@@ -67,7 +67,7 @@ public class GenerateWebsiteAction extends AbstractAction {
             try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
                 try {
                     msg.reset();
-                    msg.println();
+                    msg.println("Started Website generation");
                     copycounter = 0;
                     generatedcounter = 0;
                     //
@@ -113,11 +113,11 @@ public class GenerateWebsiteAction extends AbstractAction {
                                     template.getPath());
                             generatedcounter++;
                             break;
-                        case "properties": // skip properties files
-                            break;
                         default: // default is to copy file
-                            child.copy(tofolder, child.getName(), child.getExt());
-                            copycounter++;
+                            if (!isTemplateFile(child)) {
+                                child.copy(tofolder, child.getName(), child.getExt());
+                                copycounter++;
+                            }
                     }
                 }
             }
@@ -125,17 +125,6 @@ public class GenerateWebsiteAction extends AbstractAction {
 
         private void processMarkdown(FileObject in, OutputStream out, String templatepath) throws IOException, InterruptedException {
             ProcessBuilder pb = new ProcessBuilder("/usr/local/bin/kramdown", "--template", templatepath);
-//        String filepath = mdfile.getAbsolutePath();
-//        int dotpos = filepath.lastIndexOf(".");
-//        int slashpos = filepath.lastIndexOf("/");
-//        String outfilename = filepath.substring(slashpos + 1, dotpos + 1) + "html";
-//        String propertiespath = filepath.substring(0, dotpos + 1) + "properties";
-//        System.err.println("Creating " + outfilename);
-//        SubstitutionProperties props = new SubstitutionProperties();
-//        props.putAll(envprops);
-//        props.addFromPropertiesFile(new File(propertiespath));
-//        props.extractProperties(mdfile);
-            //
             pb.redirectInput(FileUtil.toFile(in));
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process process = pb.start();
@@ -147,6 +136,10 @@ public class GenerateWebsiteAction extends AbstractAction {
                 }
             }
             process.waitFor();
+        }
+
+        private boolean isTemplateFile(FileObject fo) {
+            return fo.getNameExt().equals("template.html");
         }
     }
 }
