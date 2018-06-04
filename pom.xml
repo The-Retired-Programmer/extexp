@@ -8,7 +8,36 @@
     
     <name>NBWebsiteProject Plugin</name>
     <description>Netbeans Plug-in to recognise and process web site projects</description>
+ 
+    <url>http://www.theretiredprogrammer.uk/nbwebsiteprojectplugin</url>
     
+    <scm>
+        <connection>scm:git:git://github.com/The-Retired-Programmer/nbwebsiteprojectplugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/nbwebsiteprojectplugin.git</developerConnection>
+        <url>http://github.com/The-Retired-Programmer/nbwebsiteprojectplugin/tree/master</url>
+    </scm>
+    
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/The-Retired-Programmer/nbwebsiteprojectplugin/issues</url>
+    </issueManagement>
+
+    <developers>
+        <developer>
+            <name>Richard Linsdale</name>
+            <email>richard@theretiredprogrammer.uk</email>
+            <organization>The-Retired-Programmer</organization>
+            <organizationUrl>http://www.theretiredprogrammer.uk</organizationUrl>
+        </developer>
+    </developers>
+  
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+       
     <properties>
         <netbeans.version>RELEASE82</netbeans.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -109,7 +138,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <cluster>nbwebsiteprojectplugin</cluster>
-                        <homePageUrl>http://www.theretiredprogrammer.uk/nbwebsiteprojectplugin</homePageUrl>
+                        <homePageUrl>${project.url}</homePageUrl>
                         <licenseFile>LICENSE</licenseFile>
                         <licenseName>The Apache License, Version 2.0</licenseName>
                         <brandingToken>nbwebsiteprojectplugin</brandingToken>
@@ -134,4 +163,65 @@
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>nbm-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create-autoupdate</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>autoupdate</goal>
+                                </goals>
+                                <configuration>
+                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/nbreleaseplugin/${project.version}</distBase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
