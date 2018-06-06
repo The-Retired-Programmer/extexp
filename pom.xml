@@ -180,7 +180,7 @@
                                     <goal>autoupdate</goal>
                                 </goals>
                                 <configuration>
-                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/nbreleaseplugin/${project.version}</distBase>
+                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/nbwebsiteprojectplugin/${project.version}</distBase>
                                 </configuration>
                             </execution>
                         </executions>
