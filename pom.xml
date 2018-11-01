@@ -2,24 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
-    <artifactId>nbwebprojectplugin</artifactId>
-    <version>1.0.0-SNAPHOT</version>
+    <artifactId>nbwebsitebuilderplugin</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>nbm</packaging>
     
-    <name>NBWebsiteProject Plugin</name>
-    <description>Netbeans Plug-in to recognise and process web site projects</description>
+    <name>NBWebsiteBuilder Plugin</name>
+    <description>Netbeans Plug-in to build Websites from components and templates</description>
  
-    <url>http://www.theretiredprogrammer.uk/nbwebsiteprojectplugin</url>
+    <url>http://www.theretiredprogrammer.uk/nbwebsitebuilderplugin</url>
     
     <scm>
-        <connection>scm:git:git://github.com/The-Retired-Programmer/nbwebsiteprojectplugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/nbwebsiteprojectplugin.git</developerConnection>
-        <url>http://github.com/The-Retired-Programmer/nbwebsiteprojectplugin/tree/master</url>
+        <connection>scm:git:git://github.com/The-Retired-Programmer/nbwebsitebuilderplugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/nbwebsitebuilderplugin.git</developerConnection>
+        <url>http://github.com/The-Retired-Programmer/nbwebsitebuilderplugin/tree/master</url>
     </scm>
     
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/The-Retired-Programmer/nbwebsiteprojectplugin/issues</url>
+        <url>https://github.com/The-Retired-Programmer/nbwebsitebuilderplugin/issues</url>
     </issueManagement>
 
     <developers>
@@ -110,6 +110,11 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-io</artifactId>
             <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -137,11 +142,11 @@
                     <version>3.14.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <cluster>nbwebsiteprojectplugin</cluster>
+                        <cluster>nbwebsitebuilderplugin</cluster>
                         <homePageUrl>${project.url}</homePageUrl>
                         <licenseFile>LICENSE</licenseFile>
                         <licenseName>The Apache License, Version 2.0</licenseName>
-                        <brandingToken>nbwebsiteprojectplugin</brandingToken>
+                        <brandingToken>nbwebsitebuilderplugin</brandingToken>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -180,7 +185,7 @@
                                     <goal>autoupdate</goal>
                                 </goals>
                                 <configuration>
-                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/nbwebsiteprojectplugin/${project.version}</distBase>
+                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/nbwebsitebuilderplugin/${project.version}</distBase>
                                 </configuration>
                             </execution>
                         </executions>

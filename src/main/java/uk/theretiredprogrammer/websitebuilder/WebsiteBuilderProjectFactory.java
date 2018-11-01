@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websiteproject;
+package uk.theretiredprogrammer.websitebuilder;
 
 import java.io.IOException;
 import org.netbeans.api.project.Project;
@@ -21,25 +21,24 @@ import org.netbeans.spi.project.ProjectFactory;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 import org.openide.util.lookup.ServiceProvider;
+
 /**
  *
  * @author richard
  */
 
-@ServiceProvider(service=ProjectFactory.class)
-public class WebsiteProjectFactory implements ProjectFactory {
-
-    public static final String PROJECT_FOLDER = "site";
+@ServiceProvider(service = ProjectFactory.class)
+public class WebsiteBuilderProjectFactory implements ProjectFactory {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
-        return projectDirectory.getFileObject(PROJECT_FOLDER) != null;
+        return IoUtil.useFolder(projectDirectory, "src", "webbuilder-resources") != null;
     }
 
     //Specifies when the project will be opened, i.e., if the project exists:
     @Override
     public Project loadProject(FileObject dir, ProjectState state) throws IOException {
-        return isProject(dir) ? new WebsiteProject(dir, state) : null;
+        return isProject(dir) ? new WebsiteBuilderProject(dir, state) : null;
     }
 
     @Override
@@ -47,4 +46,3 @@ public class WebsiteProjectFactory implements ProjectFactory {
         // leave unimplemented for the moment
     }
 }
-

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websiteproject;
+package uk.theretiredprogrammer.websitebuilder;
 
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
@@ -39,20 +39,18 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
-import uk.theretiredprogrammer.websiteproject.actions.GenerateWebsiteAction;
-import uk.theretiredprogrammer.websiteproject.actions.ViewWebsiteAction;
 
 /**
  *
  * @author richard
  */
-public class WebsiteProject implements Project {
+public class WebsiteBuilderProject implements Project {
 
     private final FileObject projectDir;
     private final ProjectState state;
     private Lookup lkp;
 
-    WebsiteProject(FileObject dir, ProjectState state) {
+    WebsiteBuilderProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;
     }
@@ -68,7 +66,8 @@ public class WebsiteProject implements Project {
             lkp = Lookups.fixed(new Object[]{
                 this,
                 new Info(),
-                new WebsiteProjectLogicalView(this)            });
+                new WebsiteBuilderProjectLogicalView(this)
+            });
         }
         return lkp;
     }
@@ -76,11 +75,11 @@ public class WebsiteProject implements Project {
     private final class Info implements ProjectInformation {
 
         @StaticResource()
-        public static final String WEBSITE_ICON = "uk/theretiredprogrammer/websiteproject/world_edit.png";
+        public static final String BOOKBUILDER_ICON = "uk/theretiredprogrammer/websitebuilder/world_edit.png";
 
         @Override
         public Icon getIcon() {
-            return new ImageIcon(ImageUtilities.loadImage(WEBSITE_ICON));
+            return new ImageIcon(ImageUtilities.loadImage(BOOKBUILDER_ICON));
         }
 
         @Override
@@ -105,18 +104,18 @@ public class WebsiteProject implements Project {
 
         @Override
         public Project getProject() {
-            return WebsiteProject.this;
+            return WebsiteBuilderProject.this;
         }
     }
 
-    class WebsiteProjectLogicalView implements LogicalViewProvider {
+    class WebsiteBuilderProjectLogicalView implements LogicalViewProvider {
 
         @StaticResource()
-        public static final String WEBSITE_ICON = "uk/theretiredprogrammer/websiteproject/world_edit.png";
+        public static final String BOOKBUILDER_ICON = "uk/theretiredprogrammer/websitebuilder/world_edit.png";
 
-        private final WebsiteProject project;
+        private final WebsiteBuilderProject project;
 
-        public WebsiteProjectLogicalView(WebsiteProject project) {
+        public WebsiteBuilderProjectLogicalView(WebsiteBuilderProject project) {
             this.project = project;
         }
 
@@ -139,14 +138,14 @@ public class WebsiteProject implements Project {
 
         private final class ProjectNode extends FilterNode {
 
-            final WebsiteProject project;
-            
-            public ProjectNode(Node node, WebsiteProject project)
+            final WebsiteBuilderProject project;
+
+            public ProjectNode(Node node, WebsiteBuilderProject project)
                     throws DataObjectNotFoundException {
                 super(node,
                         NodeFactorySupport.createCompositeChildren(
                                 project,
-                                "Projects/uk-theretiredprogrammer-websiteproject/Nodes"),
+                                "Projects/uk-theretiredprogrammer-websitebuilderproject/Nodes"),
                         // new FilterNode.Children(node),
                         new ProxyLookup(
                                 new Lookup[]{
@@ -155,22 +154,20 @@ public class WebsiteProject implements Project {
                                 }));
                 this.project = project;
             }
-            
+
             @Override
             public Action[] getActions(boolean arg0) {
                 return new Action[]{
-                    CommonProjectActions.newFileAction(),
-                    CommonProjectActions.copyProjectAction(),
-                    CommonProjectActions.deleteProjectAction(),
                     CommonProjectActions.closeProjectAction(),
-                    new GenerateWebsiteAction(project),
-                    new ViewWebsiteAction(project)
+                    new BuildWebsiteAction(project),
+                    new CleanBuildWebsiteAction(project),
+                    new CleanWebsiteAction(project)
                 };
             }
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(WEBSITE_ICON);
+                return ImageUtilities.loadImage(BOOKBUILDER_ICON);
             }
 
             @Override

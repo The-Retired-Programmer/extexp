@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websiteproject.nodes;
+package uk.theretiredprogrammer.websitebuilder;
 
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.StaticResource;
-import uk.theretiredprogrammer.websiteproject.WebsiteProject;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeList;
@@ -36,65 +35,64 @@ import org.openide.util.ImageUtilities;
  *
  * @author richard
  */
-@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-websiteproject", position = 10)
-public class SiteNodeFactory implements NodeFactory {
+@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-websitebuilderproject", position = 20)
+public class ResourceNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        WebsiteProject p = project.getLookup().lookup(WebsiteProject.class);
+        WebsiteBuilderProject p = project.getLookup().lookup(WebsiteBuilderProject.class);
         assert p != null;
-        return new WebsiteNodeList(p);
+        return new ResourceNodeList(p);
     }
 
-    private class WebsiteNodeList implements NodeList<Node> {
+    private class ResourceNodeList implements NodeList<Node> {
 
-        WebsiteProject project;
+        WebsiteBuilderProject project;
 
-        public WebsiteNodeList(WebsiteProject project) {
+        public ResourceNodeList(WebsiteBuilderProject project) {
             this.project = project;
         }
 
         @Override
         public List<Node> keys() {
-            FileObject siteFolder
-                    = project.getProjectDirectory().getFileObject("site");
+            FileObject srcFolder
+                    = project.getProjectDirectory().getFileObject("src/webbuilder-resources");
             List<Node> result = new ArrayList<>();
-            if (siteFolder != null) {
+            if (srcFolder != null) {
                 try {
-                Node sitenode = DataObject.find(siteFolder).getNodeDelegate();
-                result.add(new SiteNode(sitenode));
-                    } catch (DataObjectNotFoundException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
+                    Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
+                    result.add(new ResourceNode(sitenode));
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
             return result;
         }
-        
-        public class SiteNode extends FilterNode {
-            
+
+        public class ResourceNode extends FilterNode {
+
             @StaticResource()
-            public static final String WEBSITEFOLDER_ICON = "uk/theretiredprogrammer/websiteproject/folder_page.png";
+            public static final String WEBSITEBUILDERFOLDER_ICON = "uk/theretiredprogrammer/websitebuilder/folder_page.png";
 
-
-            public SiteNode(Node onode) {
+            public ResourceNode(Node onode) {
                 super(onode);
             }
 
             @Override
             public String getHtmlDisplayName() {
-                return "Website Sources";
+                return "Website Resources";
             }
-            
+
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(WEBSITEFOLDER_ICON);
+                return ImageUtilities.loadImage(WEBSITEBUILDERFOLDER_ICON);
             }
-            
+
             @Override
             public Image getOpenedIcon(int type) {
                 return getIcon(type);
             }
-            
+
         }
 
         @Override
