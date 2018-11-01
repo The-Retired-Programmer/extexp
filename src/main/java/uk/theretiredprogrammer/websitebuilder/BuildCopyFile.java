@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.websitebuilder;
 
 import java.io.IOException;
-import java.util.List;
 import javax.json.JsonObject;
 import org.openide.filesystems.FileObject;
 
@@ -27,7 +26,7 @@ import org.openide.filesystems.FileObject;
 public class BuildCopyFile extends Build {
 
     private final FileObject file;
-    private final List<Using> usings;
+    private final Usings usings;
 
     public BuildCopyFile(JsonObject jobj) throws IOException {
         String filename = jobj.getString("file", "");
@@ -36,15 +35,21 @@ public class BuildCopyFile extends Build {
         }
         file = IoUtil.findFile(filename);
         JsonObject jusing = jobj.getJsonObject("using");
-        usings = jusing != null ? Build.buildUse(jusing) : null;
+        if (jusing == null) {
+            usings = new Usings();
+        } else {
+            usings = Build.buildUse(jusing);
+        }
     }
 
     @Override
-    public String getContentString() throws IOException {
-        return substitute(file.asText(), usings);
+    public String getContentString(Usings parentusings) throws IOException {
+        Usings combined = new Usings(parentusings);
+        combined.putAll(usings);
+        return substitute(file.asText(), combined);
     }
 
-    private String substitute(String text, List<Using> usings) throws IOException {
+    private String substitute(String text, Usings usings) throws IOException {
         while (true) {
             int p = text.indexOf("${");
             if (p == -1) {
@@ -52,16 +57,11 @@ public class BuildCopyFile extends Build {
             }
             int q = text.indexOf("}", p + 2);
             String name = text.substring(p + 2, q);
-            text = text.substring(0, p) + getUsingContent(usings, name) + text.substring(q + 1);
-        }
-    }
-
-    private String getUsingContent(List<Using> usings, String name) throws IOException {
-        for (Using using: usings){
-            if (using.getName().equals(name)) {
-                return using.getContentString();
+            Build build = usings.get(name);
+            if (build == null) {
+                throw new IOException("No matching named content");
             }
+            text = text.substring(0, p) + build.getContentString(usings) + text.substring(q + 1);
         }
-        throw new IOException("No matching named content");
     }
-}
+} 

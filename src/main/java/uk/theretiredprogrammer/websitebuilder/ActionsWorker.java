@@ -130,7 +130,7 @@ public class ActionsWorker implements Runnable {
                 Build.setFolderSeachOrder(syscontentfolder, pagefolder);
                 JsonObject jbuild = obj.getJsonObject("build");
                 Build bld = Build.buildAction(jbuild);
-                outputwriter.println(bld.getContentString());
+                outputwriter.println(bld.getContentString(null));
             }
         }
     }

@@ -16,8 +16,6 @@
 package uk.theretiredprogrammer.websitebuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
@@ -29,16 +27,16 @@ import org.openide.filesystems.FileObject;
  */
 public abstract class Build {
 
-    public abstract String getContentString() throws IOException;
+    public abstract String getContentString(Usings parentusings) throws IOException;
 
-    static List<Using> buildUse(JsonObject jusings) throws IOException {
-        List<Using> res = new ArrayList<>();
+    static Usings buildUse(JsonObject jusings) throws IOException {
+        Usings res = new Usings();
         for (String name : jusings.keySet()) {
             JsonValue jval = jusings.getOrDefault(name, null);
             if (jval == null) {
                 throw new IOException("Json key lookup problem - syserr");
             }
-            res.add(new Using(name, buildAction(jval)));
+            res.put(name, buildAction(jval));
         }
         return res;
     }

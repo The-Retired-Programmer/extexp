@@ -15,22 +15,10 @@
  */
 package uk.theretiredprogrammer.websitebuilder;
 
-import java.io.IOException;
-
 /**
  *
  * @author richard
  */
-public class BuildString extends Build {
-
-    private final String value;
-
-    public BuildString(String value) throws IOException {
-        this.value = value;
-    }
-
-    @Override
-    public String getContentString(Usings parentusages) throws IOException {
-        return value;
-    }
+class Usages {
+    
 }

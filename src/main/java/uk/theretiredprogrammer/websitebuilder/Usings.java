@@ -15,27 +15,22 @@
  */
 package uk.theretiredprogrammer.websitebuilder;
 
-import java.io.IOException;
+import java.util.HashMap;
 
 /**
  *
  * @author richard
  */
-public class Using {
+public class Usings  extends HashMap<String, Build> {
     
-    private final String name;
-    private final Build content;
-    
-    public Using(String name, Build content) {
-        this.name = name;
-        this.content = content;
+    public Usings() {
+        super();
     }
     
-    public String getName() {
-        return name;
-    }
-    
-    public String getContentString() throws IOException {
-        return content.getContentString();
+    public Usings(Usings parentusings) {
+        super();
+        if (parentusings != null) {
+            this.putAll(parentusings);
+        }
     }
 }
