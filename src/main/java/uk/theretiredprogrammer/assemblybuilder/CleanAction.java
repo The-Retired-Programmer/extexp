@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
-import java.util.HashMap;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  * @author richard
  */
-public class Usings  extends HashMap<String, Build> {
-    
-    public Usings() {
-        super();
+public class CleanAction extends AbstractAction {
+
+    private final AssemblyBuilderProject project;
+
+    public CleanAction(AssemblyBuilderProject project) {
+        super("Clean");
+        this.project = project;
     }
-    
-    public Usings(Usings parentusings) {
-        super();
-        if (parentusings != null) {
-            this.putAll(parentusings);
-        }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        new RequestProcessor(CleanAction.class).post(new ActionsWorker(project, true, false));
     }
 }

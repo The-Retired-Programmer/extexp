@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,21 +38,21 @@ public class ActionsWorker implements Runnable {
 
     private final boolean cleanrequired;
     private final boolean buildrequired;
-    private final WebsiteBuilderProject project;
+    private final AssemblyBuilderProject project;
     private int pagecount;
     //
     private FileObject projectfolder;
     private FileObject srccontentfolder;
     private FileObject pagefolder;
     private FileObject syscontentfolder;
-    private FileObject targetfolder;
-    private FileObject targetcontentfolder;
-    private FileObject targetpagefolder;
+    private FileObject generatedfolder;
+    private FileObject generatedcontentfolder;
+    private FileObject generatedpagefolder;
     //
     private OutputWriter msg;
     private OutputWriter err;
 
-    public ActionsWorker(WebsiteBuilderProject project, boolean cleanrequired, boolean buildrequired) {
+    public ActionsWorker(AssemblyBuilderProject project, boolean cleanrequired, boolean buildrequired) {
         this.cleanrequired = cleanrequired;
         this.buildrequired = buildrequired;
         this.project = project;
@@ -64,7 +64,7 @@ public class ActionsWorker implements Runnable {
         pagecount = 0;
         long start = currentTimeMillis();
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
-        InputOutput io = IOProvider.getDefault().getIO("Website Builder for " + projectinfo.getName(), false);
+        InputOutput io = IOProvider.getDefault().getIO("Assembly Builder for " + projectinfo.getName(), false);
         io.select();
         msg = io.getOut();
         err = io.getErr();
@@ -94,39 +94,39 @@ public class ActionsWorker implements Runnable {
     }
 
     private void cleanWorker() throws IOException {
-        msg.println("Cleaning target directory");
-        targetfolder = projectfolder.getFileObject("target");
-        if (targetfolder != null) {
-            targetfolder.delete(); // clear previously generated/copied materials
+        msg.println("Cleaning generated directory");
+        generatedfolder = projectfolder.getFileObject("generated");
+        if (generatedfolder != null) {
+            generatedfolder.delete();
         }
     }
 
     private void buildWorker() throws IOException {
         msg.println("Building all required output");
-        targetfolder = IoUtil.useOrCreateFolder(projectfolder, "target");
-        targetcontentfolder = IoUtil.useOrCreateFolder(targetfolder, "content");
+        generatedfolder = IoUtil.useOrCreateFolder(projectfolder, "generated");
+        generatedcontentfolder = IoUtil.useOrCreateFolder(generatedfolder, "content");
         srccontentfolder = projectfolder.getFileObject("src/content");
-        syscontentfolder = projectfolder.getFileObject("src/webbuilder-resources");
+        syscontentfolder = projectfolder.getFileObject("src/shared-content");
         for (FileObject child : srccontentfolder.getChildren()) {
             if (child.isFolder()) {
                 pagefolder = child;
-                targetpagefolder = IoUtil.useOrCreateFolder(targetcontentfolder, child.getName());
+                generatedpagefolder = IoUtil.useOrCreateFolder(generatedcontentfolder, child.getName());
                 processPage();
                 pagecount++;
             }
         }
-        msg.println(pagecount+" outputs built");
+        msg.println(pagecount+" documents built");
     }
 
     private void processPage() throws IOException {
         FileObject assemblyinstructions = pagefolder.getFileObject("assembly.json");
         if (assemblyinstructions == null) {
-            throw new IOException("Page Assembly Instructions (assembly.json) is missing");
+            throw new IOException("Assembly Instructions (assembly.json) is missing");
         }
         try (InputStream is = assemblyinstructions.getInputStream();
                 JsonReader rdr = Json.createReader(is)) {
             JsonObject obj = rdr.readObject();
-            try (PrintWriter outputwriter = new PrintWriter(targetpagefolder.createAndOpen(obj.getString("as")))) {
+            try (PrintWriter outputwriter = new PrintWriter(generatedpagefolder.createAndOpen(obj.getString("as")))) {
                 Build.setFolderSeachOrder(syscontentfolder, pagefolder);
                 JsonObject jbuild = obj.getJsonObject("build");
                 Build bld = Build.buildAction(jbuild);

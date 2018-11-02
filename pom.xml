@@ -2,24 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
-    <artifactId>nbwebsitebuilderplugin</artifactId>
+    <artifactId>assemblybuilderplugin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>nbm</packaging>
     
-    <name>NBWebsiteBuilder Plugin</name>
-    <description>Netbeans Plug-in to build Websites from components and templates</description>
+    <name>Assembly Builder NB Plugin</name>
+    <description>Netbeans Plug-in to assembly a file from a set of templates, parameters and file creators</description>
  
-    <url>http://www.theretiredprogrammer.uk/nbwebsitebuilderplugin</url>
+    <url>http://www.theretiredprogrammer.uk/assemblybuilderplugin</url>
     
     <scm>
-        <connection>scm:git:git://github.com/The-Retired-Programmer/nbwebsitebuilderplugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/nbwebsitebuilderplugin.git</developerConnection>
-        <url>http://github.com/The-Retired-Programmer/nbwebsitebuilderplugin/tree/master</url>
+        <connection>scm:git:git://github.com/The-Retired-Programmer/assemblybuilderplugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/assemblybuilderplugin.git</developerConnection>
+        <url>http://github.com/The-Retired-Programmer/assemblybuilderplugin/tree/master</url>
     </scm>
     
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/The-Retired-Programmer/nbwebsitebuilderplugin/issues</url>
+        <url>https://github.com/The-Retired-Programmer/assemblybuilderplugin/issues</url>
     </issueManagement>
 
     <developers>
@@ -142,11 +142,11 @@
                     <version>3.14.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <cluster>nbwebsitebuilderplugin</cluster>
+                        <cluster>assemblybuilderplugin</cluster>
                         <homePageUrl>${project.url}</homePageUrl>
                         <licenseFile>LICENSE</licenseFile>
                         <licenseName>The Apache License, Version 2.0</licenseName>
-                        <brandingToken>nbwebsitebuilderplugin</brandingToken>
+                        <brandingToken>assemblybuilderplugin</brandingToken>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -185,7 +185,7 @@
                                     <goal>autoupdate</goal>
                                 </goals>
                                 <configuration>
-                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/nbwebsitebuilderplugin/${project.version}</distBase>
+                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/assemblybuilderplugin/${project.version}</distBase>
                                 </configuration>
                             </execution>
                         </executions>

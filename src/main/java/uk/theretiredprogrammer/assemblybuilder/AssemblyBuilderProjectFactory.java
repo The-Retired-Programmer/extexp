@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
 import java.io.IOException;
 import org.netbeans.api.project.Project;
@@ -28,17 +28,17 @@ import org.openide.util.lookup.ServiceProvider;
  */
 
 @ServiceProvider(service = ProjectFactory.class)
-public class WebsiteBuilderProjectFactory implements ProjectFactory {
+public class AssemblyBuilderProjectFactory implements ProjectFactory {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
-        return IoUtil.useFolder(projectDirectory, "src", "webbuilder-resources") != null;
+        return IoUtil.useFolder(projectDirectory, "src", "shared-content") != null;
     }
 
     //Specifies when the project will be opened, i.e., if the project exists:
     @Override
     public Project loadProject(FileObject dir, ProjectState state) throws IOException {
-        return isProject(dir) ? new WebsiteBuilderProject(dir, state) : null;
+        return isProject(dir) ? new AssemblyBuilderProject(dir, state) : null;
     }
 
     @Override

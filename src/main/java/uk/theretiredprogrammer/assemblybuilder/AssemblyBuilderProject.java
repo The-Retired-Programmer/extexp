@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
@@ -44,13 +44,13 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author richard
  */
-public class WebsiteBuilderProject implements Project {
+public class AssemblyBuilderProject implements Project {
 
     private final FileObject projectDir;
     private final ProjectState state;
     private Lookup lkp;
 
-    WebsiteBuilderProject(FileObject dir, ProjectState state) {
+    AssemblyBuilderProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;
     }
@@ -75,11 +75,11 @@ public class WebsiteBuilderProject implements Project {
     private final class Info implements ProjectInformation {
 
         @StaticResource()
-        public static final String BOOKBUILDER_ICON = "uk/theretiredprogrammer/websitebuilder/world_edit.png";
+        public static final String ASSEMBLYBUILDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
 
         @Override
         public Icon getIcon() {
-            return new ImageIcon(ImageUtilities.loadImage(BOOKBUILDER_ICON));
+            return new ImageIcon(ImageUtilities.loadImage(ASSEMBLYBUILDER_ICON));
         }
 
         @Override
@@ -104,18 +104,18 @@ public class WebsiteBuilderProject implements Project {
 
         @Override
         public Project getProject() {
-            return WebsiteBuilderProject.this;
+            return AssemblyBuilderProject.this;
         }
     }
 
     class WebsiteBuilderProjectLogicalView implements LogicalViewProvider {
 
         @StaticResource()
-        public static final String BOOKBUILDER_ICON = "uk/theretiredprogrammer/websitebuilder/world_edit.png";
+        public static final String ASSEMBLYBUILDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
 
-        private final WebsiteBuilderProject project;
+        private final AssemblyBuilderProject project;
 
-        public WebsiteBuilderProjectLogicalView(WebsiteBuilderProject project) {
+        public WebsiteBuilderProjectLogicalView(AssemblyBuilderProject project) {
             this.project = project;
         }
 
@@ -138,14 +138,14 @@ public class WebsiteBuilderProject implements Project {
 
         private final class ProjectNode extends FilterNode {
 
-            final WebsiteBuilderProject project;
+            final AssemblyBuilderProject project;
 
-            public ProjectNode(Node node, WebsiteBuilderProject project)
+            public ProjectNode(Node node, AssemblyBuilderProject project)
                     throws DataObjectNotFoundException {
                 super(node,
                         NodeFactorySupport.createCompositeChildren(
                                 project,
-                                "Projects/uk-theretiredprogrammer-websitebuilderproject/Nodes"),
+                                "Projects/uk-theretiredprogrammer-assemblybuilderproject/Nodes"),
                         // new FilterNode.Children(node),
                         new ProxyLookup(
                                 new Lookup[]{
@@ -159,15 +159,15 @@ public class WebsiteBuilderProject implements Project {
             public Action[] getActions(boolean arg0) {
                 return new Action[]{
                     CommonProjectActions.closeProjectAction(),
-                    new BuildWebsiteAction(project),
-                    new CleanBuildWebsiteAction(project),
-                    new CleanWebsiteAction(project)
+                    new BuildAction(project),
+                    new CleanBuildAction(project),
+                    new CleanAction(project)
                 };
             }
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(BOOKBUILDER_ICON);
+                return ImageUtilities.loadImage(ASSEMBLYBUILDER_ICON);
             }
 
             @Override

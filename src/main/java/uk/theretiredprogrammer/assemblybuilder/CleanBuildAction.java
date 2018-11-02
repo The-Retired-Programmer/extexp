@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  * @author richard
  */
-public class BuildString extends Build {
+public class CleanBuildAction extends AbstractAction {
 
-    private final String value;
+    private final AssemblyBuilderProject project;
 
-    public BuildString(String value) throws IOException {
-        this.value = value;
+    public CleanBuildAction(AssemblyBuilderProject project) {
+        super("Clean and Build");
+        this.project = project;
     }
 
     @Override
-    public String getContentString(Usings parentusages) throws IOException {
-        return value;
+    public void actionPerformed(ActionEvent e) {
+        new RequestProcessor(CleanBuildAction.class).post(new ActionsWorker(project, true, true));
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
@@ -23,17 +23,17 @@ import org.openide.util.RequestProcessor;
  *
  * @author richard
  */
-public class CleanWebsiteAction extends AbstractAction {
+public class BuildAction extends AbstractAction {
 
-    private final WebsiteBuilderProject project;
+    private final AssemblyBuilderProject project;
 
-    public CleanWebsiteAction(WebsiteBuilderProject project) {
-        super("Clean");
+    public BuildAction(AssemblyBuilderProject project) {
+        super("Build");
         this.project = project;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(CleanWebsiteAction.class).post(new ActionsWorker(project, true, false));
+        new RequestProcessor(BuildAction.class).post(new ActionsWorker(project, false, true));
     }
 }

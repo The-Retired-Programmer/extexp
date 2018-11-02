@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -35,33 +35,33 @@ import org.openide.util.ImageUtilities;
  *
  * @author richard
  */
-@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-websitebuilderproject", position = 20)
-public class ResourceNodeFactory implements NodeFactory {
+@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-assemblybuilderproject", position = 20)
+public class SharedSourceNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        WebsiteBuilderProject p = project.getLookup().lookup(WebsiteBuilderProject.class);
+        AssemblyBuilderProject p = project.getLookup().lookup(AssemblyBuilderProject.class);
         assert p != null;
-        return new ResourceNodeList(p);
+        return new SharedSourceNodeList(p);
     }
 
-    private class ResourceNodeList implements NodeList<Node> {
+    private class SharedSourceNodeList implements NodeList<Node> {
 
-        WebsiteBuilderProject project;
+        AssemblyBuilderProject project;
 
-        public ResourceNodeList(WebsiteBuilderProject project) {
+        public SharedSourceNodeList(AssemblyBuilderProject project) {
             this.project = project;
         }
 
         @Override
         public List<Node> keys() {
             FileObject srcFolder
-                    = project.getProjectDirectory().getFileObject("src/webbuilder-resources");
+                    = project.getProjectDirectory().getFileObject("src/shared-content");
             List<Node> result = new ArrayList<>();
             if (srcFolder != null) {
                 try {
                     Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
-                    result.add(new ResourceNode(sitenode));
+                    result.add(new SharedSourceNode(sitenode));
                 } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -69,23 +69,23 @@ public class ResourceNodeFactory implements NodeFactory {
             return result;
         }
 
-        public class ResourceNode extends FilterNode {
+        public class SharedSourceNode extends FilterNode {
 
             @StaticResource()
-            public static final String WEBSITEBUILDERFOLDER_ICON = "uk/theretiredprogrammer/websitebuilder/folder_page.png";
+            public static final String ASSEMBLYBUILDERFOLDER_ICON = "uk/theretiredprogrammer/assemblybuilder/folder_page.png";
 
-            public ResourceNode(Node onode) {
+            public SharedSourceNode(Node onode) {
                 super(onode);
             }
 
             @Override
             public String getHtmlDisplayName() {
-                return "Website Resources";
+                return "Shared Sources";
             }
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(WEBSITEBUILDERFOLDER_ICON);
+                return ImageUtilities.loadImage(ASSEMBLYBUILDERFOLDER_ICON);
             }
 
             @Override

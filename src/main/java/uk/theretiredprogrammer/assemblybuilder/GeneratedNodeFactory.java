@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.websitebuilder;
+package uk.theretiredprogrammer.assemblybuilder;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -35,33 +35,33 @@ import org.openide.util.ImageUtilities;
  *
  * @author richard
  */
-@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-websitebuilderproject", position = 10)
-public class SourceNodeFactory implements NodeFactory {
+@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-assemblybuilderproject", position = 30)
+public class GeneratedNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        WebsiteBuilderProject p = project.getLookup().lookup(WebsiteBuilderProject.class);
+        AssemblyBuilderProject p = project.getLookup().lookup(AssemblyBuilderProject.class);
         assert p != null;
-        return new SourceNodeList(p);
+        return new GeneratedNodeList(p);
     }
 
-    private class SourceNodeList implements NodeList<Node> {
+    private class GeneratedNodeList implements NodeList<Node> {
 
-        WebsiteBuilderProject project;
+        AssemblyBuilderProject project;
 
-        public SourceNodeList(WebsiteBuilderProject project) {
+        public GeneratedNodeList(AssemblyBuilderProject project) {
             this.project = project;
         }
 
         @Override
         public List<Node> keys() {
             FileObject srcFolder
-                    = project.getProjectDirectory().getFileObject("src/content");
+                    = project.getProjectDirectory().getFileObject("generated/content");
             List<Node> result = new ArrayList<>();
             if (srcFolder != null) {
                 try {
                     Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
-                    result.add(new SourceNode(sitenode));
+                    result.add(new GeneratedNode(sitenode));
                 } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -69,23 +69,23 @@ public class SourceNodeFactory implements NodeFactory {
             return result;
         }
 
-        public class SourceNode extends FilterNode {
+        public class GeneratedNode extends FilterNode {
 
             @StaticResource()
-            public static final String WEBSITEBUILDERFOLDER_ICON = "uk/theretiredprogrammer/websitebuilder/folder_page.png";
+            public static final String ASSEMBLYBUILDERFOLDER_ICON = "uk/theretiredprogrammer/assemblybuilder/folder_wrench.png";
 
-            public SourceNode(Node onode) {
+            public GeneratedNode(Node onode) {
                 super(onode);
             }
 
             @Override
             public String getHtmlDisplayName() {
-                return "Website Sources";
+                return "Generated";
             }
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(WEBSITEBUILDERFOLDER_ICON);
+                return ImageUtilities.loadImage(ASSEMBLYBUILDERFOLDER_ICON);
             }
 
             @Override
