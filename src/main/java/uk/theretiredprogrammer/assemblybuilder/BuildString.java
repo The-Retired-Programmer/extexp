@@ -25,12 +25,12 @@ public class BuildString extends Build {
 
     private final String value;
 
-    public BuildString(String value) throws IOException {
+    public BuildString(String value) {
         this.value = value;
     }
 
     @Override
-    public String getContentString(Usings parentusages) throws IOException {
+    public String getContentString(Usings parentusages) {
         return value;
     }
 }

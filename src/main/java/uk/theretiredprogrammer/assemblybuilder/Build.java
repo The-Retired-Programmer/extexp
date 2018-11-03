@@ -47,9 +47,11 @@ public abstract class Build {
             String action = jobj.getString("action", "copy-file");
             if (action.equals("copy-file")) {
                 return new BuildCopyFile(jobj);
-            } else {
-                throw new IOException("Unknown action defined");
             }
+            if (action.equals("nothing")) {
+                return new BuildEmpty();
+            }
+            throw new IOException("Unknown action defined");
         } else {
             String value = ((JsonString) jval).getString();
             return new BuildString(value);

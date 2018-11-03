@@ -15,10 +15,16 @@
  */
 package uk.theretiredprogrammer.assemblybuilder;
 
+import java.io.IOException;
+
 /**
  *
  * @author richard
  */
-class Usages {
-    
+public class BuildEmpty extends Build {
+
+    @Override
+    public String getContentString(Usings parentusages) throws IOException {
+        return "";
+    }
 }
