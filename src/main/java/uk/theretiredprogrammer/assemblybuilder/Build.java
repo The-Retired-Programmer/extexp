@@ -51,6 +51,9 @@ public abstract class Build {
             if (action.equals("nothing")) {
                 return new BuildEmpty();
             }
+            if (action.equals("markdown")) {
+                return new BuildMarkDownFile(jobj);
+            }
             throw new IOException("Unknown action defined");
         } else {
             String value = ((JsonString) jval).getString();
