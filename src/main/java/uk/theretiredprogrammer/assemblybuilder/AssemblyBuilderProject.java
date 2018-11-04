@@ -66,7 +66,7 @@ public class AssemblyBuilderProject implements Project {
             lkp = Lookups.fixed(new Object[]{
                 this,
                 new Info(),
-                new WebsiteBuilderProjectLogicalView(this)
+                new AssemblyBuilderProjectLogicalView(this)
             });
         }
         return lkp;
@@ -108,14 +108,14 @@ public class AssemblyBuilderProject implements Project {
         }
     }
 
-    class WebsiteBuilderProjectLogicalView implements LogicalViewProvider {
+    class AssemblyBuilderProjectLogicalView implements LogicalViewProvider {
 
         @StaticResource()
         public static final String ASSEMBLYBUILDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
 
         private final AssemblyBuilderProject project;
 
-        public WebsiteBuilderProjectLogicalView(AssemblyBuilderProject project) {
+        public AssemblyBuilderProjectLogicalView(AssemblyBuilderProject project) {
             this.project = project;
         }
 

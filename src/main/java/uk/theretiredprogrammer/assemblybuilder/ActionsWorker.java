@@ -45,9 +45,9 @@ public class ActionsWorker implements Runnable {
     private FileObject srccontentfolder;
     private FileObject pagefolder;
     private FileObject syscontentfolder;
-    private FileObject generatedfolder;
-    private FileObject generatedcontentfolder;
-    private FileObject generatedpagefolder;
+    private FileObject cachefolder;
+  //  private FileObject cachepagefolder;
+    private FileObject targetfolder;
     //
     private OutputWriter msg;
     private OutputWriter err;
@@ -94,28 +94,36 @@ public class ActionsWorker implements Runnable {
     }
 
     private void cleanWorker() throws IOException {
-        msg.println("Cleaning generated directory");
-        generatedfolder = projectfolder.getFileObject("generated");
-        if (generatedfolder != null) {
-            generatedfolder.delete();
+        msg.println("Cleaning...");
+        cachefolder = projectfolder.getFileObject("cache");
+        if (cachefolder != null) {
+            msg.println("   ...cache directory");
+            cachefolder.delete();
+        }
+        targetfolder = projectfolder.getFileObject("target");
+        if (targetfolder != null) {
+            msg.println("   ...target content");
+            for (FileObject child : targetfolder.getChildren()) {
+                if (child.isData()) {
+                    child.delete();
+                }
+            }
         }
     }
 
     private void buildWorker() throws IOException {
         msg.println("Building all required output");
-        generatedfolder = IoUtil.useOrCreateFolder(projectfolder, "generated");
-        generatedcontentfolder = IoUtil.useOrCreateFolder(generatedfolder, "content");
+        targetfolder = IoUtil.useOrCreateFolder(projectfolder, "target");
         srccontentfolder = projectfolder.getFileObject("src/content");
         syscontentfolder = projectfolder.getFileObject("src/shared-content");
         for (FileObject child : srccontentfolder.getChildren()) {
             if (child.isFolder()) {
                 pagefolder = child;
-                generatedpagefolder = IoUtil.useOrCreateFolder(generatedcontentfolder, child.getName());
                 processPage();
                 pagecount++;
             }
         }
-        msg.println(pagecount+" documents built");
+        msg.println(pagecount + " documents built");
     }
 
     private void processPage() throws IOException {
@@ -126,7 +134,7 @@ public class ActionsWorker implements Runnable {
         try (InputStream is = assemblyinstructions.getInputStream();
                 JsonReader rdr = Json.createReader(is)) {
             JsonObject obj = rdr.readObject();
-            try (PrintWriter outputwriter = new PrintWriter(generatedpagefolder.createAndOpen(obj.getString("as")))) {
+            try (PrintWriter outputwriter = new PrintWriter(targetfolder.createAndOpen(obj.getString("as")))) {
                 Build.setFolderSeachOrder(syscontentfolder, pagefolder);
                 JsonObject jbuild = obj.getJsonObject("build");
                 Build bld = Build.buildAction(jbuild);

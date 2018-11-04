@@ -56,7 +56,7 @@ public class GeneratedNodeFactory implements NodeFactory {
         @Override
         public List<Node> keys() {
             FileObject srcFolder
-                    = project.getProjectDirectory().getFileObject("generated/content");
+                    = project.getProjectDirectory().getFileObject("target");
             List<Node> result = new ArrayList<>();
             if (srcFolder != null) {
                 try {
