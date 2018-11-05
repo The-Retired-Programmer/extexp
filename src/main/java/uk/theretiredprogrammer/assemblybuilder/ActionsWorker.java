@@ -48,6 +48,7 @@ public class ActionsWorker implements Runnable {
     private FileObject cachefolder;
   //  private FileObject cachepagefolder;
     private FileObject targetfolder;
+    private FileObject resourcefolder;
     //
     private OutputWriter msg;
     private OutputWriter err;
@@ -116,6 +117,7 @@ public class ActionsWorker implements Runnable {
         targetfolder = IoUtil.useOrCreateFolder(projectfolder, "target");
         srccontentfolder = projectfolder.getFileObject("src/content");
         syscontentfolder = projectfolder.getFileObject("src/shared-content");
+        resourcefolder = IoUtil.useOrCreateFolder(projectfolder,"target", "resources");
         for (FileObject child : srccontentfolder.getChildren()) {
             if (child.isFolder()) {
                 pagefolder = child;
@@ -127,6 +129,7 @@ public class ActionsWorker implements Runnable {
     }
 
     private void processPage() throws IOException {
+        msg.println("    ...processing - "+pagefolder.getName());
         FileObject assemblyinstructions = pagefolder.getFileObject("assembly.json");
         if (assemblyinstructions == null) {
             throw new IOException("Assembly Instructions (assembly.json) is missing");
@@ -136,6 +139,7 @@ public class ActionsWorker implements Runnable {
             JsonObject obj = rdr.readObject();
             try (PrintWriter outputwriter = new PrintWriter(targetfolder.createAndOpen(obj.getString("as")))) {
                 Build.setFolderSeachOrder(syscontentfolder, pagefolder);
+                Build.setResourseFolder(resourcefolder, "resources/");
                 JsonObject jbuild = obj.getJsonObject("build");
                 Build bld = Build.buildAction(jbuild);
                 outputwriter.println(bld.getContentString(null));

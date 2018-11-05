@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.assemblybuilder;
 
 import java.io.IOException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
@@ -42,23 +43,43 @@ public abstract class Build {
     }
 
     static Build buildAction(JsonValue jval) throws IOException {
-        if (jval.getValueType() == JsonValue.ValueType.OBJECT) {
-            JsonObject jobj = ((JsonObject) jval);
-            String action = jobj.getString("action", "copy-file");
-            if (action.equals("copy-file")) {
-                return new BuildCopyFile(jobj);
-            }
-            if (action.equals("nothing")) {
-                return new BuildEmpty();
-            }
-            if (action.equals("markdown")) {
-                return new BuildMarkDownFile(jobj);
-            }
-            throw new IOException("Unknown action defined");
-        } else {
-            String value = ((JsonString) jval).getString();
-            return new BuildString(value);
+        switch (jval.getValueType()) {
+            case OBJECT:
+                JsonObject jobj = ((JsonObject) jval);
+                String action = jobj.getString("action", "copy-file");
+                if (action.equals("copy-file")) {
+                    return new BuildCopyFile(jobj);
+                }
+                if (action.equals("nothing")) {
+                    return new BuildEmpty();
+                }
+                if (action.equals("markdown")) {
+                    return new BuildMarkDownFile(jobj);
+                }
+                if (action.equals("imageset")) {
+                    return new BuildImageSet(jobj, resourcefolder, resourcefolderpath);
+                }
+                throw new IOException("Unknown action defined");
+            case ARRAY:
+                throw new IOException("Array content not allowed");
+            case STRING:
+                String value = ((JsonString) jval).getString();
+                return new BuildString(value);
+            case NUMBER:
+                JsonNumber jnum = (JsonNumber) jval;
+                if (jnum.isIntegral()) {
+                    return new BuildString(Integer.toString(jnum.intValueExact()));
+                } else {
+                    return new BuildString(jnum.toString());
+                }
+            default:
+                return new BuildString(jval.toString());
         }
+    }
+
+    static void setResourseFolder(FileObject resourcefolder, String resourcefolderpath) {
+        Build.resourcefolder = resourcefolder;
+        Build.resourcefolderpath = resourcefolderpath;
     }
 
     static void setFolderSeachOrder(FileObject... fos) {
@@ -70,4 +91,6 @@ public abstract class Build {
     }
 
     private static FileObject[] fos;
+    private static FileObject resourcefolder;
+    private static String resourcefolderpath;
 }

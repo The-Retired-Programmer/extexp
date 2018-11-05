@@ -15,8 +15,6 @@
  */
 package uk.theretiredprogrammer.assemblybuilder;
 
-import java.io.IOException;
-
 /**
  *
  * @author richard
