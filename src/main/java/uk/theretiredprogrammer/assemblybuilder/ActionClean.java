@@ -23,17 +23,17 @@ import org.openide.util.RequestProcessor;
  *
  * @author richard
  */
-public class CleanAction extends AbstractAction {
+public class ActionClean extends AbstractAction {
 
     private final AssemblyBuilderProject project;
 
-    public CleanAction(AssemblyBuilderProject project) {
+    public ActionClean(AssemblyBuilderProject project) {
         super("Clean");
         this.project = project;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(CleanAction.class).post(new ActionsWorker(project, true, false));
+        new RequestProcessor(ActionClean.class).post(new ActionsWorker(project, true, false));
     }
 }

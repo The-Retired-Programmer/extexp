@@ -83,8 +83,8 @@ public class IoUtil {
         return parent.createAndOpen(filename);
     }
     
-    public static FileObject findFile(String filename) {
-        for (FileObject fo: Build.getFos()){
+    public static FileObject findFile(String filename, FileObject... fos) {
+        for (FileObject fo: fos){
             FileObject file = fo.getFileObject(filename);
             if (file != null && file.isData()){
                 return file;

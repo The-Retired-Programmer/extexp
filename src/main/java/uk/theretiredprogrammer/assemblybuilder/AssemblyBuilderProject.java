@@ -159,9 +159,9 @@ public class AssemblyBuilderProject implements Project {
             public Action[] getActions(boolean arg0) {
                 return new Action[]{
                     CommonProjectActions.closeProjectAction(),
-                    new BuildAction(project),
-                    new CleanBuildAction(project),
-                    new CleanAction(project)
+                    new ActionBuild(project),
+                    new ActionCleanBuild(project),
+                    new ActionClean(project)
                 };
             }
 

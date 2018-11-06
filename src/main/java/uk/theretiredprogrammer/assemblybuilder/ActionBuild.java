@@ -15,16 +15,25 @@
  */
 package uk.theretiredprogrammer.assemblybuilder;
 
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  * @author richard
  */
-public class BuildEmpty extends Build {
+public class ActionBuild extends AbstractAction {
+
+    private final AssemblyBuilderProject project;
+
+    public ActionBuild(AssemblyBuilderProject project) {
+        super("Build");
+        this.project = project;
+    }
 
     @Override
-    public String getContentString(Usings parentusages) throws IOException {
-        return "";
+    public void actionPerformed(ActionEvent e) {
+        new RequestProcessor(ActionBuild.class).post(new ActionsWorker(project, false, true));
     }
 }

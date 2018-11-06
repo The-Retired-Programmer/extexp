@@ -46,7 +46,7 @@ public class ActionsWorker implements Runnable {
     private FileObject pagefolder;
     private FileObject syscontentfolder;
     private FileObject cachefolder;
-  //  private FileObject cachepagefolder;
+    //  private FileObject cachepagefolder;
     private FileObject targetfolder;
     private FileObject resourcefolder;
     //
@@ -113,11 +113,11 @@ public class ActionsWorker implements Runnable {
     }
 
     private void buildWorker() throws IOException {
-        msg.println("Building all required output");
+        msg.println("Building...");
         targetfolder = IoUtil.useOrCreateFolder(projectfolder, "target");
         srccontentfolder = projectfolder.getFileObject("src/content");
         syscontentfolder = projectfolder.getFileObject("src/shared-content");
-        resourcefolder = IoUtil.useOrCreateFolder(projectfolder,"target", "resources");
+        resourcefolder = IoUtil.useOrCreateFolder(projectfolder, "target", "resources");
         for (FileObject child : srccontentfolder.getChildren()) {
             if (child.isFolder()) {
                 pagefolder = child;
@@ -129,20 +129,21 @@ public class ActionsWorker implements Runnable {
     }
 
     private void processPage() throws IOException {
-        msg.println("    ...processing - "+pagefolder.getName());
+        msg.println("    ...processing - " + pagefolder.getName());
         FileObject assemblyinstructions = pagefolder.getFileObject("assembly.json");
         if (assemblyinstructions == null) {
             throw new IOException("Assembly Instructions (assembly.json) is missing");
         }
         try (InputStream is = assemblyinstructions.getInputStream();
                 JsonReader rdr = Json.createReader(is)) {
-            JsonObject obj = rdr.readObject();
-            try (PrintWriter outputwriter = new PrintWriter(targetfolder.createAndOpen(obj.getString("as")))) {
-                Build.setFolderSeachOrder(syscontentfolder, pagefolder);
-                Build.setResourseFolder(resourcefolder, "resources/");
-                JsonObject jbuild = obj.getJsonObject("build");
-                Build bld = Build.buildAction(jbuild);
-                outputwriter.println(bld.getContentString(null));
+            JsonObject jobj = rdr.readObject();
+            try (PrintWriter outputwriter = new PrintWriter(targetfolder.createAndOpen(jobj.getString("as")))) {
+                outputwriter.println(
+                        new Build()
+                                .setFolderSeachOrder(syscontentfolder, pagefolder)
+                                .setResourseFolder(resourcefolder, "resources/")
+                                .getContent(jobj)
+                );
             }
         }
     }
