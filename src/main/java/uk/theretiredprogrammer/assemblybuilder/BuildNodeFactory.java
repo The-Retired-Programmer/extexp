@@ -35,52 +35,51 @@ import org.openide.util.ImageUtilities;
  *
  * @author richard
  */
-@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-assemblybuilderproject", position = 30)
-public class GeneratedNodeFactory implements NodeFactory {
+@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-assemblybuilderproject", position = 40)
+public class BuildNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
         AssemblyBuilderProject p = project.getLookup().lookup(AssemblyBuilderProject.class);
         assert p != null;
-        return new GeneratedNodeList(p);
+        return new BuildNodeList(p);
     }
 
-    private class GeneratedNodeList implements NodeList<Node> {
+    private class BuildNodeList implements NodeList<Node> {
 
         AssemblyBuilderProject project;
 
-        public GeneratedNodeList(AssemblyBuilderProject project) {
+        public BuildNodeList(AssemblyBuilderProject project) {
             this.project = project;
         }
 
         @Override
         public List<Node> keys() {
-            FileObject srcFolder
-                    = project.getProjectDirectory().getFileObject("target");
             List<Node> result = new ArrayList<>();
-            if (srcFolder != null) {
+            FileObject book = project.getProjectDirectory().getFileObject("build.json");
+            if (book != null) {
                 try {
-                    Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
-                    result.add(new GeneratedNode(sitenode));
-                } catch (DataObjectNotFoundException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+                Node booknode = DataObject.find(book).getNodeDelegate();
+                result.add(new BuildNode(booknode));
+                    } catch (DataObjectNotFoundException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
             }
             return result;
         }
 
-        public class GeneratedNode extends FilterNode {
+        public class BuildNode extends FilterNode {
 
             @StaticResource()
-            public static final String ASSEMBLYBUILDERFOLDER_ICON = "uk/theretiredprogrammer/assemblybuilder/folder_wrench.png";
+            public static final String ASSEMBLYBUILDERFOLDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
 
-            public GeneratedNode(Node onode) {
+            public BuildNode(Node onode) {
                 super(onode);
             }
 
             @Override
             public String getHtmlDisplayName() {
-                return "Generated";
+                return "Build Definition";
             }
 
             @Override

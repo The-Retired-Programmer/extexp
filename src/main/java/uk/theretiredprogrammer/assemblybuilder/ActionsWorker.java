@@ -16,13 +16,9 @@
 package uk.theretiredprogrammer.assemblybuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import static java.lang.Math.round;
 import static java.lang.System.currentTimeMillis;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.filesystems.FileObject;
@@ -39,19 +35,6 @@ public class ActionsWorker implements Runnable {
     private final boolean cleanrequired;
     private final boolean buildrequired;
     private final AssemblyBuilderProject project;
-    private int pagecount;
-    //
-    private FileObject projectfolder;
-    private FileObject srccontentfolder;
-    private FileObject pagefolder;
-    private FileObject syscontentfolder;
-    private FileObject cachefolder;
-    //  private FileObject cachepagefolder;
-    private FileObject targetfolder;
-    private FileObject resourcefolder;
-    //
-    private OutputWriter msg;
-    private OutputWriter err;
 
     public ActionsWorker(AssemblyBuilderProject project, boolean cleanrequired, boolean buildrequired) {
         this.cleanrequired = cleanrequired;
@@ -62,49 +45,45 @@ public class ActionsWorker implements Runnable {
     @Override
     public void run() {
         boolean success = true;
-        pagecount = 0;
         long start = currentTimeMillis();
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
         InputOutput io = IOProvider.getDefault().getIO("Assembly Builder for " + projectinfo.getName(), false);
         io.select();
-        msg = io.getOut();
-        err = io.getErr();
-        try {
-            msg.reset();
-            projectfolder = project.getProjectDirectory();
-            if (cleanrequired) {
-                cleanWorker();
+        try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
+            try {
+                msg.reset();
+                if (cleanrequired) {
+                    cleanWorker(project.getProjectDirectory(), msg, err);
+                }
+                if (buildrequired) {
+                    buildWorker(project.getProjectDirectory(), msg, err);
+                }
+            } catch (TransformerException | IOException ex) {
+                success = false;
+                String m = ex.getMessage();
+                if (m != null) {
+                    err.println(m);
+                } else {
+                    err.println("Failure: exception trapped - no explanation message available");
+                }
+                ex.printStackTrace(err);
             }
-            if (buildrequired) {
-                buildWorker();
-            }
-        } catch (IOException ex) {
-            success = false;
-            String m = ex.getMessage();
-            if (m != null) {
-                err.println(m);
-            } else {
-                err.println("Failure: exception trapped - no explanation message available");
-            }
-            ex.printStackTrace(err);
+            int elapsed = round((currentTimeMillis() - start) / 1000F);
+            msg.println("BUILD " + (success ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
-        int elapsed = round((currentTimeMillis() - start) / 1000F);
-        msg.println("BUILD " + (success ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
-        msg.close();
-        err.close();
     }
 
-    private void cleanWorker() throws IOException {
+    private void cleanWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException {
         msg.println("Cleaning...");
-        cachefolder = projectfolder.getFileObject("cache");
+        FileObject cachefolder = projectfolder.getFileObject("cache");
         if (cachefolder != null) {
             msg.println("   ...cache directory");
             cachefolder.delete();
         }
-        targetfolder = projectfolder.getFileObject("target");
-        if (targetfolder != null) {
-            msg.println("   ...target content");
-            for (FileObject child : targetfolder.getChildren()) {
+        FileObject outputfolder = projectfolder.getFileObject("output");
+        if (outputfolder != null) {
+            msg.println("   ...output content");
+            for (FileObject child : outputfolder.getChildren()) {
                 if (child.isData()) {
                     child.delete();
                 }
@@ -112,39 +91,16 @@ public class ActionsWorker implements Runnable {
         }
     }
 
-    private void buildWorker() throws IOException {
+    private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException, TransformerException {
         msg.println("Building...");
-        targetfolder = IoUtil.useOrCreateFolder(projectfolder, "target");
-        srccontentfolder = projectfolder.getFileObject("src/content");
-        syscontentfolder = projectfolder.getFileObject("src/shared-content");
-        resourcefolder = IoUtil.useOrCreateFolder(projectfolder, "target", "resources");
-        for (FileObject child : srccontentfolder.getChildren()) {
-            if (child.isFolder()) {
-                pagefolder = child;
-                processPage();
-                pagecount++;
-            }
-        }
-        msg.println(pagecount + " documents built");
-    }
-
-    private void processPage() throws IOException {
-        msg.println("    ...processing - " + pagefolder.getName());
-        FileObject assemblyinstructions = pagefolder.getFileObject("assembly.json");
-        if (assemblyinstructions == null) {
-            throw new IOException("Assembly Instructions (assembly.json) is missing");
-        }
-        try (InputStream is = assemblyinstructions.getInputStream();
-                JsonReader rdr = Json.createReader(is)) {
-            JsonObject jobj = rdr.readObject();
-            try (PrintWriter outputwriter = new PrintWriter(targetfolder.createAndOpen(jobj.getString("as")))) {
-                outputwriter.println(
-                        new Build()
-                                .setFolderSeachOrder(syscontentfolder, pagefolder)
-                                .setResourseFolder(resourcefolder, "resources/")
-                                .getContent(jobj)
-                );
-            }
-        }
+        new AssemblyExecutor(
+                projectfolder,
+                projectfolder.getFileObject("src/content"),
+                projectfolder.getFileObject("src/shared-content"),
+                IoUtil.useOrCreateFolder(projectfolder, "cache"),
+                IoUtil.useOrCreateFolder(projectfolder, "output"),
+                IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
+                "resources/"
+        ).execute(msg, err);
     }
 }

@@ -32,7 +32,7 @@ public class AssemblyBuilderProjectFactory implements ProjectFactory {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
-        return IoUtil.useFolder(projectDirectory, "src", "shared-content") != null;
+        return projectDirectory.getFileObject("build.json") != null;
     }
 
     //Specifies when the project will be opened, i.e., if the project exists:

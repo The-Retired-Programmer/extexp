@@ -16,10 +16,10 @@
 package uk.theretiredprogrammer.assemblybuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -27,23 +27,24 @@ import org.openide.filesystems.FileUtil;
  */
 public class IoUtil {
 
-    public static void copyFilesIfNotPresent(FileObject directory, String... filenames) throws IOException {
-        for (String filename : filenames) {
-            if (directory.getFileObject(filename) == null) {
-                try (InputStream is = IoUtil.class.getResourceAsStream(filename);
-                        OutputStream os = directory.createAndOpen(filename)) {
-                    FileUtil.copy(is, os);
-                }
-            }
+    public static FileObject stringToFile(FileObject todirectory, String name, String content) throws IOException {
+        FileObject outfo = todirectory.getFileObject(name);
+        if (outfo != null) {
+            outfo.delete();
         }
+        outfo = todirectory.createData(name);
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(outfo.getOutputStream()))) {
+            out.write(content);
+        }
+        return outfo;
     }
     
-    public static void copyFile(FileObject todirectory, FileObject from) throws IOException {
-        
-        try (InputStream is = from.getInputStream();
-                OutputStream os = getOutputStream(todirectory,from.getNameExt())) {
-            FileUtil.copy(is, os);
+    public static OutputStream getOutputStream(FileObject todirectory, String name) throws IOException {
+        FileObject outfo = todirectory.getFileObject(name);
+        if (outfo != null) {
+            outfo.delete();
         }
+        return todirectory.createAndOpen(name);
     }
     
     public static FileObject useFolder(FileObject parent, String... foldernames) {
@@ -75,14 +76,6 @@ public class IoUtil {
         return folder;
     }
 
-    public static OutputStream getOutputStream(FileObject parent, String filename) throws IOException {
-        FileObject outfo = parent.getFileObject(filename);
-        if (outfo != null) {
-            outfo.delete();
-        }
-        return parent.createAndOpen(filename);
-    }
-    
     public static FileObject findFile(String filename, FileObject... fos) {
         for (FileObject fo: fos){
             FileObject file = fo.getFileObject(filename);
