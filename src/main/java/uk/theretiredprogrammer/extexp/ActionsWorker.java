@@ -93,7 +93,7 @@ public class ActionsWorker implements Runnable {
 
     private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException, TransformerException {
         msg.println("Building...");
-        new AssemblyExecutor(
+        new BuildExecutor(
                 projectfolder,
                 projectfolder.getFileObject("src/content"),
                 projectfolder.getFileObject("src/shared-content"),

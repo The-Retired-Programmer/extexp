@@ -30,17 +30,17 @@ import org.openide.windows.OutputWriter;
  *
  * @author richard
  */
-public class AssemblyExecutor {
+public class BuildExecutor {
 
     private final Map<String, String> strings = new HashMap<>();
     private final boolean isSimpleExecution;
     private final JsonObject jobj;
-    private final ExecutorManager exec;
+    private final BuildStepExecutor stepExecutor;
 
-    public AssemblyExecutor(FileObject project, FileObject content, FileObject shared, FileObject cache,
+    public BuildExecutor(FileObject project, FileObject content, FileObject shared, FileObject cache,
             FileObject out, FileObject resources, String relative) throws IOException {
         //
-        exec = new ExecutorManager(content, shared, cache, out, resources, relative);
+        stepExecutor = new BuildStepExecutor(content, shared, cache, out, resources, relative);
         FileObject buildinstructions = project.getFileObject("build.json");
         if (buildinstructions == null) {
             throw new IOException("Build Instructions (build.json) is missing");
@@ -55,7 +55,7 @@ public class AssemblyExecutor {
         }
         switch (jval.getValueType()) {
             case ARRAY:
-                ExecutorManager.extractParameters(jobj, strings);
+                BuildStepExecutor.extractParameters(jobj, strings);
                 isSimpleExecution = false;
                 break;
             case STRING:
@@ -68,10 +68,10 @@ public class AssemblyExecutor {
 
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
         if (isSimpleExecution) {
-            exec.extractParams(jobj).execute(msg, err);
+            stepExecutor.extractParams(jobj).execute(msg, err);
         } else {
             for (JsonObject jobjchild : jobj.getJsonArray("action").getValuesAs(JsonObject.class)) {
-                exec.extractParams(jobjchild, strings).execute(msg, err);
+                stepExecutor.extractParams(jobjchild, strings).execute(msg, err);
             }
         }
     }

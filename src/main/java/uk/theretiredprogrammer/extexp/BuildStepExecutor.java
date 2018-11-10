@@ -38,7 +38,7 @@ import org.openide.windows.OutputWriter;
  *
  * @author richard
  */
-public class ExecutorManager {
+public class BuildStepExecutor {
 
     private final Map<String, String> strings = new HashMap<>();
     private Map<String, String> parentstrings;
@@ -52,7 +52,7 @@ public class ExecutorManager {
     //
     Executor exec;
     
-    public ExecutorManager(FileObject contentfolder, FileObject sharedcontentfolder,
+    public BuildStepExecutor(FileObject contentfolder, FileObject sharedcontentfolder,
             FileObject cachefolder, FileObject outfolder,
             FileObject resourcesfolder, String relativepath) {
         this.contentfolder = contentfolder;
@@ -64,13 +64,13 @@ public class ExecutorManager {
     }
 
     // fluent configuration 
-    public ExecutorManager extractParams(JsonObject jobj) {
+    public BuildStepExecutor extractParams(JsonObject jobj) {
         parentstrings = null;
         extractParameters(jobj, strings);
         return this;
     }
 
-    public ExecutorManager extractParams(JsonObject jobj, Map<String, String> parentstrings) {
+    public BuildStepExecutor extractParams(JsonObject jobj, Map<String, String> parentstrings) {
         strings.putAll(parentstrings);
         this.parentstrings = parentstrings;
         extractParameters(jobj, strings);
