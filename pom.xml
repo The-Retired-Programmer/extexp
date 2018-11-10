@@ -2,24 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
-    <artifactId>assemblybuilderplugin</artifactId>
+    <artifactId>extexp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>nbm</packaging>
     
-    <name>Assembly Builder NB Plugin</name>
-    <description>Netbeans Plug-in to assembly a file from a set of templates, parameters and file creators</description>
+    <name>ExTexP NB Plugin</name>
+    <description>Netbeans Plug-in - Extendable Text Processor (ExTexP) - to assembly files(s) from a series of templates, parameters and transformations</description>
  
-    <url>http://www.theretiredprogrammer.uk/assemblybuilderplugin</url>
+    <url>http://www.theretiredprogrammer.uk/extexp</url>
     
     <scm>
-        <connection>scm:git:git://github.com/The-Retired-Programmer/assemblybuilderplugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/assemblybuilderplugin.git</developerConnection>
-        <url>http://github.com/The-Retired-Programmer/assemblybuilderplugin/tree/master</url>
+        <connection>scm:git:git://github.com/The-Retired-Programmer/extexp.git</connection>
+        <developerConnection>scm:git:ssh://github.com:The-Retired-Programmer/extexp.git</developerConnection>
+        <url>http://github.com/The-Retired-Programmer/extexp/tree/master</url>
     </scm>
     
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/The-Retired-Programmer/assemblybuilderplugin/issues</url>
+        <url>https://github.com/The-Retired-Programmer/extexp/issues</url>
     </issueManagement>
 
     <developers>
@@ -142,11 +142,11 @@
                     <version>3.14.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <cluster>assemblybuilderplugin</cluster>
+                        <cluster>extexp</cluster>
                         <homePageUrl>${project.url}</homePageUrl>
                         <licenseFile>LICENSE</licenseFile>
                         <licenseName>The Apache License, Version 2.0</licenseName>
-                        <brandingToken>assemblybuilderplugin</brandingToken>
+                        <brandingToken>extexp</brandingToken>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -185,7 +185,7 @@
                                     <goal>autoupdate</goal>
                                 </goals>
                                 <configuration>
-                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/assemblybuilderplugin/${project.version}</distBase>
+                                    <distBase>http://repo.maven.apache.org/maven2/uk/theretiredprogrammer/extexp/${project.version}</distBase>
                                 </configuration>
                             </execution>
                         </executions>

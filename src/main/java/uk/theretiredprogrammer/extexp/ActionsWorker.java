@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.io.IOException;
 import static java.lang.Math.round;
@@ -34,9 +34,9 @@ public class ActionsWorker implements Runnable {
 
     private final boolean cleanrequired;
     private final boolean buildrequired;
-    private final AssemblyBuilderProject project;
+    private final ExTexPProject project;
 
-    public ActionsWorker(AssemblyBuilderProject project, boolean cleanrequired, boolean buildrequired) {
+    public ActionsWorker(ExTexPProject project, boolean cleanrequired, boolean buildrequired) {
         this.cleanrequired = cleanrequired;
         this.buildrequired = buildrequired;
         this.project = project;

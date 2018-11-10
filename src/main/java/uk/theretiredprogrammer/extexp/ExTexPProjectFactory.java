@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.io.IOException;
 import org.netbeans.api.project.Project;
@@ -28,7 +28,7 @@ import org.openide.util.lookup.ServiceProvider;
  */
 
 @ServiceProvider(service = ProjectFactory.class)
-public class AssemblyBuilderProjectFactory implements ProjectFactory {
+public class ExTexPProjectFactory implements ProjectFactory {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
@@ -38,7 +38,7 @@ public class AssemblyBuilderProjectFactory implements ProjectFactory {
     //Specifies when the project will be opened, i.e., if the project exists:
     @Override
     public Project loadProject(FileObject dir, ProjectState state) throws IOException {
-        return isProject(dir) ? new AssemblyBuilderProject(dir, state) : null;
+        return isProject(dir) ? new ExTexPProject(dir, state) : null;
     }
 
     @Override

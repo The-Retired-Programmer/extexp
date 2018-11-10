@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
-import java.util.function.Function;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  * @author richard
  */
-public class ParameterDescriptor {
+public class ActionBuild extends AbstractAction {
 
-    public final Function<String, String> parameterExtractor;
+    private final ExTexPProject project;
 
-    public ParameterDescriptor(Function<String, String> parameterExtractor) {
-        this.parameterExtractor = parameterExtractor;
+    public ActionBuild(ExTexPProject project) {
+        super("Build");
+        this.project = project;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        new RequestProcessor(ActionBuild.class).post(new ActionsWorker(project, false, true));
     }
 }

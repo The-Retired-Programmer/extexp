@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.io.IOException;
 import java.io.Writer;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.assemblybuilder.IODescriptor.IOREQUIREMENT.INPUTSTRING;
-import static uk.theretiredprogrammer.assemblybuilder.IODescriptor.IOREQUIREMENT.WRITER;
+import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.INPUTSTRING;
+import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
 
 /**
  *

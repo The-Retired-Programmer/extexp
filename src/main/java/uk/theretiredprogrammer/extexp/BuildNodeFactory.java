@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -35,21 +35,21 @@ import org.openide.util.ImageUtilities;
  *
  * @author richard
  */
-@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-assemblybuilderproject", position = 40)
+@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-extexp", position = 40)
 public class BuildNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        AssemblyBuilderProject p = project.getLookup().lookup(AssemblyBuilderProject.class);
+        ExTexPProject p = project.getLookup().lookup(ExTexPProject.class);
         assert p != null;
         return new BuildNodeList(p);
     }
 
     private class BuildNodeList implements NodeList<Node> {
 
-        AssemblyBuilderProject project;
+        ExTexPProject project;
 
-        public BuildNodeList(AssemblyBuilderProject project) {
+        public BuildNodeList(ExTexPProject project) {
             this.project = project;
         }
 
@@ -59,11 +59,11 @@ public class BuildNodeFactory implements NodeFactory {
             FileObject book = project.getProjectDirectory().getFileObject("build.json");
             if (book != null) {
                 try {
-                Node booknode = DataObject.find(book).getNodeDelegate();
-                result.add(new BuildNode(booknode));
-                    } catch (DataObjectNotFoundException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
+                    Node booknode = DataObject.find(book).getNodeDelegate();
+                    result.add(new BuildNode(booknode));
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
             return result;
         }
@@ -71,7 +71,7 @@ public class BuildNodeFactory implements NodeFactory {
         public class BuildNode extends FilterNode {
 
             @StaticResource()
-            public static final String ASSEMBLYBUILDERFOLDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
+            public static final String EXTEXPBUILD_ICON = "uk/theretiredprogrammer/extexp/wrench.png";
 
             public BuildNode(Node onode) {
                 super(onode);
@@ -84,7 +84,7 @@ public class BuildNodeFactory implements NodeFactory {
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(ASSEMBLYBUILDERFOLDER_ICON);
+                return ImageUtilities.loadImage(EXTEXPBUILD_ICON);
             }
 
             @Override

@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import org.openide.util.RequestProcessor;
+import java.io.IOException;
+import org.openide.windows.OutputWriter;
 
 /**
  *
  * @author richard
+ *
  */
-public class ActionClean extends AbstractAction {
-
-    private final AssemblyBuilderProject project;
-
-    public ActionClean(AssemblyBuilderProject project) {
-        super("Clean");
-        this.project = project;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionClean.class).post(new ActionsWorker(project, true, false));
-    }
+public abstract class Executor {
+    
+    public abstract IODescriptor[] getIODescriptors();
+    
+    public abstract void execute(OutputWriter msg, OutputWriter err) throws IOException;
 }

@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
-import java.io.IOException;
-import org.openide.windows.OutputWriter;
+import java.util.function.Function;
+import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author richard
- *
  */
-public abstract class Executor {
-    
-    public abstract IODescriptor[] getIODescriptors();
-    
-    public abstract void execute(OutputWriter msg, OutputWriter err) throws IOException;
+public class ResourcesDescriptor {
+
+    public final Function<String, String> parameterExtractor;
+    public final FileObject resourcesFolder;
+    public final String relativeResourcesPath;
+
+    public ResourcesDescriptor(Function<String, String> parameterExtractor,
+            FileObject resourcesFolder, String relativeResourcesPath) {
+        this.parameterExtractor = parameterExtractor;
+        this.resourcesFolder = resourcesFolder;
+        this.relativeResourcesPath = relativeResourcesPath;
+    }
 }

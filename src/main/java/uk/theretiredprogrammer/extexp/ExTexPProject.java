@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
@@ -44,13 +44,13 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author richard
  */
-public class AssemblyBuilderProject implements Project {
+public class ExTexPProject implements Project {
 
     private final FileObject projectDir;
     private final ProjectState state;
     private Lookup lkp;
 
-    AssemblyBuilderProject(FileObject dir, ProjectState state) {
+    ExTexPProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;
     }
@@ -66,7 +66,7 @@ public class AssemblyBuilderProject implements Project {
             lkp = Lookups.fixed(new Object[]{
                 this,
                 new Info(),
-                new AssemblyBuilderProjectLogicalView(this)
+                new ExTexPProjectLogicalView(this)
             });
         }
         return lkp;
@@ -75,11 +75,11 @@ public class AssemblyBuilderProject implements Project {
     private final class Info implements ProjectInformation {
 
         @StaticResource()
-        public static final String ASSEMBLYBUILDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
+        public static final String EXTEXP_ICON = "uk/theretiredprogrammer/extexp/wrench.png";
 
         @Override
         public Icon getIcon() {
-            return new ImageIcon(ImageUtilities.loadImage(ASSEMBLYBUILDER_ICON));
+            return new ImageIcon(ImageUtilities.loadImage(EXTEXP_ICON));
         }
 
         @Override
@@ -104,18 +104,18 @@ public class AssemblyBuilderProject implements Project {
 
         @Override
         public Project getProject() {
-            return AssemblyBuilderProject.this;
+            return ExTexPProject.this;
         }
     }
 
-    class AssemblyBuilderProjectLogicalView implements LogicalViewProvider {
+    class ExTexPProjectLogicalView implements LogicalViewProvider {
 
         @StaticResource()
-        public static final String ASSEMBLYBUILDER_ICON = "uk/theretiredprogrammer/assemblybuilder/wrench.png";
+        public static final String EXTEXP_ICON = "uk/theretiredprogrammer/extexp/wrench.png";
 
-        private final AssemblyBuilderProject project;
+        private final ExTexPProject project;
 
-        public AssemblyBuilderProjectLogicalView(AssemblyBuilderProject project) {
+        public ExTexPProjectLogicalView(ExTexPProject project) {
             this.project = project;
         }
 
@@ -138,14 +138,14 @@ public class AssemblyBuilderProject implements Project {
 
         private final class ProjectNode extends FilterNode {
 
-            final AssemblyBuilderProject project;
+            final ExTexPProject project;
 
-            public ProjectNode(Node node, AssemblyBuilderProject project)
+            public ProjectNode(Node node, ExTexPProject project)
                     throws DataObjectNotFoundException {
                 super(node,
                         NodeFactorySupport.createCompositeChildren(
                                 project,
-                                "Projects/uk-theretiredprogrammer-assemblybuilderproject/Nodes"),
+                                "Projects/uk-theretiredprogrammer-extexp/Nodes"),
                         // new FilterNode.Children(node),
                         new ProxyLookup(
                                 new Lookup[]{
@@ -167,7 +167,7 @@ public class AssemblyBuilderProject implements Project {
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(ASSEMBLYBUILDER_ICON);
+                return ImageUtilities.loadImage(EXTEXP_ICON);
             }
 
             @Override

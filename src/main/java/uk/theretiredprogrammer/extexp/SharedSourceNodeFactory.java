@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -35,33 +35,33 @@ import org.openide.util.ImageUtilities;
  *
  * @author richard
  */
-@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-assemblybuilderproject", position = 10)
-public class SourceNodeFactory implements NodeFactory {
+@NodeFactory.Registration(projectType = "uk-theretiredprogrammer-extexp", position = 20)
+public class SharedSourceNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        AssemblyBuilderProject p = project.getLookup().lookup(AssemblyBuilderProject.class);
+        ExTexPProject p = project.getLookup().lookup(ExTexPProject.class);
         assert p != null;
-        return new SourceNodeList(p);
+        return new SharedSourceNodeList(p);
     }
 
-    private class SourceNodeList implements NodeList<Node> {
+    private class SharedSourceNodeList implements NodeList<Node> {
 
-        AssemblyBuilderProject project;
+        ExTexPProject project;
 
-        public SourceNodeList(AssemblyBuilderProject project) {
+        public SharedSourceNodeList(ExTexPProject project) {
             this.project = project;
         }
 
         @Override
         public List<Node> keys() {
             FileObject srcFolder
-                    = project.getProjectDirectory().getFileObject("src/content");
+                    = project.getProjectDirectory().getFileObject("src/shared-content");
             List<Node> result = new ArrayList<>();
             if (srcFolder != null) {
                 try {
                     Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
-                    result.add(new SourceNode(sitenode));
+                    result.add(new SharedSourceNode(sitenode));
                 } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -69,23 +69,23 @@ public class SourceNodeFactory implements NodeFactory {
             return result;
         }
 
-        public class SourceNode extends FilterNode {
+        public class SharedSourceNode extends FilterNode {
 
             @StaticResource()
-            public static final String ASSEMBLYBUILDERFOLDER_ICON = "uk/theretiredprogrammer/assemblybuilder/folder_edit.png";
+            public static final String EXTEXPFOLDER_ICON = "uk/theretiredprogrammer/extexp/folder_page.png";
 
-            public SourceNode(Node onode) {
+            public SharedSourceNode(Node onode) {
                 super(onode);
             }
 
             @Override
             public String getHtmlDisplayName() {
-                return "Sources";
+                return "Shared Sources";
             }
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(ASSEMBLYBUILDERFOLDER_ICON);
+                return ImageUtilities.loadImage(EXTEXPFOLDER_ICON);
             }
 
             @Override

@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.assemblybuilder;
+package uk.theretiredprogrammer.extexp;
 
 import java.util.function.Function;
-import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author richard
  */
-public class ResourcesDescriptor {
+public class ParameterDescriptor {
 
     public final Function<String, String> parameterExtractor;
-    public final FileObject resourcesFolder;
-    public final String relativeResourcesPath;
 
-    public ResourcesDescriptor(Function<String, String> parameterExtractor,
-            FileObject resourcesFolder, String relativeResourcesPath) {
+    public ParameterDescriptor(Function<String, String> parameterExtractor) {
         this.parameterExtractor = parameterExtractor;
-        this.resourcesFolder = resourcesFolder;
-        this.relativeResourcesPath = relativeResourcesPath;
     }
 }
