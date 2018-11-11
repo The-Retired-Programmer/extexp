@@ -56,7 +56,7 @@ public class SourceNodeFactory implements NodeFactory {
         @Override
         public List<Node> keys() {
             FileObject srcFolder
-                    = project.getProjectDirectory().getFileObject("src/content");
+                    = project.getProjectDirectory().getFileObject("src");
             List<Node> result = new ArrayList<>();
             if (srcFolder != null) {
                 try {

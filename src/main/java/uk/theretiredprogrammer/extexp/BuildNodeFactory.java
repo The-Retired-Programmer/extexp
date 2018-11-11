@@ -56,11 +56,11 @@ public class BuildNodeFactory implements NodeFactory {
         @Override
         public List<Node> keys() {
             List<Node> result = new ArrayList<>();
-            FileObject book = project.getProjectDirectory().getFileObject("build.json");
-            if (book != null) {
+            FileObject buildinstructions = project.getProjectDirectory().getFileObject("build.json");
+            if (buildinstructions != null) {
                 try {
-                    Node booknode = DataObject.find(book).getNodeDelegate();
-                    result.add(new BuildNode(booknode));
+                    Node node = DataObject.find(buildinstructions).getNodeDelegate();
+                    result.add(new BuildNode(node));
                 } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -79,7 +79,7 @@ public class BuildNodeFactory implements NodeFactory {
 
             @Override
             public String getHtmlDisplayName() {
-                return "Build Definition";
+                return "Build Instructions";
             }
 
             @Override

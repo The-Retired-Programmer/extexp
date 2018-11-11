@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp;
 
-import java.util.function.Function;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -24,13 +23,10 @@ import org.openide.filesystems.FileObject;
  */
 public class ResourcesDescriptor {
 
-    public final Function<String, String> parameterExtractor;
     public final FileObject resourcesFolder;
     public final String relativeResourcesPath;
 
-    public ResourcesDescriptor(Function<String, String> parameterExtractor,
-            FileObject resourcesFolder, String relativeResourcesPath) {
-        this.parameterExtractor = parameterExtractor;
+    public ResourcesDescriptor(FileObject resourcesFolder, String relativeResourcesPath) {
         this.resourcesFolder = resourcesFolder;
         this.relativeResourcesPath = relativeResourcesPath;
     }

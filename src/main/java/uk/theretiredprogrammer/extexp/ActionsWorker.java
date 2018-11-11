@@ -93,14 +93,15 @@ public class ActionsWorker implements Runnable {
 
     private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException, TransformerException {
         msg.println("Building...");
-        new BuildExecutor(
+        BuildExecutor.execute(
                 projectfolder,
-                projectfolder.getFileObject("src/content"),
-                projectfolder.getFileObject("src/shared-content"),
+                projectfolder.getFileObject("src"),
                 IoUtil.useOrCreateFolder(projectfolder, "cache"),
                 IoUtil.useOrCreateFolder(projectfolder, "output"),
                 IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
-                "resources/"
-        ).execute(msg, err);
+                "resources/",
+                msg,
+                err
+        );
     }
 }

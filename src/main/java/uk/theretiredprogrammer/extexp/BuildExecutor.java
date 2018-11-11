@@ -32,19 +32,15 @@ import org.openide.windows.OutputWriter;
  */
 public class BuildExecutor {
 
-    private final Map<String, String> strings = new HashMap<>();
-    private final boolean isSimpleExecution;
-    private final JsonObject jobj;
-    private final BuildStepExecutor stepExecutor;
-
-    public BuildExecutor(FileObject project, FileObject content, FileObject shared, FileObject cache,
-            FileObject out, FileObject resources, String relative) throws IOException {
+    public static void execute(FileObject project, FileObject content,
+            FileObject cache, FileObject out,
+            FileObject resources, String relative, OutputWriter msg, OutputWriter err) throws IOException {
         //
-        stepExecutor = new BuildStepExecutor(content, shared, cache, out, resources, relative);
         FileObject buildinstructions = project.getFileObject("build.json");
         if (buildinstructions == null) {
             throw new IOException("Build Instructions (build.json) is missing");
         }
+        JsonObject jobj;
         try (InputStream is = buildinstructions.getInputStream();
                 JsonReader rdr = Json.createReader(is)) {
             jobj = rdr.readObject();
@@ -55,24 +51,24 @@ public class BuildExecutor {
         }
         switch (jval.getValueType()) {
             case ARRAY:
+                Map<String, String> strings = new HashMap<>();
                 BuildStepExecutor.extractParameters(jobj, strings);
-                isSimpleExecution = false;
+                String srcpath = strings.get("path");
+                BuildStepExecutor stepExecutor = new BuildStepExecutor(
+                        srcpath == null ? content : content.getFileObject(srcpath),
+                        srcpath == null ? null : content,
+                        srcpath == null ? cache : IoUtil.useOrCreateFolder(cache, srcpath),
+                        out, resources, relative);
+                for (JsonObject jobjchild : jobj.getJsonArray("action").getValuesAs(JsonObject.class)) {
+                    stepExecutor.extractParams(jobjchild, strings).execute(msg, err);
+                }
                 break;
             case STRING:
-                isSimpleExecution = true;
+                new BuildStepExecutor(content, null, cache, out, resources, relative)
+                        .extractParams(jobj).execute(msg, err);
                 break;
             default:
                 throw new IOException("action type must be either Array or String in build.json");
-        }
-    }
-
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        if (isSimpleExecution) {
-            stepExecutor.extractParams(jobj).execute(msg, err);
-        } else {
-            for (JsonObject jobjchild : jobj.getJsonArray("action").getValuesAs(JsonObject.class)) {
-                stepExecutor.extractParams(jobjchild, strings).execute(msg, err);
-            }
         }
     }
 }

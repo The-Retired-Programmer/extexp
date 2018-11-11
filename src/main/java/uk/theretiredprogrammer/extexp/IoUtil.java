@@ -38,7 +38,7 @@ public class IoUtil {
         }
         return outfo;
     }
-    
+
     public static OutputStream getOutputStream(FileObject todirectory, String name) throws IOException {
         FileObject outfo = todirectory.getFileObject(name);
         if (outfo != null) {
@@ -46,7 +46,7 @@ public class IoUtil {
         }
         return todirectory.createAndOpen(name);
     }
-    
+
     public static FileObject useFolder(FileObject parent, String... foldernames) {
         FileObject folder = parent;
         for (String foldername : foldernames) {
@@ -76,13 +76,15 @@ public class IoUtil {
         return folder;
     }
 
-    public static FileObject findFile(String filename, FileObject... fos) {
-        for (FileObject fo: fos){
-            FileObject file = fo.getFileObject(filename);
-            if (file != null && file.isData()){
-                return file;
+    public static FileObject findFile(String filename, FileObject... fos) throws IOException {
+        for (FileObject fo : fos) {
+            if (fo != null) {
+                FileObject file = fo.getFileObject(filename);
+                if (file != null && file.isData()) {
+                    return file;
+                }
             }
         }
-        return null;
+        throw new IOException("Cannot locate file \'" + filename + "\" for input");
     }
 }

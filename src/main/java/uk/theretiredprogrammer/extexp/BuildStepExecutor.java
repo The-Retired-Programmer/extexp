@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -51,7 +53,7 @@ public class BuildStepExecutor {
     private final String relativeResourcesFolderPath;
     //
     Executor exec;
-    
+
     public BuildStepExecutor(FileObject contentfolder, FileObject sharedcontentfolder,
             FileObject cachefolder, FileObject outfolder,
             FileObject resourcesfolder, String relativepath) {
@@ -144,7 +146,6 @@ public class BuildStepExecutor {
                     case RESOURCESDESCRIPTOR:
                         iodescriptor.setValue(
                                 new ResourcesDescriptor(
-                                        (s) -> strings.get(s),
                                         resourcesfolder,
                                         relativeResourcesFolderPath
                                 )
@@ -157,39 +158,27 @@ public class BuildStepExecutor {
                                 )
                         );
                         break;
+                    case PARAMSTRING:
+                        iodescriptor.setValue(fname);
+                        break;
                     case INPUTSTRING:
-                        if (isrealfile) {
-                            FileObject file = IoUtil.findFile(fname, contentfolder, sharedcontentfolder);
-                            if (file == null) {
-                                throw new IOException("cannot locate file \'" + fname + "\" for input");
-                            }
-                            iodescriptor.setValue(file.asText());
-                        } else {
-                            iodescriptor.setValue(strings.get(fname));
-                        }
+                        iodescriptor.setValue(isrealfile
+                                ? IoUtil.findFile(fname, contentfolder, sharedcontentfolder).asText()
+                                : strings.get(fname)
+                        );
                         break;
                     case READER:
-                        if (isrealfile) {
-                            FileObject file = IoUtil.findFile(fname, contentfolder, sharedcontentfolder);
-                            if (file == null) {
-                                throw new IOException("cannot locate file \'" + fname + "\" for input");
-                            }
-                            iodescriptor.setValue(new BufferedReader(new InputStreamReader(file.getInputStream())));
-                        } else {
-                            iodescriptor.setValue(new StringReader(strings.get(fname)));
-                        }
+                        iodescriptor.setValue(isrealfile
+                                ? new BufferedReader(new InputStreamReader(
+                                        IoUtil.findFile(fname, contentfolder, sharedcontentfolder).getInputStream()
+                                ))
+                                : new StringReader(strings.get(fname))
+                        );
                         break;
                     case INPUTPATH:
-                        FileObject file;
-                        if (isrealfile) {
-                            file = IoUtil.findFile(fname, contentfolder, sharedcontentfolder);
-                            if (file == null) {
-                                throw new IOException("cannot locate file \'" + fname + "\" for input");
-                            }
-                        } else {
-                            file = IoUtil.stringToFile(cachefolder, fname, strings.get(fname));
-                        }
-                        iodescriptor.setValue(file.getPath());
+                        iodescriptor.setValue((isrealfile
+                                        ? IoUtil.findFile(fname, contentfolder, sharedcontentfolder)
+                                        : IoUtil.stringToFile(cachefolder, fname, strings.get(fname))).getPath());
                         break;
                     case WRITER:
                         Writer writer;
@@ -197,7 +186,7 @@ public class BuildStepExecutor {
                             writer = new StringWriter();
                             writerstosavestrings.add(iodescriptor);
                         } else {
-                            writer = new BufferedWriter(new OutputStreamWriter(IoUtil.getOutputStream(outfolder,fname)));
+                            writer = new BufferedWriter(new OutputStreamWriter(IoUtil.getOutputStream(outfolder, fname)));
                             writerstoclose.add(iodescriptor);
                         }
                         iodescriptor.setValue(writer);
@@ -223,6 +212,19 @@ public class BuildStepExecutor {
         // and copy all string writers to parameter storage
         for (IODescriptor<StringWriter> iodesc : writerstosavestrings) {
             parentstrings.put(strings.get(iodesc.getName()).substring(1), iodesc.getValue().toString());
+        }
+    }
+
+    private void setIODescriptorforInputFile(String fname, IODescriptor iod,
+            Supplier<String> viaparameter, Function<FileObject, String> viafile) throws IOException {
+        if (!strings.containsKey(fname)) {
+            iod.setValue(strings.get(fname));
+        } else {
+            FileObject file = IoUtil.findFile(fname, contentfolder, sharedcontentfolder);
+            if (file == null) {
+                throw new IOException("cannot locate file \'" + fname + "\" for input");
+            }
+            iod.setValue(file.asText());
         }
     }
 }

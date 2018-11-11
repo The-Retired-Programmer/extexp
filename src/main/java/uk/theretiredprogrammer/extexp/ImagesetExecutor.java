@@ -23,6 +23,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
 import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.RESOURCESDESCRIPTOR;
 import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
+import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMSTRING;
 
 /**
  *
@@ -32,22 +33,26 @@ public class ImagesetExecutor extends Executor {
 
     private final IODescriptor<ResourcesDescriptor> rdesc = new IODescriptor<>(RESOURCESDESCRIPTOR);
     private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
+    private final IODescriptor<String> image = new IODescriptor<>("image", PARAMSTRING);
+    private final IODescriptor<String> width = new IODescriptor<>("width", PARAMSTRING);
+    private  final IODescriptor<String> height = new IODescriptor<>("height", PARAMSTRING);
+     
 
     @Override
     public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{rdesc, output};
+        return new IODescriptor[]{rdesc, output, image, width, height};
     }
 
     @Override
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
         ResourcesDescriptor rd = rdesc.getValue();
-        String image = rd.parameterExtractor.apply("image");
-        int p = image.lastIndexOf('.');
-        String fn = image.substring(0, p);
-        String fext = image.substring(p + 1);
+        String imagestring = image.getValue();
+        int p = imagestring.lastIndexOf('.');
+        String fn = imagestring.substring(0, p);
+        String fext = imagestring.substring(p + 1);
         int fnsize = fn.length();
-        String width = rd.parameterExtractor.apply("width");
-        String height = rd.parameterExtractor.apply("height");
+        String widthstring = width.getValue();
+        String heightstring = height.getValue();
         Map<Integer, String> images = new TreeMap<>();
         String relativeresourcesfolderpath = rd.relativeResourcesPath;
         for (FileObject child : rd.resourcesFolder.getChildren()) {
@@ -56,7 +61,7 @@ public class ImagesetExecutor extends Executor {
                 String cext = child.getExt();
                 if (cext.equals(fext)) {
                     if (cn.equals(fn)) {
-                        images.put(Integer.parseInt(width), child.getNameExt());
+                        images.put(Integer.parseInt(widthstring), child.getNameExt());
                     } else {
                         if (cn.startsWith(fn + "-")) {
                             String postfix = cn.substring(fnsize + 1);
@@ -76,9 +81,9 @@ public class ImagesetExecutor extends Executor {
         }
         Writer out = output.getValue();
         out.append("<img width=\"");
-        out.append(width);
+        out.append(widthstring);
         out.append("\" height=\"");
-        out.append(height);
+        out.append(heightstring);
         out.append("\"\n    src=\"");
         out.append(relativeresourcesfolderpath);
         out.append(fn);
@@ -96,9 +101,9 @@ public class ImagesetExecutor extends Executor {
             prefix = ",\n    ";
         }
         out.append("\"\n    sizes=\"(max-width: ");
-        out.append(width);
+        out.append(widthstring);
         out.append("px) 100vw, ");
-        out.append(width);
+        out.append(widthstring);
         out.append("px\" />\n");
     }
 }
