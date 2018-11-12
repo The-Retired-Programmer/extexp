@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -50,19 +48,22 @@ public class BuildStepExecutor {
     private final FileObject cachefolder;
     private final FileObject outfolder;
     private final FileObject resourcesfolder;
-    private final String relativeResourcesFolderPath;
+    private final String relativepath;
     //
     Executor exec;
+    private final Map<String, String> recipestore;
 
     public BuildStepExecutor(FileObject contentfolder, FileObject sharedcontentfolder,
             FileObject cachefolder, FileObject outfolder,
-            FileObject resourcesfolder, String relativepath) {
+            FileObject resourcesfolder, String relativepath,
+            Map<String, String> recipestore) {
         this.contentfolder = contentfolder;
         this.sharedcontentfolder = sharedcontentfolder;
         this.cachefolder = cachefolder;
         this.outfolder = outfolder;
         this.resourcesfolder = resourcesfolder;
-        this.relativeResourcesFolderPath = relativepath;
+        this.relativepath = relativepath;
+        this.recipestore = recipestore;
     }
 
     // fluent configuration 
@@ -85,7 +86,8 @@ public class BuildStepExecutor {
             switch (jval.getValueType()) {
                 case ARRAY:
                 case OBJECT:
-                    break; // ignore complex obects
+                    strings.put(key, jval.toString());
+                    break;
                 case STRING:
                     strings.put(key, ((JsonString) jobj.get(key)).getString());
                     break;
@@ -124,12 +126,20 @@ public class BuildStepExecutor {
             case "create-imageset":
                 exec = new ImagesetExecutor();
                 break;
+            case "create-recipe":
+                exec = new CreateRecipeExecutor();
+                break;
+            case "use-recipe":
+                exec = new UseRecipeExecutor();
+                break;
             default:
                 throw new IOException("unknown action");
         }
         // get/prepare the IO requirements for the executor
         List<IODescriptor<Writer>> writerstoclose = new ArrayList<>();
         List<IODescriptor<StringWriter>> writerstosavestrings = new ArrayList<>();
+        List<IODescriptor<StringWriter>> writerstosaverecipes = new ArrayList<>();
+        List<IODescriptor<StringWriter>> writerstoexecrecipes = new ArrayList<>();
         for (IODescriptor iodescriptor : exec.getIODescriptors()) {
             String pname = iodescriptor.getName();
             if (!(iodescriptor.isOptional() && !strings.containsKey(pname))) {
@@ -147,7 +157,7 @@ public class BuildStepExecutor {
                         iodescriptor.setValue(
                                 new ResourcesDescriptor(
                                         resourcesfolder,
-                                        relativeResourcesFolderPath
+                                        relativepath
                                 )
                         );
                         break;
@@ -157,6 +167,9 @@ public class BuildStepExecutor {
                                         (s) -> strings.get(s)
                                 )
                         );
+                        break;
+                    case RECIPE:
+                        iodescriptor.setValue(recipestore.get(fname));
                         break;
                     case PARAMSTRING:
                         iodescriptor.setValue(fname);
@@ -177,8 +190,8 @@ public class BuildStepExecutor {
                         break;
                     case INPUTPATH:
                         iodescriptor.setValue((isrealfile
-                                        ? IoUtil.findFile(fname, contentfolder, sharedcontentfolder)
-                                        : IoUtil.stringToFile(cachefolder, fname, strings.get(fname))).getPath());
+                                ? IoUtil.findFile(fname, contentfolder, sharedcontentfolder)
+                                : IoUtil.stringToFile(cachefolder, fname, strings.get(fname))).getPath());
                         break;
                     case WRITER:
                         Writer writer;
@@ -190,6 +203,16 @@ public class BuildStepExecutor {
                             writerstoclose.add(iodescriptor);
                         }
                         iodescriptor.setValue(writer);
+                        break;
+                    case RECIPEWRITER:
+                        StringWriter recipewriter = new StringWriter();
+                        writerstosaverecipes.add(iodescriptor);
+                        iodescriptor.setValue(recipewriter);
+                        break;
+                    case EXECRECIPEWRITER:
+                        StringWriter execrecipewriter = new StringWriter();
+                        writerstoexecrecipes.add(iodescriptor);
+                        iodescriptor.setValue(execrecipewriter);
                         break;
                     case OUTPUTPATH:
                         if (fname.startsWith("!")) {
@@ -213,18 +236,17 @@ public class BuildStepExecutor {
         for (IODescriptor<StringWriter> iodesc : writerstosavestrings) {
             parentstrings.put(strings.get(iodesc.getName()).substring(1), iodesc.getValue().toString());
         }
-    }
-
-    private void setIODescriptorforInputFile(String fname, IODescriptor iod,
-            Supplier<String> viaparameter, Function<FileObject, String> viafile) throws IOException {
-        if (!strings.containsKey(fname)) {
-            iod.setValue(strings.get(fname));
-        } else {
-            FileObject file = IoUtil.findFile(fname, contentfolder, sharedcontentfolder);
-            if (file == null) {
-                throw new IOException("cannot locate file \'" + fname + "\" for input");
-            }
-            iod.setValue(file.asText());
+        // and copy all recipe writers to recipe storage
+        for (IODescriptor<StringWriter> iodesc : writerstosaverecipes) {
+            recipestore.put(strings.get(iodesc.getName()), iodesc.getValue().toString());
+        }
+        // and exec all execrecipe writers
+        for (IODescriptor<StringWriter> iodesc : writerstoexecrecipes) {
+            String execjson = iodesc.getValue().toString();
+            //msg.println(execjson);
+            RecipeExecutor.execute(contentfolder, sharedcontentfolder, cachefolder, outfolder,
+            resourcesfolder, relativepath, recipestore, msg, err,
+            strings, iodesc.getValue().toString());
         }
     }
 }

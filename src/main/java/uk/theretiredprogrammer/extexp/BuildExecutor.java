@@ -36,6 +36,7 @@ public class BuildExecutor {
             FileObject cache, FileObject out,
             FileObject resources, String relative, OutputWriter msg, OutputWriter err) throws IOException {
         //
+        Map<String, String> recipestore = new HashMap<>();
         FileObject buildinstructions = project.getFileObject("build.json");
         if (buildinstructions == null) {
             throw new IOException("Build Instructions (build.json) is missing");
@@ -49,22 +50,37 @@ public class BuildExecutor {
         if (jval == null) {
             throw new IOException("no action label found at top level of build.json");
         }
+        Map<String, String> strings;
+        String srcpath;
         switch (jval.getValueType()) {
             case ARRAY:
-                Map<String, String> strings = new HashMap<>();
+                strings = new HashMap<>();
                 BuildStepExecutor.extractParameters(jobj, strings);
-                String srcpath = strings.get("path");
+                srcpath = strings.get("path");
                 BuildStepExecutor stepExecutor = new BuildStepExecutor(
                         srcpath == null ? content : content.getFileObject(srcpath),
                         srcpath == null ? null : content,
                         srcpath == null ? cache : IoUtil.useOrCreateFolder(cache, srcpath),
-                        out, resources, relative);
+                        out, resources, relative,
+                        recipestore);
                 for (JsonObject jobjchild : jobj.getJsonArray("action").getValuesAs(JsonObject.class)) {
                     stepExecutor.extractParams(jobjchild, strings).execute(msg, err);
                 }
                 break;
+            case OBJECT:
+                strings = new HashMap<>();
+                BuildStepExecutor.extractParameters(jobj, strings);
+                srcpath = strings.get("path");
+                new BuildStepExecutor(
+                        srcpath == null ? content : content.getFileObject(srcpath),
+                        srcpath == null ? null : content,
+                        srcpath == null ? cache : IoUtil.useOrCreateFolder(cache, srcpath),
+                        out, resources, relative,
+                        recipestore)
+                        .extractParams(jobj.getJsonObject("action"), strings).execute(msg, err);
+                break;
             case STRING:
-                new BuildStepExecutor(content, null, cache, out, resources, relative)
+                new BuildStepExecutor(content, null, cache, out, resources, relative,recipestore)
                         .extractParams(jobj).execute(msg, err);
                 break;
             default:

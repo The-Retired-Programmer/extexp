@@ -18,27 +18,25 @@ package uk.theretiredprogrammer.extexp;
 import java.io.IOException;
 import java.io.Writer;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.INPUTSTRING;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
+import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMSTRING;
+import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.RECIPEWRITER;
 
 /**
  *
  * @author richard
  */
-public class SubstituteExecutor extends Executor {
+public class CreateRecipeExecutor extends Executor {
 
-    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
-    private final IODescriptor<ParameterDescriptor> pd = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
+    private final IODescriptor<String> definition = new IODescriptor<>("definition", PARAMSTRING);
+    private final IODescriptor<Writer> recipewriter = new IODescriptor<>("recipe", RECIPEWRITER);
 
     @Override
     public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{input, pd, output};
+        return new IODescriptor[]{definition, recipewriter};
     }
 
     @Override
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        Do.substitute(input.getValue(), pd.getValue().parameterExtractor, output.getValue());
+        recipewriter.getValue().write(definition.getValue());
     }
 }
