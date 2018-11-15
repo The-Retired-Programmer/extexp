@@ -13,32 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
 import java.io.IOException;
 import java.io.Writer;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.EXECRECIPEWRITER;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.RECIPE;
+import uk.theretiredprogrammer.extexp.execution.Do;
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTSTRING;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
+import uk.theretiredprogrammer.extexp.execution.ParameterDescriptor;
 
 /**
  *
  * @author richard
  */
-public class UseRecipeExecutor extends Executor {
+public class SubstituteExecutor extends Executor {
 
-    private final IODescriptor<String> recipe = new IODescriptor<>("recipe", RECIPE);
+    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
     private final IODescriptor<ParameterDescriptor> pd = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    private final IODescriptor<Writer> output = new IODescriptor<>(EXECRECIPEWRITER);
+    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
 
     @Override
     public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{recipe, pd, output};
+        return new IODescriptor[]{input, pd, output};
     }
 
     @Override
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        Do.substitute(recipe.getValue(), pd.getValue().parameterExtractor, output.getValue());
+        Do.substitute(input.getValue(), pd.getValue().parameterExtractor, output.getValue());
     }
 }

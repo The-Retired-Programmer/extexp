@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,8 +27,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.openide.windows.OutputWriter;
 import org.w3c.dom.Document;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.READER;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.READER;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
 
 /**
  *

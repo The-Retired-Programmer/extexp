@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -34,6 +34,36 @@ public class Do {
         String fragment = in.substring(0, p);
         if (fragment != null && !fragment.isEmpty()) {
             out.write(fragment);
+        }
+        int q = in.indexOf("}", p + 2);
+        String name = in.substring(p + 2, q);
+
+        fragment = getparam.apply(name);
+        if (fragment != null && !fragment.isEmpty()) {
+            substitute(fragment, getparam, out);
+        }
+
+        fragment = in.substring(q + 1);
+        if (fragment != null && !fragment.isEmpty()) {
+            substitute(fragment, getparam, out);
+        }
+    }
+    
+    public static String substitute(String in, Function<String, String> getparam) {
+      StringBuilder sb = new StringBuilder();
+      substitute(in, getparam, sb);
+      return sb.toString();
+    }
+    
+    private static void substitute(String in, Function<String, String> getparam, StringBuilder out) {
+        int p = in.indexOf("${");
+        if (p == -1) {
+            out.append(in);
+            return;
+        }
+        String fragment = in.substring(0, p);
+        if (fragment != null && !fragment.isEmpty()) {
+            out.append(fragment);
         }
         int q = in.indexOf("}", p + 2);
         String name = in.substring(p + 2, q);

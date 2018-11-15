@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
+import uk.theretiredprogrammer.extexp.execution.ResourcesDescriptor;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.RESOURCESDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMSTRING;
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMSTRING;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.RESOURCESDESCRIPTOR;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
 
 /**
  *

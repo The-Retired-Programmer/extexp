@@ -13,30 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import java.io.IOException;
 import java.io.Writer;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMSTRING;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.RECIPEWRITER;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTSTRING;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
 
 /**
  *
  * @author richard
  */
-public class CreateRecipeExecutor extends Executor {
+public class CopyExecutor extends Executor {
 
-    private final IODescriptor<String> definition = new IODescriptor<>("definition", PARAMSTRING);
-    private final IODescriptor<Writer> recipewriter = new IODescriptor<>("recipe", RECIPEWRITER);
+    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
+    private final IODescriptor<Writer> output = new IODescriptor<>("from", WRITER);
+    
 
     @Override
     public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{definition, recipewriter};
+        return new IODescriptor[]{input, output};
     }
-
+    
     @Override
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        recipewriter.getValue().write(definition.getValue());
+        output.getValue().write(input.getValue());
     }
 }

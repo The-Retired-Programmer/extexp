@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.execution;
 
 /**
  *
  * @author richard
  */
-public class IODescriptor <T> {
+public class IODescriptor<T> {
 
     /**
      * @return the name
@@ -36,10 +36,17 @@ public class IODescriptor <T> {
     }
 
     /**
-     * @return the optional
+     * @return the optional flag
      */
     public boolean isOptional() {
         return optional;
+    }
+
+    /**
+     * @return the result flag
+     */
+    public boolean isResult() {
+        return result;
     }
 
     /**
@@ -55,37 +62,43 @@ public class IODescriptor <T> {
     public void setValue(T value) {
         this.value = value;
     }
-    
+
     public enum IOREQUIREMENT {
-        INPUTSTRING, PARAMSTRING, RECIPE,
-        READER, WRITER, RECIPEWRITER, EXECRECIPEWRITER,
+        INPUTSTRING, PARAMSTRING, JSONPARAMSTRING, JSONSTRUCTURE,
+        INPUTRECIPE, OUTPUTRECIPE,
+        READER, WRITER,
         INPUTPATH, OUTPUTPATH,
         RESOURCESDESCRIPTOR, PARAMETERDESCRIPTOR
     }
-    
+
     private final String name;
     private final IOREQUIREMENT type;
-    private final boolean optional;
-    private T value;
-    
+    private boolean optional = false;
+    private boolean result = false;
+    private T value = null;
+
     public IODescriptor(String name, IOREQUIREMENT type) {
         this.name = name;
         this.type = type;
-        this.optional = false;
-        this.value = null;
+        switch (type) {
+            case WRITER:
+            case OUTPUTRECIPE:
+            case JSONSTRUCTURE:
+                result = true;
+        }
     }
-    
+
     public IODescriptor(IOREQUIREMENT type) {
-        this.name = null;
-        this.type = type;
-        this.optional = false;
-        this.value = null;
+        this(null, type);
     }
-    
-    public IODescriptor(String name, IOREQUIREMENT type, boolean optional) {
-        this.name = name;
-        this.type = type;
-        this.optional = optional;
-        this.value = null;
+
+    public IODescriptor result() {
+        result = true;
+        return this;
+    }
+
+    public IODescriptor optional() {
+        optional = true;
+        return this;
     }
 }

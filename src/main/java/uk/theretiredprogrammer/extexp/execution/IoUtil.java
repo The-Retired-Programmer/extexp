@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -85,6 +85,18 @@ public class IoUtil {
                 }
             }
         }
-        throw new IOException("Cannot locate file \'" + filename + "\" for input");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Cannot locate file \"");
+        sb.append(filename);
+        sb.append("\" for input\n");
+        for (FileObject fo : fos) {
+            if (fo == null) {
+                sb.append("null file object\n");
+            } else {
+                sb.append(fo.getPath());
+                sb.append('\n');
+            }
+        }
+        throw new IOException(sb.toString());
     }
 }

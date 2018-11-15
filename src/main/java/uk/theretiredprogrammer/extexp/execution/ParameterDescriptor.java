@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.execution;
 
-import java.io.IOException;
-import org.openide.windows.OutputWriter;
+import java.util.function.Function;
 
 /**
  *
  * @author richard
- *
  */
-public abstract class Executor {
-    
-    public abstract IODescriptor[] getIODescriptors();
-    
-    public abstract void execute(OutputWriter msg, OutputWriter err) throws IOException;
+public class ParameterDescriptor {
+
+    public final Function<String, String> parameterExtractor;
+
+    public ParameterDescriptor(Function<String, String> parameterExtractor) {
+        this.parameterExtractor = parameterExtractor;
+    }
 }

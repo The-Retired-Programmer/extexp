@@ -15,9 +15,20 @@
  */
 package uk.theretiredprogrammer.extexp;
 
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.IoUtil;
+import uk.theretiredprogrammer.extexp.execution.ParameterFrame;
+import uk.theretiredprogrammer.extexp.execution.ProcessStep;
 import java.io.IOException;
+import java.io.InputStream;
 import static java.lang.Math.round;
 import static java.lang.System.currentTimeMillis;
+import java.util.HashMap;
+import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
 import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
@@ -93,7 +104,7 @@ public class ActionsWorker implements Runnable {
 
     private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException, TransformerException {
         msg.println("Building...");
-        BuildExecutor.execute(
+        IOPaths paths = new IOPaths(
                 projectfolder,
                 projectfolder.getFileObject("src"),
                 IoUtil.useOrCreateFolder(projectfolder, "cache"),
@@ -103,5 +114,17 @@ public class ActionsWorker implements Runnable {
                 msg,
                 err
         );
+        Map<String, JsonStructure> recipestore = new HashMap<>();
+        FileObject buildinstructions = paths.getProjectfolder().getFileObject("build.json");
+        if (buildinstructions == null) {
+            throw new IOException("Build Instructions (build.json) is missing");
+        }
+        JsonObject jobj;
+        try (InputStream is = buildinstructions.getInputStream();
+                JsonReader rdr = Json.createReader(is)) {
+            jobj = rdr.readObject();
+        }
+        ParameterFrame frame = new ParameterFrame(jobj);
+        ProcessStep.execute(paths, recipestore, frame);
     }
 }

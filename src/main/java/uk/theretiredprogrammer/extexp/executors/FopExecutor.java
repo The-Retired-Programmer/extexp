@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.INPUTPATH;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.OUTPUTPATH;
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTPATH;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.OUTPUTPATH;
 
 /**
  *
@@ -28,8 +30,8 @@ import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.OUTPUTPA
  */
 public class FopExecutor extends Executor {
 
-    private final IODescriptor<String> foxsl = new IODescriptor<>("from", INPUTPATH);
-    private final IODescriptor<String> pdf = new IODescriptor<>("to", OUTPUTPATH);
+    private final IODescriptor<String> foxsl = new IODescriptor<>("fo-xsl", INPUTPATH);
+    private final IODescriptor<String> pdf = new IODescriptor<>("pdf", OUTPUTPATH);
 
     @Override
     public IODescriptor[] getIODescriptors() {

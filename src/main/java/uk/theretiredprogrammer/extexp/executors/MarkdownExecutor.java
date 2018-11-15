@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.INPUTPATH;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTPATH;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
 
 /**
  *
@@ -31,7 +33,7 @@ import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
 public class MarkdownExecutor extends Executor {
 
     private final IODescriptor<String> input = new IODescriptor<>("from", INPUTPATH);
-    private final IODescriptor<String> template = new IODescriptor<>("template", INPUTPATH, true);
+    private final IODescriptor<String> template = new IODescriptor<>("template", INPUTPATH).optional();
     private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
     
     @Override

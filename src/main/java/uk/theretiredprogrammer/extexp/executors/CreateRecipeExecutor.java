@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.executors;
 
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import java.io.IOException;
-import java.io.Writer;
+import javax.json.JsonStructure;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.INPUTSTRING;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.IODescriptor.IOREQUIREMENT.WRITER;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.JSONPARAMSTRING;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.OUTPUTRECIPE;
 
 /**
  *
  * @author richard
  */
-public class SubstituteExecutor extends Executor {
+public class CreateRecipeExecutor extends Executor {
 
-    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
-    private final IODescriptor<ParameterDescriptor> pd = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
+    private final IODescriptor<JsonStructure> definition = new IODescriptor<>("definition", JSONPARAMSTRING);
+    private final IODescriptor<JsonStructure> recipe = new IODescriptor<>("recipe", OUTPUTRECIPE);
 
     @Override
     public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{input, pd, output};
+        return new IODescriptor[]{definition, recipe};
     }
 
     @Override
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        Do.substitute(input.getValue(), pd.getValue().parameterExtractor, output.getValue());
+        recipe.setValue(definition.getValue());
     }
 }
