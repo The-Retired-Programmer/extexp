@@ -38,6 +38,7 @@ import uk.theretiredprogrammer.extexp.executors.IfDefinedExecutor;
 import uk.theretiredprogrammer.extexp.executors.ImagesetExecutor;
 import uk.theretiredprogrammer.extexp.executors.MarkdownExecutor;
 import static javax.json.JsonValue.ValueType.OBJECT;
+import uk.theretiredprogrammer.extexp.executors.MarkdownAndSubstituteExecutor;
 
 /**
  *
@@ -75,6 +76,9 @@ public class ProcessStep {
             switch (action) {
                 case "markdown":
                     exec = new MarkdownExecutor();
+                    break;
+                case "markdown-substitute":
+                    exec = new MarkdownAndSubstituteExecutor();
                     break;
                 case "copy":
                     exec = new CopyExecutor();
@@ -189,72 +193,70 @@ public class ProcessStep {
             exec.execute(paths.getMsg(), paths.getErr());
             // and handle the post processing
             for (IODescriptor iodescriptor : exec.getIODescriptors()) {
-                if (iodescriptor.isResult()) {
-                    String pval;
-                    IOPaths newpaths;
-                    JsonStructure js;
-                    String pvalue = getParameterValue(frame, iodescriptor);
-                    switch (iodescriptor.getType()) {
-                        case RESOURCESDESCRIPTOR:
-                        case PARAMETERDESCRIPTOR:
-                        case PARAMSTRING:
-                        case INPUTSTRING:
-                        case INPUTPATH:
-                        case OUTPUTPATH:
-                        case INPUTRECIPE:
-                        case JSONPARAMSTRING:
-                            break;
-                        case OUTPUTRECIPE:
-                            recipestore.put(pvalue, (JsonStructure) iodescriptor.getValue());
-                            break;
-                        case JSONSTRUCTURESIMPLEFRAME:
-                            pval = frame.getFrameParameter("path");
-                            newpaths = pval == null ? paths : paths.updatePath(pval);
-                            js = (JsonStructure) iodescriptor.getValue();
-                            if (js != null) {
-                                if (js.getValueType() == OBJECT) {
-                                    ParameterFrame newframe = new SimpleParameterFrame((JsonObject) js, frame);
+                String pval;
+                IOPaths newpaths;
+                JsonStructure js;
+                String pvalue = getParameterValue(frame, iodescriptor);
+                switch (iodescriptor.getType()) {
+                    case RESOURCESDESCRIPTOR:
+                    case PARAMETERDESCRIPTOR:
+                    case PARAMSTRING:
+                    case INPUTSTRING:
+                    case INPUTPATH:
+                    case OUTPUTPATH:
+                    case INPUTRECIPE:
+                    case JSONPARAMSTRING:
+                        break;
+                    case OUTPUTRECIPE:
+                        recipestore.put(pvalue, (JsonStructure) iodescriptor.getValue());
+                        break;
+                    case JSONSTRUCTURESIMPLEFRAME:
+                        pval = frame.getFrameParameter("path");
+                        newpaths = pval == null ? paths : paths.updatePath(pval);
+                        js = (JsonStructure) iodescriptor.getValue();
+                        if (js != null) {
+                            if (js.getValueType() == OBJECT) {
+                                ParameterFrame newframe = new SimpleParameterFrame((JsonObject) js, frame);
+                                execute(newpaths, recipestore, newframe);
+                            } else {
+                                for (JsonObject jobj : ((JsonArray) js).getValuesAs(JsonObject.class)) {
+                                    ParameterFrame newframe = new SimpleParameterFrame(jobj, frame);
                                     execute(newpaths, recipestore, newframe);
-                                } else {
-                                    for (JsonObject jobj : ((JsonArray) js).getValuesAs(JsonObject.class)) {
-                                        ParameterFrame newframe = new SimpleParameterFrame(jobj, frame);
-                                        execute(newpaths, recipestore, newframe);
-                                    }
                                 }
                             }
-                            break;
-                        case JSONSTRUCTUREFRAME:
-                            pval = frame.getFrameParameter("path");
-                            newpaths = pval == null ? paths : paths.updatePath(pval);
-                            js = (JsonStructure) iodescriptor.getValue();
-                            if (js != null) {
-                                if (js.getValueType() == OBJECT) {
-                                    ParameterFrame newframe = new ParameterFrame((JsonObject) js, frame);
+                        }
+                        break;
+                    case JSONSTRUCTUREFRAME:
+                        pval = frame.getFrameParameter("path");
+                        newpaths = pval == null ? paths : paths.updatePath(pval);
+                        js = (JsonStructure) iodescriptor.getValue();
+                        if (js != null) {
+                            if (js.getValueType() == OBJECT) {
+                                ParameterFrame newframe = new ParameterFrame((JsonObject) js, frame);
+                                execute(newpaths, recipestore, newframe);
+                            } else {
+                                for (JsonObject jobj : ((JsonArray) js).getValuesAs(JsonObject.class)) {
+                                    ParameterFrame newframe = new ParameterFrame(jobj, frame);
                                     execute(newpaths, recipestore, newframe);
-                                } else {
-                                    for (JsonObject jobj : ((JsonArray) js).getValuesAs(JsonObject.class)) {
-                                        ParameterFrame newframe = new ParameterFrame(jobj, frame);
-                                        execute(newpaths, recipestore, newframe);
-                                    }
                                 }
                             }
-                            break;
-                        case READER:
-                            ((Reader) iodescriptor.getValue()).close();
-                            break;
-                        case WRITER:
-                            Writer w = (Writer) iodescriptor.getValue();
-                            w.close();
-                            if (w instanceof StringWriter) {
-                                frame.setStringFileParameter(
-                                        getParameterValue(frame, iodescriptor).substring(1),
-                                        iodescriptor.getValue().toString()
-                                );
-                            }
-                            break;
-                        default:
-                            throw new IOException("IODescription - unknown post-exec requirement: " + iodescriptor.getType().toString());
-                    }
+                        }
+                        break;
+                    case READER:
+                        ((Reader) iodescriptor.getValue()).close();
+                        break;
+                    case WRITER:
+                        Writer w = (Writer) iodescriptor.getValue();
+                        w.close();
+                        if (w instanceof StringWriter) {
+                            frame.setStringFileParameter(
+                                    getParameterValue(frame, iodescriptor).substring(1),
+                                    iodescriptor.getValue().toString()
+                            );
+                        }
+                        break;
+                    default:
+                        throw new IOException("IODescription - unknown post-exec requirement: " + iodescriptor.getType().toString());
                 }
             }
         }

@@ -43,13 +43,6 @@ public class IODescriptor<T> {
     }
 
     /**
-     * @return the result flag
-     */
-    public boolean isResult() {
-        return result;
-    }
-
-    /**
      * @return the value
      */
     public T getValue() {
@@ -74,28 +67,15 @@ public class IODescriptor<T> {
     private final String name;
     private final IOREQUIREMENT type;
     private boolean optional = false;
-    private boolean result = false;
     private T value = null;
 
     public IODescriptor(String name, IOREQUIREMENT type) {
         this.name = name;
         this.type = type;
-        switch (type) {
-            case WRITER:
-            case OUTPUTRECIPE:
-            case JSONSTRUCTUREFRAME:
-            case JSONSTRUCTURESIMPLEFRAME:
-                result = true;
-        }
     }
 
     public IODescriptor(IOREQUIREMENT type) {
         this(null, type);
-    }
-
-    public IODescriptor result() {
-        result = true;
-        return this;
     }
 
     public IODescriptor optional() {
