@@ -45,8 +45,8 @@ import static javax.json.JsonValue.ValueType.OBJECT;
  */
 public class ProcessStep {
 
-    public static void execute(IOPaths paths, Map<String, JsonStructure> recipestore, ParameterFrame frame) throws IOException {
-        String description = frame.getParameter("description");
+    public static void execute(IOPaths paths, Map<String, JsonStructure> recipestore, BaseParameterFrame frame) throws IOException {
+        String description = frame.getFrameParameter("description");
         if (description != null) {
             paths.getMsg().println("    ..." + description);
         }
@@ -177,7 +177,8 @@ public class ProcessStep {
                             }
                             break;
                         case OUTPUTRECIPE:
-                        case JSONSTRUCTURE:
+                        case JSONSTRUCTURESIMPLEFRAME:
+                        case JSONSTRUCTUREFRAME:
                             break;
                         default:
                             throw new IOException("IODescription - unknown pre-exec requirement: " + iodescriptor.getType().toString());
@@ -189,6 +190,9 @@ public class ProcessStep {
             // and handle the post processing
             for (IODescriptor iodescriptor : exec.getIODescriptors()) {
                 if (iodescriptor.isResult()) {
+                    String pval;
+                    IOPaths newpaths;
+                    JsonStructure js;
                     String pvalue = getParameterValue(frame, iodescriptor);
                     switch (iodescriptor.getType()) {
                         case RESOURCESDESCRIPTOR:
@@ -199,14 +203,14 @@ public class ProcessStep {
                         case OUTPUTPATH:
                         case INPUTRECIPE:
                         case JSONPARAMSTRING:
-                            throw new IOException("Cannot set result on these IODescriptors");
+                            break;
                         case OUTPUTRECIPE:
                             recipestore.put(pvalue, (JsonStructure) iodescriptor.getValue());
                             break;
-                        case JSONSTRUCTURE:
-                            String pval = frame.getFrameParameter("path");
-                            IOPaths newpaths = pval == null ? paths : paths.updatePath(pval);
-                            JsonStructure js = (JsonStructure) iodescriptor.getValue();
+                        case JSONSTRUCTURESIMPLEFRAME:
+                            pval = frame.getFrameParameter("path");
+                            newpaths = pval == null ? paths : paths.updatePath(pval);
+                            js = (JsonStructure) iodescriptor.getValue();
                             if (js != null) {
                                 if (js.getValueType() == OBJECT) {
                                     ParameterFrame newframe = new SimpleParameterFrame((JsonObject) js, frame);
@@ -214,6 +218,22 @@ public class ProcessStep {
                                 } else {
                                     for (JsonObject jobj : ((JsonArray) js).getValuesAs(JsonObject.class)) {
                                         ParameterFrame newframe = new SimpleParameterFrame(jobj, frame);
+                                        execute(newpaths, recipestore, newframe);
+                                    }
+                                }
+                            }
+                            break;
+                        case JSONSTRUCTUREFRAME:
+                            pval = frame.getFrameParameter("path");
+                            newpaths = pval == null ? paths : paths.updatePath(pval);
+                            js = (JsonStructure) iodescriptor.getValue();
+                            if (js != null) {
+                                if (js.getValueType() == OBJECT) {
+                                    ParameterFrame newframe = new ParameterFrame((JsonObject) js, frame);
+                                    execute(newpaths, recipestore, newframe);
+                                } else {
+                                    for (JsonObject jobj : ((JsonArray) js).getValuesAs(JsonObject.class)) {
+                                        ParameterFrame newframe = new ParameterFrame(jobj, frame);
                                         execute(newpaths, recipestore, newframe);
                                     }
                                 }
@@ -240,11 +260,11 @@ public class ProcessStep {
         }
     }
 
-    private static String getParameterValue(ParameterFrame frame, IODescriptor iodescriptor) {
+    private static String getParameterValue(BaseParameterFrame frame, IODescriptor iodescriptor) {
         return frame.getParameter(iodescriptor.getName());
     }
 
-    private static JsonStructure getJsonStructureValue(ParameterFrame frame, IODescriptor iodescriptor) {
+    private static JsonStructure getJsonStructureValue(BaseParameterFrame frame, IODescriptor iodescriptor) {
         return frame.getJsonParameter(iodescriptor.getName());
     }
 }

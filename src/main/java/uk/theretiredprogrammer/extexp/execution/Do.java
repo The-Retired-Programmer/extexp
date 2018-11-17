@@ -26,27 +26,7 @@ import java.util.function.Function;
 public class Do {
     
     public static void substitute(String in, Function<String, String> getparam, Writer out) throws IOException {
-        int p = in.indexOf("${");
-        if (p == -1) {
-            out.write(in);
-            return;
-        }
-        String fragment = in.substring(0, p);
-        if (fragment != null && !fragment.isEmpty()) {
-            out.write(fragment);
-        }
-        int q = in.indexOf("}", p + 2);
-        String name = in.substring(p + 2, q);
-
-        fragment = getparam.apply(name);
-        if (fragment != null && !fragment.isEmpty()) {
-            substitute(fragment, getparam, out);
-        }
-
-        fragment = in.substring(q + 1);
-        if (fragment != null && !fragment.isEmpty()) {
-            substitute(fragment, getparam, out);
-        }
+        out.write(substitute(in, getparam));
     }
     
     public static String substitute(String in, Function<String, String> getparam) {
@@ -77,6 +57,5 @@ public class Do {
         if (fragment != null && !fragment.isEmpty()) {
             substitute(fragment, getparam, out);
         }
-    }
-    
+    }  
 }

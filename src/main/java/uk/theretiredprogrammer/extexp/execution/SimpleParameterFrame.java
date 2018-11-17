@@ -29,15 +29,10 @@ public class SimpleParameterFrame extends ParameterFrame {
         this(jobj, null);
     }
 
-    public SimpleParameterFrame(JsonObject jobj, ParameterFrame parent) {
+    public SimpleParameterFrame(JsonObject jobj, BaseParameterFrame parent) {
         super(jobj, parent);
     }
     
-    @Override
-    public void clearStringFileParameters() {
-        previous.clearStringFileParameters();
-    }
-
     @Override
     public void setStringFileParameter(String name, String val) throws IOException {
         previous.setStringFileParameter(name, val);

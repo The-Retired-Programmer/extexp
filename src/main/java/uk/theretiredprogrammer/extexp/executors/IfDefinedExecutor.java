@@ -22,7 +22,7 @@ import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.JSONPARAMSTRING;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.JSONSTRUCTURE;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.JSONSTRUCTURESIMPLEFRAME;
 import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
 import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMSTRING;
 
@@ -36,7 +36,7 @@ public class IfDefinedExecutor extends Executor {
     private final IODescriptor<JsonStructure> thenpart = new IODescriptor<>("then", JSONPARAMSTRING).optional();
     private final IODescriptor<JsonStructure> elsepart = new IODescriptor<>("else", JSONPARAMSTRING).optional();
     private final IODescriptor<ParameterDescriptor> params = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    private final IODescriptor<JsonStructure> selectedpart = new IODescriptor<>(JSONSTRUCTURE);
+    private final IODescriptor<JsonStructure> selectedpart = new IODescriptor<>(JSONSTRUCTURESIMPLEFRAME);
 
     @Override
     public IODescriptor[] getIODescriptors() {

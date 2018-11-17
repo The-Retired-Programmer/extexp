@@ -36,6 +36,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
+import uk.theretiredprogrammer.extexp.execution.BaseParameterFrame;
 
 /**
  *
@@ -124,7 +125,6 @@ public class ActionsWorker implements Runnable {
                 JsonReader rdr = Json.createReader(is)) {
             jobj = rdr.readObject();
         }
-        ParameterFrame frame = new ParameterFrame(jobj);
-        ProcessStep.execute(paths, recipestore, frame);
+        ProcessStep.execute(paths, recipestore, new BaseParameterFrame(jobj));
     }
 }

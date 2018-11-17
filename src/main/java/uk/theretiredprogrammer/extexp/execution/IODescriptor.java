@@ -64,7 +64,7 @@ public class IODescriptor<T> {
     }
 
     public enum IOREQUIREMENT {
-        INPUTSTRING, PARAMSTRING, JSONPARAMSTRING, JSONSTRUCTURE,
+        INPUTSTRING, PARAMSTRING, JSONPARAMSTRING, JSONSTRUCTUREFRAME, JSONSTRUCTURESIMPLEFRAME,
         INPUTRECIPE, OUTPUTRECIPE,
         READER, WRITER,
         INPUTPATH, OUTPUTPATH,
@@ -83,7 +83,8 @@ public class IODescriptor<T> {
         switch (type) {
             case WRITER:
             case OUTPUTRECIPE:
-            case JSONSTRUCTURE:
+            case JSONSTRUCTUREFRAME:
+            case JSONSTRUCTURESIMPLEFRAME:
                 result = true;
         }
     }

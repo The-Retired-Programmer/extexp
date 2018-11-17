@@ -21,7 +21,7 @@ import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTRECIPE;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.JSONSTRUCTURE;
+import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.JSONSTRUCTUREFRAME;
 import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
 import uk.theretiredprogrammer.extexp.execution.ParameterDescriptor;
 
@@ -33,7 +33,7 @@ public class UseRecipeExecutor extends Executor {
 
     private final IODescriptor<JsonStructure> recipe = new IODescriptor<>("recipe", INPUTRECIPE);
     private final IODescriptor<ParameterDescriptor> pd = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    private final IODescriptor<JsonStructure> jsonstructure = new IODescriptor<>(JSONSTRUCTURE);
+    private final IODescriptor<JsonStructure> jsonstructure = new IODescriptor<>(JSONSTRUCTUREFRAME);
 
     @Override
     public IODescriptor[] getIODescriptors() {
@@ -42,7 +42,6 @@ public class UseRecipeExecutor extends Executor {
 
     @Override
     public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        //Do.substitute(recipe.getValue(), pd.getValue().parameterExtractor, output.getValue());
         jsonstructure.setValue(recipe.getValue());
     }
 }
