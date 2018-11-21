@@ -18,9 +18,11 @@ package uk.theretiredprogrammer.extexp;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Action;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
+import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeList;
 import org.openide.filesystems.FileObject;
@@ -90,6 +92,16 @@ public class BuildNodeFactory implements NodeFactory {
             @Override
             public Image getOpenedIcon(int type) {
                 return getIcon(type);
+            }
+            
+            @Override
+            public Action[] getActions(boolean arg0) {
+                return new Action[]{
+                    new ActionOpenVisualEditor(project),
+                    new ActionBuild(project),
+                    new ActionCleanBuild(project),
+                    new ActionClean(project),
+                };
             }
 
         }

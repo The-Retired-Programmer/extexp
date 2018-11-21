@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
+import java.awt.datatransfer.DataFlavor;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import java.io.IOException;
@@ -28,7 +29,7 @@ import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMEN
  * @author richard
  */
 public class CopyExecutor extends Executor {
-
+    
     private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
     private final IODescriptor<Writer> output = new IODescriptor<>("from", WRITER);
     
