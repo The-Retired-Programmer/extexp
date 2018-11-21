@@ -41,7 +41,7 @@ public class CopyExecutorWidgetData extends WidgetData {
     }
 
     @Override
-    public CategoryType getCategory() {
+    public CategoryType getCategoryType() {
         return CategoryType.EXECUTOR;
     }
 

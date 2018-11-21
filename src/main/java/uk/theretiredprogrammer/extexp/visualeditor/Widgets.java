@@ -29,8 +29,8 @@ import org.netbeans.api.visual.vmd.VMDPinWidget;
  */
 public class Widgets {
     
-    public static String[] createWidget(ExtexpScene scene, WidgetData widgetdata, int x, int y) {
-        String nodeid = createNode(scene, x, y, widgetdata.getWidgetImage(),
+    public static String[] createWidget(ExtexpScene scene, WidgetData widgetdata, Point pos) {
+        String nodeid = createNode(scene, pos, widgetdata.getWidgetImage(),
                 widgetdata.getDisplayName(), null, Arrays.asList());
         List<PinDef> pins = widgetdata.getPinDefList();
         String[] res = new String[pins.size()+1];
@@ -50,10 +50,10 @@ public class Widgets {
     private static int pinID = 1;
     private static int edgeID = 1;
 
-    private static String createNode(ExtexpScene scene, int x, int y, Image image, String name, String type, List<Image> glyphs) {
+    private static String createNode(ExtexpScene scene, Point pos, Image image, String name, String type, List<Image> glyphs) {
         String nodeid = "node" + nodeID++;
         VMDNodeWidget widget = (VMDNodeWidget) scene.addNode(nodeid);
-        widget.setPreferredLocation(new Point(x, y));
+        widget.setPreferredLocation(pos);
         widget.setNodeProperties(image, name, type, glyphs);
         scene.addPin(nodeid, nodeid + VMDGraphScene.PIN_ID_DEFAULT_SUFFIX);
         return nodeid;

@@ -55,7 +55,7 @@ public abstract class WidgetData {
     static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide.png";
     static final Image IFIMAGE = ImageUtilities.loadImage(IFIMAGENAME); // NOI18N
 
-    public abstract CategoryType getCategory();
+    public abstract CategoryType getCategoryType();
 
     public abstract Image getWidgetImage();
     

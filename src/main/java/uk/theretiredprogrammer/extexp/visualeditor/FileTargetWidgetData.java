@@ -38,7 +38,7 @@ public class FileTargetWidgetData extends WidgetData {
     }
 
     @Override
-    public CategoryType getCategory() {
+    public CategoryType getCategoryType() {
         return CategoryType.TARGET;
     }
 

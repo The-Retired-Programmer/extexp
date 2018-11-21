@@ -40,7 +40,7 @@ public class TemporaryFileInputOutputWidgetData extends WidgetData {
     }
 
     @Override
-    public CategoryType getCategory() {
+    public CategoryType getCategoryType() {
         return CategoryType.BOTH;
     }
 

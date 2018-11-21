@@ -42,7 +42,7 @@ public class MarkdownAndSubstituteExecutorWidgetData extends WidgetData {
     }
 
     @Override
-    public CategoryType getCategory() {
+    public CategoryType getCategoryType() {
         return CategoryType.EXECUTOR;
     }
 

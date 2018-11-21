@@ -55,7 +55,7 @@ public class ExtexpScene extends VMDGraphScene {
             public void accept(Widget widget, Point point, Transferable transferable) {
                 try {
                     WidgetData widgetdata = (WidgetData) transferable.getTransferData(DATA_FLAVOR_WIDGETDATA);
-                    String copynode[] = Widgets.createWidget(ExtexpScene.this, widgetdata, 0, 0);
+                    String copynode[] = Widgets.createWidget(ExtexpScene.this, widgetdata, point);
                     nodemap.put(copynode[0], widgetdata);
                 } catch (UnsupportedFlavorException | IOException ex) {
                 }
