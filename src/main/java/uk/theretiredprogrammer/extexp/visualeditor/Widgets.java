@@ -18,29 +18,31 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 import java.awt.Image;
 import java.awt.Point;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.netbeans.api.visual.vmd.VMDGraphScene;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
+import org.netbeans.api.visual.widget.LayerWidget;
 
 /**
  *
  * @author richard
  */
 public class Widgets {
-    
-    public static String[] createWidget(ExtexpScene scene, WidgetData widgetdata, Point pos) {
+
+    public static Map<String, String> createWidget(ExtexpScene scene, WidgetData widgetdata, Point pos) {
+        Map<String, String> res = new HashMap<>();
         String nodeid = createNode(scene, pos, widgetdata.getWidgetImage(),
                 widgetdata.getDisplayName(), null, Arrays.asList());
-        List<PinDef> pins = widgetdata.getPinDefList();
-        String[] res = new String[pins.size()+1];
-        res[0] = nodeid;
-        int index = 1;
-        for ( PinDef pin : pins) {
-            res[index++] = createPin(scene, nodeid, pin.getName(), null);
+        res.put(widgetdata.getDisplayName(), nodeid);
+        for (PinDef pin : widgetdata.getPinDefList()) {
+            res.put(pin.getName(), createPin(scene, nodeid, pin.getName(), null));
         }
         return res;
     }
+
     public static String createConnector(ExtexpScene scene, String sourcePinID, String targetPinID) {
         return createEdge(scene, sourcePinID, targetPinID);
     }
@@ -72,5 +74,4 @@ public class Widgets {
         scene.setEdgeTarget(edgeid, targetPinID);
         return edgeid;
     }
-
 }

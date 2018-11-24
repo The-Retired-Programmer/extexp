@@ -9,7 +9,6 @@ import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
@@ -35,12 +34,14 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 })
 public final class VisualEditorTC extends TopComponent {
     
+    private final ExtexpScene scene;
+    
     public VisualEditorTC() {
         initComponents();
         setName(Bundle.CTL_VETopComponent());
         setToolTipText(Bundle.HINT_VETopComponent());
         JScrollPane scrollpane = new JScrollPane();
-        ExtexpScene scene = new ExtexpScene();
+        scene = new ExtexpScene();
         scrollpane.setViewportView(scene.createView());
         setLayout(new BorderLayout());
         add(scrollpane, BorderLayout.CENTER);
@@ -78,6 +79,11 @@ public final class VisualEditorTC extends TopComponent {
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
+    }
+    
+    @Override
+    public void componentActivated() {
+        scene.getView().requestFocusInWindow();
     }
 
     void writeProperties(java.util.Properties p) {
