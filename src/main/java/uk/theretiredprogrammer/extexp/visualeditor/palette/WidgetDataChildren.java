@@ -39,10 +39,10 @@ import uk.theretiredprogrammer.extexp.visualeditor.ImagesetExecutorWidgetData;
 import uk.theretiredprogrammer.extexp.visualeditor.MarkdownAndSubstituteExecutorWidgetData;
 import uk.theretiredprogrammer.extexp.visualeditor.MarkdownExecutorWidgetData;
 import uk.theretiredprogrammer.extexp.visualeditor.ParameterSourceWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.StartSequenceWidgetData;
+import uk.theretiredprogrammer.extexp.visualeditor.SequenceWidgetData;
 import uk.theretiredprogrammer.extexp.visualeditor.SubstituteExecutorWidgetData;
 import uk.theretiredprogrammer.extexp.visualeditor.TemporaryFileInputOutputWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.UseRecipeWidgetData;
+import uk.theretiredprogrammer.extexp.visualeditor.RunWidgetData;
 import uk.theretiredprogrammer.extexp.visualeditor.XsltExecutorWidgetData;
 
 /**
@@ -62,10 +62,10 @@ public class WidgetDataChildren  extends Index.ArrayChildren {
         List<WidgetDataNode> childrenNodes = new ArrayList<>();
         switch (category.getType()) {
             case CONTROL:
-                childrenNodes.add(new WidgetDataNode(new StartSequenceWidgetData()));
+                childrenNodes.add(new WidgetDataNode(new SequenceWidgetData()));
                 childrenNodes.add(new WidgetDataNode(new IfDefinedWidgetData()));
                 childrenNodes.add(new WidgetDataNode(new CreateRecipeWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new UseRecipeWidgetData()));
+                childrenNodes.add(new WidgetDataNode(new RunWidgetData()));
                 break;
             case EXECUTOR:
                 childrenNodes.add(new WidgetDataNode(new CopyExecutorWidgetData()));

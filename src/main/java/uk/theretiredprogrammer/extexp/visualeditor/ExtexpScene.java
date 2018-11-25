@@ -58,8 +58,7 @@ public class ExtexpScene extends VMDGraphScene {
             public void accept(Widget widget, Point point, Transferable transferable) {
                 try {
                     WidgetData widgetdata = (WidgetData) transferable.getTransferData(DATA_FLAVOR_WIDGETDATA);
-                    ExtexpWidget w = new ExtexpWidget(ExtexpScene.this, widgetdata, point, connectionlayerwidget);
-                    layerwidget.addChild(w);
+                    insertWidget(widgetdata, point);
 //                    Map<String, String> namesandIDs = Widgets.createWidget(layerwidget, widgetdata, point);
 //                    String nodeid = getNodeId(namesandIDs);
 //                    nodetodata.put(nodeid, widgetdata);
@@ -68,6 +67,11 @@ public class ExtexpScene extends VMDGraphScene {
                 }
             }
         }));
+    }
+    
+    public void insertWidget(WidgetData widgetdata, Point point) {
+        ExtexpWidget w = new ExtexpWidget(ExtexpScene.this, widgetdata, point, connectionlayerwidget);
+        layerwidget.addChild(w);
     }
     
     private String getNodeId(Map<String, String> namesandIDs) {

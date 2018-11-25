@@ -52,7 +52,7 @@ public abstract class WidgetData {
     static final Image FILETARGETIMAGE = ImageUtilities.loadImage(FILETARGETIMAGENAME); // NOI18N
     static final String PARAMETERSOURCEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/comment.png";
     static final Image PARAMETERSOURCEIMAGE = ImageUtilities.loadImage(PARAMETERSOURCEIMAGENAME); // N  OI18N
-    static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide.png";
+    static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
     static final Image IFIMAGE = ImageUtilities.loadImage(IFIMAGENAME); // NOI18N
 
     public abstract CategoryType getCategoryType();

@@ -6,6 +6,9 @@
 package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
+import java.util.function.Function;
+import javax.json.JsonObject;
 import javax.swing.JScrollPane;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -35,6 +38,7 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 public final class VisualEditorTC extends TopComponent {
     
     private final ExtexpScene scene;
+    private final ExtexpSceneSerialise serialiser = new ExtexpSceneSerialise();
     
     public VisualEditorTC() {
         initComponents();
@@ -47,6 +51,15 @@ public final class VisualEditorTC extends TopComponent {
         add(scrollpane, BorderLayout.CENTER);
         add(scene.createSatelliteView(), BorderLayout.WEST);
         associateLookup(Lookups.singleton(PaletteSupport.createPalette()));
+    }
+    
+    
+    public void setSaveSource(Function<JsonObject, Boolean> savesource) {
+        serialiser.setOutputFunction(savesource);
+    }
+    
+    public void deserialise(JsonObject jobj) throws IOException {
+        serialiser.deserialize(scene,jobj);
     }
 
     /**

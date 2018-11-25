@@ -22,11 +22,16 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.Cate
  *
  * @author richard
  */
-public class UseRecipeWidgetData extends WidgetData {
+public class SequenceWidgetData extends WidgetData {
+
+    private String name;
     
-    public UseRecipeWidgetData() {
-        addPinDef(new PinDef("description"));
-        addPinDef(new PinDef("Recipe"));
+    public SequenceWidgetData(String name) {
+        this.name = name;
+    }
+    
+    public SequenceWidgetData() {
+        this("MAIN");
     }
     
     @Override
@@ -46,6 +51,6 @@ public class UseRecipeWidgetData extends WidgetData {
 
     @Override
     public String getDisplayName() {
-        return "Use Recipe";
+        return name;
     }
-}   
+}
