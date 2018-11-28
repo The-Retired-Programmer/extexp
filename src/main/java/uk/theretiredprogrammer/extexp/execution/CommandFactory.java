@@ -15,19 +15,24 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import org.openide.filesystems.FileObject;
+import java.io.IOException;
+import javax.json.JsonObject;
 
 /**
  *
  * @author richard
  */
-public class ResourcesDescriptor {
+public class CommandFactory {
 
-    public final FileObject resourcesFolder;
-    public final String relativeResourcesPath;
-
-    public ResourcesDescriptor(FileObject resourcesFolder, String relativeResourcesPath) {
-        this.resourcesFolder = resourcesFolder;
-        this.relativeResourcesPath = relativeResourcesPath;
+    public static final Command create(JsonObject jobj) throws IOException {
+        Command command;
+        command = ControlFactory.create(jobj);
+        if (command == null ) {
+            command = ExecutorFactory.create(jobj);
+        }
+        if (command == null) {
+            throw new IOException("CommandFactory - cannot parse the json command object");
+        }
+        return command;
     }
 }

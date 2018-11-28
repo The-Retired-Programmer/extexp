@@ -19,15 +19,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Do;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IODescriptor;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTPATH;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
-import uk.theretiredprogrammer.extexp.execution.ParameterDescriptor;
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.IOInputPath;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.execution.IOWriter;
 
 /**
  *
@@ -35,26 +33,20 @@ import uk.theretiredprogrammer.extexp.execution.ParameterDescriptor;
  */
 public class MarkdownAndSubstituteExecutor extends Executor {
 
-    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTPATH);
-    private final IODescriptor<String> template = new IODescriptor<>("template", INPUTPATH).optional();
-    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
-    private final IODescriptor<ParameterDescriptor> pd = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    
     @Override
-    public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[] { input, template, output, pd};
-    }
-
-    @Override
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
+    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
+        IOInputPath input = new IOInputPath(this.getLocalParameter("from", paths, tempfs));
+        IOInputPath template = new IOInputPath(this.getOptionalLocalParameter("template", paths, tempfs));
+        //
         ProcessBuilder pb;
-        String templatepath = template.getValue();
+        String templatepath = template.get(paths, tempfs);
         if (templatepath == null) {
             pb = new ProcessBuilder("/usr/local/bin/kramdown", "--no-auto-ids");
         } else {
             pb = new ProcessBuilder("/usr/local/bin/kramdown", "--no-auto-ids", "--template", templatepath);
         }
-        pb.redirectInput(new File(input.getValue()));
+        pb.redirectInput(new File(input.get(paths, tempfs)));
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process process = pb.start();
         StringBuilder sb = new StringBuilder();
@@ -70,6 +62,10 @@ public class MarkdownAndSubstituteExecutor extends Executor {
         } catch (InterruptedException ex) {
             throw new IOException(ex);
         }
-        Do.substitute(sb.toString(), pd.getValue().parameterExtractor, output.getValue());
+        Do.substitute(sb.toString(), (name) -> getOptionalSubstitutedParameter(name, paths, tempfs), output.get(paths, tempfs));
+        //
+        output.close(paths, tempfs);
+        input.close(paths, tempfs);
+        template.close(paths, tempfs);
     }
 }

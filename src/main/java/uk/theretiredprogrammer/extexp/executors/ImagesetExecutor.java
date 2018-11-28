@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import uk.theretiredprogrammer.extexp.execution.ResourcesDescriptor;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
@@ -23,10 +22,9 @@ import java.util.TreeMap;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IODescriptor;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMSTRING;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.RESOURCESDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.execution.IOWriter;
 
 /**
  *
@@ -34,31 +32,20 @@ import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMEN
  */
 public class ImagesetExecutor extends Executor {
 
-    private final IODescriptor<ResourcesDescriptor> rdesc = new IODescriptor<>(RESOURCESDESCRIPTOR);
-    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
-    private final IODescriptor<String> image = new IODescriptor<>("image", PARAMSTRING);
-    private final IODescriptor<String> width = new IODescriptor<>("width", PARAMSTRING);
-    private  final IODescriptor<String> height = new IODescriptor<>("height", PARAMSTRING);
-     
-
     @Override
-    public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{rdesc, output, image, width, height};
-    }
-
-    @Override
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        ResourcesDescriptor rd = rdesc.getValue();
-        String imagestring = image.getValue();
+    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
+        //
+        String imagestring = getSubstitutedParameter("image", paths, tempfs);
         int p = imagestring.lastIndexOf('.');
         String fn = imagestring.substring(0, p);
         String fext = imagestring.substring(p + 1);
         int fnsize = fn.length();
-        String widthstring = width.getValue();
-        String heightstring = height.getValue();
+        String widthstring = getSubstitutedParameter("width", paths, tempfs);
+        String heightstring = getSubstitutedParameter("height", paths, tempfs);
         Map<Integer, String> images = new TreeMap<>();
-        String relativeresourcesfolderpath = rd.relativeResourcesPath;
-        for (FileObject child : rd.resourcesFolder.getChildren()) {
+        String relativeresourcesfolderpath = paths.getRelativepath();
+        for (FileObject child : paths.getResourcesfolder().getChildren()) {
             if (child.isData()) {
                 String cn = child.getName();
                 String cext = child.getExt();
@@ -82,7 +69,7 @@ public class ImagesetExecutor extends Executor {
                 }
             }
         }
-        Writer out = output.getValue();
+        Writer out = output.get(paths, tempfs);
         out.append("<img width=\"");
         out.append(widthstring);
         out.append("\" height=\"");
@@ -108,5 +95,7 @@ public class ImagesetExecutor extends Executor {
         out.append("px) 100vw, ");
         out.append(widthstring);
         out.append("px\" />\n");
+        //
+        output.close(paths, tempfs);
     }
 }

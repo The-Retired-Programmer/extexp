@@ -22,19 +22,21 @@ import javax.json.JsonObject;
  *
  * @author richard
  */
-public class SimpleParameterFrame extends ParameterFrame {
+public class ControlFactory {
 
-
-    public SimpleParameterFrame(JsonObject jobj) {
-        this(jobj, null);
-    }
-
-    public SimpleParameterFrame(JsonObject jobj, BaseParameterFrame parent) {
-        super(jobj, parent);
-    }
-    
-    @Override
-    public void setStringFileParameter(String name, String val) throws IOException {
-        previous.setStringFileParameter(name, val);
+    public static final Control create(JsonObject jobj) throws IOException {
+        String runname = jobj.getString("Run", "");
+        if (!runname.isEmpty()) {
+            RunControl rc = new RunControl();
+            rc.parse(jobj);
+            return rc;
+        }
+        String ifdefinedname = jobj.getString("If-defined", "");
+        if (!ifdefinedname.isEmpty()) {
+            IfDefinedControl idc = new IfDefinedControl();
+            idc.parse(jobj);
+            return idc;
+        }
+        return null;
     }
 }

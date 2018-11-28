@@ -25,17 +25,17 @@ import java.util.function.Function;
  */
 public class Do {
     
-    public static void substitute(String in, Function<String, String> getparam, Writer out) throws IOException {
-        out.write(substitute(in, getparam));
+    public static void substitute(String in, Function<String, String> getoptionalparam, Writer out) throws IOException {
+        out.write(substitute(in, getoptionalparam));
     }
     
-    public static String substitute(String in, Function<String, String> getparam) {
+    public static String substitute(String in, Function<String, String> getoptionalparam) {
       StringBuilder sb = new StringBuilder();
-      substitute(in, getparam, sb);
+      substitute(in, getoptionalparam, sb);
       return sb.toString();
     }
     
-    private static void substitute(String in, Function<String, String> getparam, StringBuilder out) {
+    private static void substitute(String in, Function<String, String> getoptionalparam, StringBuilder out) {
         int p = in.indexOf("${");
         if (p == -1) {
             out.append(in);
@@ -48,14 +48,14 @@ public class Do {
         int q = in.indexOf("}", p + 2);
         String name = in.substring(p + 2, q);
 
-        fragment = getparam.apply(name);
+        fragment = getoptionalparam.apply(name);
         if (fragment != null && !fragment.isEmpty()) {
-            substitute(fragment, getparam, out);
+            substitute(fragment, getoptionalparam, out);
         }
 
         fragment = in.substring(q + 1);
         if (fragment != null && !fragment.isEmpty()) {
-            substitute(fragment, getparam, out);
+            substitute(fragment, getoptionalparam, out);
         }
     }  
 }

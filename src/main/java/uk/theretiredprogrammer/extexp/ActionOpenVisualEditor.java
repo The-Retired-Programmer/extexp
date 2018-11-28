@@ -46,7 +46,7 @@ public class ActionOpenVisualEditor extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         VisualEditorTC tc = new VisualEditorTC();
-        FileObject buildinstructions = project.getProjectDirectory().getFileObject("build_new.json");
+        FileObject buildinstructions = project.getProjectDirectory().getFileObject("build.json");
         JsonObject jobj;
         try {
             try (InputStream is = buildinstructions.getInputStream();
@@ -70,19 +70,19 @@ public class ActionOpenVisualEditor extends AbstractAction {
 
     private boolean updateBuildFile(JsonObject jobj) {
         try {
-            FileObject out = project.getProjectDirectory().getFileObject("build_new.json");
+            FileObject out = project.getProjectDirectory().getFileObject("build.json");
             if (out != null) {
 
-                FileObject bkup = project.getProjectDirectory().getFileObject("build_new.json.bkup");
+                FileObject bkup = project.getProjectDirectory().getFileObject("build.json.bkup");
                 if (bkup != null) {
                     bkup.delete();
                 }
                 FileLock fl = out.lock();
-                out.rename(fl, "build_new.json", "bkup");
+                out.rename(fl, "build.json", "bkup");
                 fl.releaseLock();
             }
             InputStream is;
-            try (OutputStream os = project.getProjectDirectory().createAndOpen("build_new.json")) {
+            try (OutputStream os = project.getProjectDirectory().createAndOpen("build.json")) {
                 is = new ByteArrayInputStream(jobj.toString().getBytes());
                 FileUtil.copy(is, os);
             }

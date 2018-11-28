@@ -17,18 +17,15 @@ package uk.theretiredprogrammer.extexp;
 
 import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IoUtil;
-import uk.theretiredprogrammer.extexp.execution.ParameterFrame;
-import uk.theretiredprogrammer.extexp.execution.ProcessStep;
+import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.lang.Math.round;
 import static java.lang.System.currentTimeMillis;
-import java.util.HashMap;
-import java.util.Map;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonStructure;
 import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
@@ -36,7 +33,11 @@ import org.openide.filesystems.FileObject;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
-import uk.theretiredprogrammer.extexp.execution.BaseParameterFrame;
+import uk.theretiredprogrammer.extexp.execution.BuildFile;
+import uk.theretiredprogrammer.extexp.execution.Command;
+import uk.theretiredprogrammer.extexp.execution.CommandSequence;
+import uk.theretiredprogrammer.extexp.execution.CommandSequenceStore;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 
 /**
  *
@@ -115,7 +116,6 @@ public class ActionsWorker implements Runnable {
                 msg,
                 err
         );
-        Map<String, JsonStructure> recipestore = new HashMap<>();
         FileObject buildinstructions = paths.getProjectfolder().getFileObject("build.json");
         if (buildinstructions == null) {
             throw new IOException("Build Instructions (build.json) is missing");
@@ -125,6 +125,25 @@ public class ActionsWorker implements Runnable {
                 JsonReader rdr = Json.createReader(is)) {
             jobj = rdr.readObject();
         }
-        ProcessStep.execute(paths, recipestore, new BaseParameterFrame(jobj));
+        CommandSequenceStore commandsequencestore = new CommandSequenceStore();
+        TemporaryFileStore temporaryfilestore = new TemporaryFileStore();
+        String parseresult = BuildFile.parse(jobj,
+                (name, sequence) -> insertSequence(commandsequencestore, name, sequence));
+        if (!parseresult.isEmpty()) {
+            throw new IOException(parseresult);
+        }
+        CommandSequence commandsequence = commandsequencestore.getSequence("MAIN");
+        if (commandsequence == null) {
+            throw new IOException("Command sequence \"MAIN\" missing");
+        }
+        for (Command command : commandsequence) {
+            ProcessCommand.execute(paths, commandsequencestore, temporaryfilestore, command);
+        }
     }
+
+    private String insertSequence(CommandSequenceStore commandsequencestore, String name, JsonArray sequence) {
+        commandsequencestore.addSequence(name, sequence);
+        return "";
+    }
+
 }

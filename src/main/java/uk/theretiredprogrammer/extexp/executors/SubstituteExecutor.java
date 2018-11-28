@@ -16,15 +16,13 @@
 package uk.theretiredprogrammer.extexp.executors;
 
 import java.io.IOException;
-import java.io.Writer;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Do;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IODescriptor;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTSTRING;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.PARAMETERDESCRIPTOR;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
-import uk.theretiredprogrammer.extexp.execution.ParameterDescriptor;
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.IOInputString;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.execution.IOWriter;
 
 /**
  *
@@ -32,17 +30,14 @@ import uk.theretiredprogrammer.extexp.execution.ParameterDescriptor;
  */
 public class SubstituteExecutor extends Executor {
 
-    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
-    private final IODescriptor<ParameterDescriptor> pd = new IODescriptor<>(PARAMETERDESCRIPTOR);
-    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
-
     @Override
-    public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{input, pd, output};
-    }
-
-    @Override
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        Do.substitute(input.getValue(), pd.getValue().parameterExtractor, output.getValue());
+    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
+        IOInputString input = new IOInputString(this.getLocalParameter("from", paths, tempfs));
+        //
+        Do.substitute(input.get(paths, tempfs), (name) -> getOptionalSubstitutedParameter(name, paths, tempfs), output.get(paths, tempfs));
+        //
+        output.close(paths, tempfs);
+        input.close(paths, tempfs);
     }
 }

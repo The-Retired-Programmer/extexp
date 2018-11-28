@@ -16,27 +16,31 @@
 package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
-import org.openide.windows.OutputWriter;
 
 /**
  *
  * @author richard
- *
  */
-public abstract class Executor extends Command {
+public abstract class Control extends Command {
     
-    public final void parse(JsonObject jobj) throws IOException{
-        for (Map.Entry<String,JsonValue> paramdef : jobj.entrySet()){
+    private final Map<String,Command> commands = new HashMap<>();
+    
+    public void parse(JsonObject jobj) throws IOException{
+        for (Entry<String,JsonValue> paramdef : jobj.entrySet()){
             JsonValue val = paramdef.getValue();
             switch (val.getValueType()){
                 case OBJECT:
+                    commands.put(paramdef.getKey(),CommandFactory.create((JsonObject) val));
+                    break;
                 case ARRAY:
-                    throw new IOException("illegal parameter type in Executor");
+                    throw new IOException("illegal parameter type in Control");
                 case STRING:
                     putParameter(paramdef.getKey(), ((JsonString) val).getString());
                     break;
@@ -55,5 +59,10 @@ public abstract class Executor extends Command {
         }
     }
     
-    public abstract void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException;
+    public Command getOptionalCommand(String name) {
+        return commands.get(name);
+    }
+    
+    public abstract void execute(IOPaths paths, CommandSequenceStore commandsequencestore,
+            TemporaryFileStore temporaryfilestore) throws IOException;
 }

@@ -15,14 +15,15 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTPATH;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.OUTPUTPATH;
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.IOInputPath;
+import uk.theretiredprogrammer.extexp.execution.IOOutputPath;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 
 /**
  *
@@ -30,19 +31,14 @@ import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMEN
  */
 public class FopExecutor extends Executor {
 
-    private final IODescriptor<String> foxsl = new IODescriptor<>("fo-xsl", INPUTPATH);
-    private final IODescriptor<String> pdf = new IODescriptor<>("pdf", OUTPUTPATH);
-
     @Override
-    public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{foxsl, pdf};
-    }
-
-    @Override
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
+    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        IOOutputPath pdf = new IOOutputPath(this.getLocalParameter("pdf", paths, tempfs));
+        IOInputPath foxsl = new IOInputPath(this.getLocalParameter("fo-xsl", paths, tempfs));
+        //
         ProcessBuilder pb = new ProcessBuilder("/Users/richard/Applications/fop-2.3/fop/fop",
-                "-fo", foxsl.getValue(),
-                "-pdf", pdf.getValue());
+                "-fo", foxsl.get(paths, tempfs),
+                "-pdf", pdf.get(paths, tempfs));
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process process = pb.start();
         try (BufferedReader fromReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -56,5 +52,8 @@ public class FopExecutor extends Executor {
         } catch (InterruptedException ex) {
             throw new IOException(ex);
         }
+        //
+        pdf.close(paths, tempfs);
+        foxsl.close(paths, tempfs);
     }
 }

@@ -17,12 +17,10 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.Point;
 import java.io.IOException;
-import java.util.Map.Entry;
 import java.util.function.Function;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
+import uk.theretiredprogrammer.extexp.execution.BuildFile;
 
 /**
  *
@@ -40,54 +38,24 @@ public class ExtexpSceneSerialise {
     public void serialize(ExtexpScene scene) {
     }
 
+    private int col;
+
     // call in AWT to deserialize scene
     public void deserialize(ExtexpScene scene, JsonObject jobj) throws IOException {
-        int col = 1;
-        boolean runwidget = false;
-        for (Entry<String, JsonValue> es : jobj.entrySet()) {
-            String name = es.getKey();
-            JsonValue content = es.getValue();
-            switch (content.getValueType()) {
-                case ARRAY:
-                    putSerial(scene, col++, name, (JsonArray) content);
-                    break;
-                case OBJECT:
-                    JsonObject jo = (JsonObject) content;
-                    if (name.equals("Run")) {
-                        putWidget(scene, 0, 0, new RunWidgetData(jo.getString("name", "**missing**")));
-                        runwidget = true;
-                    } else {
-                        throw new IOException("Deserialise - Illegal Json File content (1)");
-                    }
-                    break;
-                case STRING:
-                    String val = ((JsonString) content).getString();
-                    if (name.equals("Run")) {
-                        putWidget(scene, 0, 0, new RunWidgetData(val));
-                        runwidget = true;
-                    } else {
-                        throw new IOException("Deserialise - Illegal Json File content (2)");
-                    }
-                    break;
-                default:
-                    throw new IOException("Deserialise - Illegal Json File content (3)");
+            col = 1;
+            String parseresult = BuildFile.parse(jobj, (name, sequence) -> putSerial(scene, col++, name, sequence));
+            if (!parseresult.isEmpty()) {
+                throw new IOException(parseresult);
             }
-        }
-        if (! runwidget) {
-            putWidget(scene, 0, 0, new RunWidgetData("MAIN"));
-        }
     }
 
     private static final int ROWSTEP = 120;
     private static final int COLSTEP = 200;
 
-    private void putSerial(ExtexpScene scene, int col, String name, JsonArray content) throws IOException {
-        int row = putWidget(scene, col, 1, new SequenceWidgetData(name));
+    private String putSerial(ExtexpScene scene, int col, String name, JsonArray content) {
+        int row = putWidget(scene, col, 0, new SequenceWidgetData(name));
         for (JsonObject j : content.getValuesAs(JsonObject.class)) {
             String run = j.getString("Run", "");
-            if (!run.isEmpty()) {
-                row = putWidget(scene, col, row, new RunWidgetData(run));
-            } else {
                 String action = j.getString("action", "");
                 switch (action) {
                     case "markdown-substitute":
@@ -115,10 +83,10 @@ public class ExtexpSceneSerialise {
                         row = putWidget(scene, col, row, new XsltExecutorWidgetData());
                         break;
                     default:
-                        throw new IOException("Unknown Json Object action: "+action);
+                        return "Unknown Json Object action: " + action;
                 }
-            }
         }
+        return "";
     }
 
     private int putWidget(ExtexpScene scene, int col, int row, WidgetData widgetdata) {

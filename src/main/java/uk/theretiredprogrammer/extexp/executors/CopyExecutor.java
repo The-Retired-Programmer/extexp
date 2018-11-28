@@ -15,32 +15,28 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import java.awt.datatransfer.DataFlavor;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IODescriptor;
 import java.io.IOException;
-import java.io.Writer;
 import org.openide.windows.OutputWriter;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.INPUTSTRING;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.IOInputString;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.execution.IOWriter;
 
 /**
  *
  * @author richard
  */
 public class CopyExecutor extends Executor {
-    
-    private final IODescriptor<String> input = new IODescriptor<>("from", INPUTSTRING);
-    private final IODescriptor<Writer> output = new IODescriptor<>("from", WRITER);
-    
 
     @Override
-    public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{input, output};
-    }
-    
-    @Override
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
-        output.getValue().write(input.getValue());
+    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
+        IOInputString input = new IOInputString(this.getLocalParameter("from", paths, tempfs));
+        //
+        output.get(paths, tempfs).write(input.get(paths, tempfs));
+        //
+        output.close(paths, tempfs);
+        input.close(paths, tempfs);
     }
 }

@@ -15,17 +15,23 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import java.util.function.Function;
+import java.io.IOException;
 
 /**
  *
  * @author richard
  */
-public class ParameterDescriptor {
+public class IOOutputPath extends IO<String> {
 
-    public final Function<String, String> parameterExtractor;
+    public IOOutputPath(String parametervalue) {
+        super(parametervalue);
+    }
 
-    public ParameterDescriptor(Function<String, String> parameterExtractor) {
-        this.parameterExtractor = parameterExtractor;
+    @Override
+    String setup(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        if (parametervalue.startsWith("!")) {
+            throw new IOException("Cannot use temporary filestore  for output path , please use a real filestore object");
+        }
+        return paths.getOutPath() + "/" + parametervalue;
     }
 }

@@ -16,8 +16,6 @@
 package uk.theretiredprogrammer.extexp.executors;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -28,9 +26,10 @@ import javax.xml.transform.stream.StreamSource;
 import org.openide.windows.OutputWriter;
 import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IODescriptor;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.READER;
-import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMENT.WRITER;
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.IOReader;
+import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.execution.IOWriter;
 
 /**
  *
@@ -38,27 +37,26 @@ import static uk.theretiredprogrammer.extexp.execution.IODescriptor.IOREQUIREMEN
  */
 public class XsltExecutor extends Executor {
 
-    private final IODescriptor<Reader> input = new IODescriptor<>("from", READER);
-    private final IODescriptor<Reader> stylesheet = new IODescriptor<>("stylesheet", READER);
-    private final IODescriptor<Writer> output = new IODescriptor<>("to", WRITER);
-
     @Override
-    public IODescriptor[] getIODescriptors() {
-        return new IODescriptor[]{input, stylesheet, output};
-    }
-
-    @Override
-    public void execute(OutputWriter msg, OutputWriter err) throws IOException {
+    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
+        IOReader input = new IOReader(this.getLocalParameter("from", paths, tempfs));
+        IOReader stylesheet = new IOReader(this.getLocalParameter("stylesheet", paths, tempfs));
+        //
         try {
             Transformer tr;
-            tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet.getValue()));
+            tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet.get(paths, tempfs)));
             DOMResult dr = new DOMResult();
-            tr.transform(new StreamSource(input.getValue()), dr);
+            tr.transform(new StreamSource(input.get(paths, tempfs)), dr);
             //
             tr = TransformerFactory.newInstance().newTransformer();
-            tr.transform(new DOMSource((Document) dr.getNode()), new StreamResult(output.getValue()));
+            tr.transform(new DOMSource((Document) dr.getNode()), new StreamResult(output.get(paths, tempfs)));
         } catch (TransformerException ex) {
             throw new IOException(ex);
         }
+        //
+        output.close(paths, tempfs);
+        input.close(paths, tempfs);
+        stylesheet.close(paths, tempfs);
     }
 }
