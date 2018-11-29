@@ -33,7 +33,7 @@ public class ExecutorFactory {
 
     public static final Executor create(JsonObject jobj) throws IOException {
         Executor exec;
-        String actionname = jobj.getString("action", "");
+        String actionname = jobj.getString("Do", "");
         switch (actionname) {
             case "markdown":
                 exec = new MarkdownExecutor();
