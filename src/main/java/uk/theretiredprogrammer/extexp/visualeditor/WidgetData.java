@@ -20,6 +20,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /*
@@ -42,18 +43,18 @@ public abstract class WidgetData {
 
     private final List<PinDef> pinlist = new ArrayList<>();
     
-    static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-    static final Image EXECUTORIMAGE = ImageUtilities.loadImage(EXECUTORIMAGENAME); // NOI18N
-    static final String CONTROLIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/star.png";
-    static final Image CONTROLIMAGE = ImageUtilities.loadImage(CONTROLIMAGENAME); // NOI18N
-    static final String FILESOURCEIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/script.png";
-    static final Image FILESOURCEIMAGE = ImageUtilities.loadImage(FILESOURCEIMAGENAME); // NOI18N
-    static final String FILETARGETIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/disk.png";
-    static final Image FILETARGETIMAGE = ImageUtilities.loadImage(FILETARGETIMAGENAME); // NOI18N
-    static final String PARAMETERSOURCEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/comment.png";
-    static final Image PARAMETERSOURCEIMAGE = ImageUtilities.loadImage(PARAMETERSOURCEIMAGENAME); // N  OI18N
-    static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
-    static final Image IFIMAGE = ImageUtilities.loadImage(IFIMAGENAME); // NOI18N
+    protected static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
+    protected static final Image EXECUTORIMAGE = ImageUtilities.loadImage(EXECUTORIMAGENAME); // NOI18N
+    protected static final String CONTROLIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/star.png";
+    protected static final Image CONTROLIMAGE = ImageUtilities.loadImage(CONTROLIMAGENAME); // NOI18N
+    protected static final String FILESOURCEIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/script.png";
+    protected static final Image FILESOURCEIMAGE = ImageUtilities.loadImage(FILESOURCEIMAGENAME); // NOI18N
+    protected static final String FILETARGETIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/disk.png";
+    protected static final Image FILETARGETIMAGE = ImageUtilities.loadImage(FILETARGETIMAGENAME); // NOI18N
+    protected static final String PARAMETERSOURCEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/comment.png";
+    protected static final Image PARAMETERSOURCEIMAGE = ImageUtilities.loadImage(PARAMETERSOURCEIMAGENAME); // N  OI18N
+    protected static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
+    protected static final Image IFIMAGE = ImageUtilities.loadImage(IFIMAGENAME); // NOI18N
 
     public abstract CategoryType getCategoryType();
 
@@ -71,7 +72,7 @@ public abstract class WidgetData {
         return pinlist;
     }
 
-    final void addPinDef(PinDef pindef) {
+    protected final void addPinDef(PinDef pindef) {
         pinlist.add(pindef);
     }
 }

@@ -15,13 +15,11 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
+import java.awt.Image;
 import java.io.IOException;
-import uk.theretiredprogrammer.extexp.execution.Command;
-import uk.theretiredprogrammer.extexp.execution.CommandSequenceStore;
-import uk.theretiredprogrammer.extexp.execution.Control;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
-import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
 /**
  *
@@ -39,6 +37,43 @@ public class RunControl extends Control {
         for (Command child : commandsequencestore.getSequence(runval)) {
             child.setParent(this);
             ProcessCommand.execute(newpaths, commandsequencestore, newTFS, child);
+        }
+    }
+
+    @Override
+    public WidgetData getWidgetData() {
+        return new RunWidgetData();
+    }
+
+    private class RunWidgetData extends WidgetData {
+
+        public RunWidgetData(String recipe) {
+            addPinDef(new PinDef("description"));
+            addPinDef(new PinDef(recipe));
+        }
+
+        public RunWidgetData() {
+            this("*recipe*");
+        }
+
+        @Override
+        public Image getWidgetImage() {
+            return CONTROLIMAGE;
+        }
+
+        @Override
+        public String getWidgetImageName() {
+            return CONTROLIMAGENAME;
+        }
+
+        @Override
+        public CategoryChildren.CategoryType getCategoryType() {
+            return CategoryChildren.CategoryType.CONTROL;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "Run";
         }
     }
 }

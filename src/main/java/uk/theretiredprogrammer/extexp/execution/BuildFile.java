@@ -15,11 +15,17 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.function.BiFunction;
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.JsonValue;
+import org.openide.filesystems.FileObject;
+import org.openide.windows.OutputWriter;
 
 /**
  *
@@ -27,7 +33,46 @@ import javax.json.JsonValue;
  */
 public class BuildFile {
 
-    public static String parse(JsonObject jobj,BiFunction<String, JsonArray, String> sequencehandler) {
+    public static ExecutionEnvironment initAndParse(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException {
+        IOPaths paths = new IOPaths(
+                projectfolder,
+                projectfolder.getFileObject("src"),
+                IoUtil.useOrCreateFolder(projectfolder, "cache"),
+                IoUtil.useOrCreateFolder(projectfolder, "output"),
+                IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
+                "resources/",
+                msg,
+                err
+        );
+        FileObject buildinstructions = paths.getProjectfolder().getFileObject("build.json");
+        if (buildinstructions == null) {
+            throw new IOException("Build Instructions (build.json) is missing");
+        }
+        JsonObject jobj;
+        try (InputStream is = buildinstructions.getInputStream();
+                JsonReader rdr = Json.createReader(is)) {
+            jobj = rdr.readObject();
+        }
+        CommandSequenceStore commandsequencestore = new CommandSequenceStore();
+        TemporaryFileStore temporaryfilestore = new TemporaryFileStore();
+        String parseresult = BuildFile.parse(jobj,
+                (name, sequence) -> insertSequence(commandsequencestore, name, sequence));
+        if (!parseresult.isEmpty()) {
+            throw new IOException(parseresult);
+        }
+        CommandSequence commandsequence = commandsequencestore.getSequence("MAIN");
+        if (commandsequence == null) {
+            throw new IOException("Command sequence \"MAIN\" missing");
+        }
+        return new ExecutionEnvironment(paths, temporaryfilestore, commandsequencestore);
+    }
+
+    private static String insertSequence(CommandSequenceStore commandsequencestore, String name, JsonArray sequence) {
+        commandsequencestore.addSequence(name, sequence);
+        return "";
+    }
+
+    private static String parse(JsonObject jobj, BiFunction<String, JsonArray, String> sequencehandler) {
         for (Map.Entry<String, JsonValue> es : jobj.entrySet()) {
             String name = es.getKey();
             JsonValue content = es.getValue();

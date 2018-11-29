@@ -16,8 +16,8 @@
 package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
@@ -26,27 +26,36 @@ import javax.json.JsonObject;
  * @author richard
  */
 public class CommandSequenceStore {
-    
-    private Map<String,CommandSequence> commandsequences = new HashMap<>();
-    
-    public String addSequence(String name, JsonArray sequence){
+
+    private List<NamedCommandSequence> commandsequences = new ArrayList<>();
+
+    public String addSequence(String name, JsonArray sequence) {
         try {
-            commandsequences.put(name, getCommandSequence(sequence));
+            commandsequences.add(new NamedCommandSequence(name, getCommandSequence(sequence)));
             return "";
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
         }
     }
-    
-    private CommandSequence getCommandSequence(JsonArray sequence) throws IOException{
+
+    private CommandSequence getCommandSequence(JsonArray sequence) throws IOException {
         CommandSequence res = new CommandSequence();
         for (JsonObject jobj : sequence.getValuesAs(JsonObject.class)) {
             res.add(CommandFactory.create(jobj));
         }
         return res;
     }
-    
+
     public CommandSequence getSequence(String name) {
-        return commandsequences.get(name);
+        for (NamedCommandSequence ncs :commandsequences){
+            if (ncs.name.equals(name)) {
+                return ncs.commandsequence;
+            }
+        }
+        return null;
+    }
+
+    public List<NamedCommandSequence> getNamedSequences() {
+        return commandsequences;
     }
 }

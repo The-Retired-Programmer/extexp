@@ -15,13 +15,11 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
+import java.awt.Image;
 import java.io.IOException;
-import uk.theretiredprogrammer.extexp.execution.Command;
-import uk.theretiredprogrammer.extexp.execution.CommandSequenceStore;
-import uk.theretiredprogrammer.extexp.execution.Control;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
-import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
 /**
  *
@@ -46,4 +44,40 @@ public class IfDefinedControl extends Control {
             }
         }
     }
+
+    @Override
+    public WidgetData getWidgetData() {
+        return new IfDefinedWidgetData();
+    }
+
+    private class IfDefinedWidgetData extends WidgetData {
+
+        public IfDefinedWidgetData() {
+            addPinDef(new PinDef("description"));
+            addPinDef(new PinDef("param"));
+            addPinDef(new PinDef("then"));
+            addPinDef(new PinDef("else"));
+        }
+
+        @Override
+        public Image getWidgetImage() {
+            return IFIMAGE;
+        }
+
+        @Override
+        public String getWidgetImageName() {
+            return IFIMAGENAME;
+        }
+
+        @Override
+        public CategoryChildren.CategoryType getCategoryType() {
+            return CategoryChildren.CategoryType.CONTROL;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "If Defined";
+        }
+    }
+
 }

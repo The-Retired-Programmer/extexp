@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
+import java.awt.Image;
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +28,8 @@ import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
 /**
  *
@@ -66,5 +70,40 @@ public class MarkdownExecutor extends Executor {
         output.close(paths, tempfs);
         input.close(paths, tempfs);
         template.close(paths, tempfs);
+    }
+
+    @Override
+    public WidgetData getWidgetData() {
+        return new MarkdownExecutorWidgetData();
+    }
+
+    private class MarkdownExecutorWidgetData extends WidgetData {
+
+        public MarkdownExecutorWidgetData() {
+            addPinDef(new PinDef("description"));
+            addPinDef(new PinDef("from"));
+            addPinDef(new PinDef("template"));
+            addPinDef(new PinDef("to"));
+        }
+
+        @Override
+        public Image getWidgetImage() {
+            return EXECUTORIMAGE;
+        }
+
+        @Override
+        public String getWidgetImageName() {
+            return EXECUTORIMAGENAME;
+        }
+
+        @Override
+        public CategoryChildren.CategoryType getCategoryType() {
+            return CategoryChildren.CategoryType.EXECUTOR;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "Markdown";
+        }
     }
 }

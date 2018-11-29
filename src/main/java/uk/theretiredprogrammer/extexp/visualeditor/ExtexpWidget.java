@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
+import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;

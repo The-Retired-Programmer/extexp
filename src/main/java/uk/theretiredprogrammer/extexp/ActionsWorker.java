@@ -15,17 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp;
 
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
-import uk.theretiredprogrammer.extexp.execution.IoUtil;
 import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
 import java.io.IOException;
-import java.io.InputStream;
 import static java.lang.Math.round;
 import static java.lang.System.currentTimeMillis;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
@@ -36,8 +29,7 @@ import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.BuildFile;
 import uk.theretiredprogrammer.extexp.execution.Command;
 import uk.theretiredprogrammer.extexp.execution.CommandSequence;
-import uk.theretiredprogrammer.extexp.execution.CommandSequenceStore;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 
 /**
  *
@@ -106,44 +98,9 @@ public class ActionsWorker implements Runnable {
 
     private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException, TransformerException {
         msg.println("Building...");
-        IOPaths paths = new IOPaths(
-                projectfolder,
-                projectfolder.getFileObject("src"),
-                IoUtil.useOrCreateFolder(projectfolder, "cache"),
-                IoUtil.useOrCreateFolder(projectfolder, "output"),
-                IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
-                "resources/",
-                msg,
-                err
-        );
-        FileObject buildinstructions = paths.getProjectfolder().getFileObject("build.json");
-        if (buildinstructions == null) {
-            throw new IOException("Build Instructions (build.json) is missing");
-        }
-        JsonObject jobj;
-        try (InputStream is = buildinstructions.getInputStream();
-                JsonReader rdr = Json.createReader(is)) {
-            jobj = rdr.readObject();
-        }
-        CommandSequenceStore commandsequencestore = new CommandSequenceStore();
-        TemporaryFileStore temporaryfilestore = new TemporaryFileStore();
-        String parseresult = BuildFile.parse(jobj,
-                (name, sequence) -> insertSequence(commandsequencestore, name, sequence));
-        if (!parseresult.isEmpty()) {
-            throw new IOException(parseresult);
-        }
-        CommandSequence commandsequence = commandsequencestore.getSequence("MAIN");
-        if (commandsequence == null) {
-            throw new IOException("Command sequence \"MAIN\" missing");
-        }
-        for (Command command : commandsequence) {
-            ProcessCommand.execute(paths, commandsequencestore, temporaryfilestore, command);
+        ExecutionEnvironment env = BuildFile.initAndParse(projectfolder, msg, err);
+        for (Command command : env.commandsequences.getSequence("MAIN")) {
+            ProcessCommand.execute(env.paths, env.commandsequences, env.tempfs, command);
         }
     }
-
-    private String insertSequence(CommandSequenceStore commandsequencestore, String name, JsonArray sequence) {
-        commandsequencestore.addSequence(name, sequence);
-        return "";
-    }
-
 }

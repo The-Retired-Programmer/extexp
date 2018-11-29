@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
+import java.awt.Image;
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
@@ -25,6 +27,8 @@ import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
 /**
  *
@@ -97,5 +101,41 @@ public class ImagesetExecutor extends Executor {
         out.append("px\" />\n");
         //
         output.close(paths, tempfs);
+    }
+
+    @Override
+    public WidgetData getWidgetData() {
+        return new ImagesetExecutorWidgetData();
+    }
+
+    private class ImagesetExecutorWidgetData extends WidgetData {
+
+        public ImagesetExecutorWidgetData() {
+            addPinDef(new PinDef("description"));
+            addPinDef(new PinDef("image"));
+            addPinDef(new PinDef("width"));
+            addPinDef(new PinDef("height"));
+            addPinDef(new PinDef("to"));
+        }
+
+        @Override
+        public Image getWidgetImage() {
+            return EXECUTORIMAGE;
+        }
+
+        @Override
+        public String getWidgetImageName() {
+            return EXECUTORIMAGENAME;
+        }
+
+        @Override
+        public CategoryChildren.CategoryType getCategoryType() {
+            return CategoryChildren.CategoryType.EXECUTOR;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "Imageset";
+        }
     }
 }

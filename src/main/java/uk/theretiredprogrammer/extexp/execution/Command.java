@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,4 +117,6 @@ public abstract class Command  {
         }
         return false;
     }
+    
+    public abstract WidgetData getWidgetData();
 }

@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
+import java.awt.Image;
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,6 +26,8 @@ import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOOutputPath;
 import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
 /**
  *
@@ -55,5 +59,39 @@ public class FopExecutor extends Executor {
         //
         pdf.close(paths, tempfs);
         foxsl.close(paths, tempfs);
+    }
+
+    @Override
+    public WidgetData getWidgetData() {
+        return new FopExecutorWidgetData();
+    }
+
+    private class FopExecutorWidgetData extends WidgetData {
+
+        public FopExecutorWidgetData() {
+            addPinDef(new PinDef("description"));
+            addPinDef(new PinDef("fo-xsl"));
+            addPinDef(new PinDef("pdf"));
+        }
+
+        @Override
+        public Image getWidgetImage() {
+            return EXECUTORIMAGE;
+        }
+
+        @Override
+        public String getWidgetImageName() {
+            return EXECUTORIMAGENAME;
+        }
+
+        @Override
+        public CategoryChildren.CategoryType getCategoryType() {
+            return CategoryChildren.CategoryType.EXECUTOR;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "FOP";
+        }
     }
 }

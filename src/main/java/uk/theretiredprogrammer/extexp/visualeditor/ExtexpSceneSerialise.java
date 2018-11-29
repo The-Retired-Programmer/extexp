@@ -17,10 +17,16 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.Point;
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.extexp.execution.BuildFile;
+import uk.theretiredprogrammer.extexp.execution.Command;
+import uk.theretiredprogrammer.extexp.execution.CommandSequence;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.execution.NamedCommandSequence;
+import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
 
 /**
  *
@@ -41,52 +47,21 @@ public class ExtexpSceneSerialise {
     private int col;
 
     // call in AWT to deserialize scene
-    public void deserialize(ExtexpScene scene, JsonObject jobj) throws IOException {
-            col = 1;
-            String parseresult = BuildFile.parse(jobj, (name, sequence) -> putSerial(scene, col++, name, sequence));
-            if (!parseresult.isEmpty()) {
-                throw new IOException(parseresult);
-            }
+    public void deserialize(ExtexpScene scene, ExecutionEnvironment env) throws IOException {
+        col = 1;
+        for (NamedCommandSequence ncs : env.commandsequences.getNamedSequences()) {
+            putSerial(scene, col++, ncs.name, ncs.commandsequence);
+        }
     }
 
     private static final int ROWSTEP = 120;
     private static final int COLSTEP = 200;
 
-    private String putSerial(ExtexpScene scene, int col, String name, JsonArray content) {
+    private void putSerial(ExtexpScene scene, int col, String name, CommandSequence commandsequence) {
         int row = putWidget(scene, col, 0, new SequenceWidgetData(name));
-        for (JsonObject j : content.getValuesAs(JsonObject.class)) {
-            String run = j.getString("Run", "");
-                String action = j.getString("action", "");
-                switch (action) {
-                    case "markdown-substitute":
-                        row = putWidget(scene, col, row, new MarkdownAndSubstituteExecutorWidgetData());
-                        break;
-                    case "markdown":
-                        row = putWidget(scene, col, row, new MarkdownExecutorWidgetData());
-                        break;
-                    case "copy":
-                        row = putWidget(scene, col, row, new CopyExecutorWidgetData());
-                        break;
-                    case "if-defined":
-                        row = putWidget(scene, col, row, new IfDefinedWidgetData());
-                        break;
-                    case "fop":
-                        row = putWidget(scene, col, row, new FopExecutorWidgetData());
-                        break;
-                    case "create-imageset":
-                        row = putWidget(scene, col, row, new ImagesetExecutorWidgetData());
-                        break;
-                    case "substitute":
-                        row = putWidget(scene, col, row, new SubstituteExecutorWidgetData());
-                        break;
-                    case "xslt":
-                        row = putWidget(scene, col, row, new XsltExecutorWidgetData());
-                        break;
-                    default:
-                        return "Unknown Json Object action: " + action;
-                }
+        for (Command command : commandsequence ) {
+            row = putWidget(scene, col, row, command.getWidgetData());
         }
-        return "";
     }
 
     private int putWidget(ExtexpScene scene, int col, int row, WidgetData widgetdata) {

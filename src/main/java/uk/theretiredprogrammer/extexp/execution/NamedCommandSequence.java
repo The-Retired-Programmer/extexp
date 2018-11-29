@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.visualeditor;
-
-import org.netbeans.api.visual.vmd.VMDPinWidget;
+package uk.theretiredprogrammer.extexp.execution;
 
 /**
  *
  * @author richard
  */
-public class ExtexpPinWidget extends VMDPinWidget {
+public class NamedCommandSequence {
     
-    public ExtexpPinWidget(final ExtexpScene scene, PinDef pindef) {
-        super(scene);
-        this.setPinName(pindef.getName());
+    public String name;
+    public CommandSequence commandsequence;
+    
+    public NamedCommandSequence(String name, CommandSequence commandsequence) {
+        this.name = name;
+        this.commandsequence = commandsequence;
     }
 }

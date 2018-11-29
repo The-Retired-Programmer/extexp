@@ -29,21 +29,6 @@ package uk.theretiredprogrammer.extexp.visualeditor.palette;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.nodes.Index;
-import uk.theretiredprogrammer.extexp.visualeditor.CopyExecutorWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.CreateRecipeWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.FileSourceWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.FileTargetWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.FopExecutorWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.IfDefinedWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.ImagesetExecutorWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.MarkdownAndSubstituteExecutorWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.MarkdownExecutorWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.ParameterSourceWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.SequenceWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.SubstituteExecutorWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.TemporaryFileInputOutputWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.RunWidgetData;
-import uk.theretiredprogrammer.extexp.visualeditor.XsltExecutorWidgetData;
 
 /**
  *
@@ -62,29 +47,29 @@ public class WidgetDataChildren  extends Index.ArrayChildren {
         List<WidgetDataNode> childrenNodes = new ArrayList<>();
         switch (category.getType()) {
             case CONTROL:
-                childrenNodes.add(new WidgetDataNode(new SequenceWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new IfDefinedWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new CreateRecipeWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new RunWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new SequenceWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new IfDefinedWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new CreateRecipeWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new RunWidgetData()));
                 break;
             case EXECUTOR:
-                childrenNodes.add(new WidgetDataNode(new CopyExecutorWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new FopExecutorWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new ImagesetExecutorWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new MarkdownAndSubstituteExecutorWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new MarkdownExecutorWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new SubstituteExecutorWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new XsltExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new CopyExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new FopExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new ImagesetExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new MarkdownAndSubstituteExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new MarkdownExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new SubstituteExecutorWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new XsltExecutorWidgetData()));
                 break;
             case SOURCE:
-                childrenNodes.add(new WidgetDataNode(new ParameterSourceWidgetData()));
-                childrenNodes.add(new WidgetDataNode(new FileSourceWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new ParameterSourceWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new FileSourceWidgetData()));
                 break;
             case TARGET:
-                childrenNodes.add(new WidgetDataNode(new FileTargetWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new FileTargetWidgetData()));
                 break;
             case BOTH:
-                childrenNodes.add(new WidgetDataNode(new TemporaryFileInputOutputWidgetData()));
+//                childrenNodes.add(new WidgetDataNode(new TemporaryFileInputOutputWidgetData()));
                 break;
             case CONNECTOR:
         }

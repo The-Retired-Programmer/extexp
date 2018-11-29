@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
+import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
+import java.awt.Image;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import java.io.IOException;
 import org.openide.windows.OutputWriter;
@@ -22,6 +24,8 @@ import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputString;
 import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
+import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
 /**
  *
@@ -39,4 +43,39 @@ public class CopyExecutor extends Executor {
         output.close(paths, tempfs);
         input.close(paths, tempfs);
     }
+
+    @Override
+    public WidgetData getWidgetData() {
+        return new CopyExecutorWidgetData();
+    }
+
+    private class CopyExecutorWidgetData extends WidgetData {
+
+        public CopyExecutorWidgetData() {
+            addPinDef(new PinDef("description"));
+            addPinDef(new PinDef("from"));
+            addPinDef(new PinDef("to"));
+        }
+
+        @Override
+        public Image getWidgetImage() {
+            return EXECUTORIMAGE;
+        }
+
+        @Override
+        public String getWidgetImageName() {
+            return EXECUTORIMAGENAME;
+        }
+
+        @Override
+        public CategoryChildren.CategoryType getCategoryType() {
+            return CategoryChildren.CategoryType.EXECUTOR;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "Copy";
+        }
+    }
+
 }

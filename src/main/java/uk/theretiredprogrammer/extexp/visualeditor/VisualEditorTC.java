@@ -15,6 +15,7 @@ import org.openide.awt.ActionID;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 
 /**
@@ -58,8 +59,8 @@ public final class VisualEditorTC extends TopComponent {
         serialiser.setOutputFunction(savesource);
     }
     
-    public void deserialise(JsonObject jobj) throws IOException {
-        serialiser.deserialize(scene,jobj);
+    public void deserialise(ExecutionEnvironment env) throws IOException {
+        serialiser.deserialize(scene,env);
     }
 
     /**
