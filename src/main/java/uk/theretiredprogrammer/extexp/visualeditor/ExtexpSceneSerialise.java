@@ -54,11 +54,13 @@ public class ExtexpSceneSerialise {
 
     private static final int ROWSTEP = 120;
     private static final int COLSTEP = 200;
+    private static final int COLINITOFFSET = 100;
+    private static final int ROWINITOFFSET = 20;
 
     private void putSequence(ExtexpScene scene, String name, CommandSequence commandsequence) {
         row = 0;
         ExtexpWidget previouswidget = putWidget(scene, new SequenceWidgetData(name));
-        for (Command command : commandsequence ) {
+        for (Command command : commandsequence) {
             ExtexpWidget currentwidget = putWidget(scene, command.getWidgetData());
             scene.insertConnection(previouswidget, currentwidget);
             previouswidget = currentwidget;
@@ -66,8 +68,8 @@ public class ExtexpSceneSerialise {
     }
 
     private ExtexpWidget putWidget(ExtexpScene scene, WidgetData widgetdata) {
-        int x = COLSTEP * col;
-        int y = ROWSTEP * row++;
+        int x = COLINITOFFSET + COLSTEP * col;
+        int y = ROWINITOFFSET + ROWSTEP * row++;
         return scene.insertWidget(widgetdata, new Point(x, y));
     }
 }

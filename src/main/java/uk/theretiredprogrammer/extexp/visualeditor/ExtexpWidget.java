@@ -41,6 +41,7 @@ public class ExtexpWidget extends VMDNodeWidget {
 
     private final LayerWidget connectionlayer;
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public ExtexpWidget(final ExtexpScene scene, final LayerWidget widgetlayer, WidgetData widgetdata, Point pos, LayerWidget connectionlayer) {
         super(scene);
         this.connectionlayer = connectionlayer;
@@ -49,7 +50,6 @@ public class ExtexpWidget extends VMDNodeWidget {
         this.setNodeImage(widgetdata.getWidgetImage());
         for (PinDef pin : widgetdata.getPinDefList()) {
             attachPinWidget(new ExtexpPinWidget(scene, pin));
-            //(scene, nodeid, pin.getName(), null));
         }
         widgetlayer.addChild(this);
         //
