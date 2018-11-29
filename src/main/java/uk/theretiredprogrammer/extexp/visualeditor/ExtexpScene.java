@@ -19,8 +19,6 @@ import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -32,8 +30,6 @@ import static uk.theretiredprogrammer.extexp.visualeditor.WidgetData.DATA_FLAVOR
 
 public class ExtexpScene extends VMDGraphScene {
 
-    private Map<String, WidgetData> nodetodata = new HashMap<>();
-    private Map<String, Map<String, String>> nodetonamesandids = new HashMap<>();
     private final LayerWidget layerwidget;
     private final LayerWidget connectionlayerwidget;
     /**
@@ -59,27 +55,17 @@ public class ExtexpScene extends VMDGraphScene {
                 try {
                     WidgetData widgetdata = (WidgetData) transferable.getTransferData(DATA_FLAVOR_WIDGETDATA);
                     insertWidget(widgetdata, point);
-//                    Map<String, String> namesandIDs = Widgets.createWidget(layerwidget, widgetdata, point);
-//                    String nodeid = getNodeId(namesandIDs);
-//                    nodetodata.put(nodeid, widgetdata);
-//                    nodetonamesandids.put(nodeid, namesandIDs);
                 } catch (UnsupportedFlavorException | IOException ex) {
                 }
             }
         }));
     }
     
-    public void insertWidget(WidgetData widgetdata, Point point) {
-        ExtexpWidget w = new ExtexpWidget(ExtexpScene.this, widgetdata, point, connectionlayerwidget);
-        layerwidget.addChild(w);
+    public ExtexpWidget insertWidget(WidgetData widgetdata, Point point) {
+        return new ExtexpWidget(this, layerwidget, widgetdata, point, connectionlayerwidget);
     }
     
-    private String getNodeId(Map<String, String> namesandIDs) {
-        for(String value : namesandIDs.values()){
-            if (value.startsWith("node")) {
-                return value;
-            }
-        }
-        return null;
+    public ExtexpConnection insertConnection(ExtexpWidget source, ExtexpWidget target){
+        return new ExtexpConnection(this, connectionlayerwidget, source, target);
     }
 }

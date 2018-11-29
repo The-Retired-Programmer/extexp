@@ -20,22 +20,13 @@ import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.util.ImageUtilities;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /*
- * Item.java
- *
- * Created on September 21, 2006, 9:09 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- *
- * To understand this class, see https://platform.netbeans.org/tutorials/nbm-nodesapi3.html
  */
 /**
  *
- * @author Geertjan Wielenga
+ * @author Richard
  */
 public abstract class WidgetData {
 
@@ -55,6 +46,8 @@ public abstract class WidgetData {
     protected static final Image PARAMETERSOURCEIMAGE = ImageUtilities.loadImage(PARAMETERSOURCEIMAGENAME); // N  OI18N
     protected static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
     protected static final Image IFIMAGE = ImageUtilities.loadImage(IFIMAGENAME); // NOI18N
+    protected static final String RUNIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
+    protected static final Image RUNIMAGE = ImageUtilities.loadImage(RUNIMAGENAME); // NOI18N
 
     public abstract CategoryType getCategoryType();
 

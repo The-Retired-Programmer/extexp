@@ -17,16 +17,12 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.Point;
 import java.io.IOException;
-import java.util.Map.Entry;
 import java.util.function.Function;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.extexp.execution.BuildFile;
 import uk.theretiredprogrammer.extexp.execution.Command;
 import uk.theretiredprogrammer.extexp.execution.CommandSequence;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.execution.NamedCommandSequence;
-import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
 
 /**
  *
@@ -45,37 +41,33 @@ public class ExtexpSceneSerialise {
     }
 
     private int col;
+    private int row;
 
     // call in AWT to deserialize scene
     public void deserialize(ExtexpScene scene, ExecutionEnvironment env) throws IOException {
-        col = 1;
+        col = 0;
         for (NamedCommandSequence ncs : env.commandsequences.getNamedSequences()) {
-            putSerial(scene, col++, ncs.name, ncs.commandsequence);
+            putSequence(scene, ncs.name, ncs.commandsequence);
+            col++;
         }
     }
 
     private static final int ROWSTEP = 120;
     private static final int COLSTEP = 200;
 
-    private void putSerial(ExtexpScene scene, int col, String name, CommandSequence commandsequence) {
-        int row = putWidget(scene, col, 0, new SequenceWidgetData(name));
+    private void putSequence(ExtexpScene scene, String name, CommandSequence commandsequence) {
+        row = 0;
+        ExtexpWidget previouswidget = putWidget(scene, new SequenceWidgetData(name));
         for (Command command : commandsequence ) {
-            row = putWidget(scene, col, row, command.getWidgetData());
+            ExtexpWidget currentwidget = putWidget(scene, command.getWidgetData());
+            scene.insertConnection(previouswidget, currentwidget);
+            previouswidget = currentwidget;
         }
     }
 
-    private int putWidget(ExtexpScene scene, int col, int row, WidgetData widgetdata) {
-        int x;
-        int y;
-//            int x = j.getInt("x", -1);
-//            int y = j.getInt("y", -1);
-//            if (x == -1) {
-        x = COLSTEP * col;
-//            }
-//            if (y == -1) {
-        y = ROWSTEP * row++;
-//            }
-        scene.insertWidget(widgetdata, new Point(x, y));
-        return row;
+    private ExtexpWidget putWidget(ExtexpScene scene, WidgetData widgetdata) {
+        int x = COLSTEP * col;
+        int y = ROWSTEP * row++;
+        return scene.insertWidget(widgetdata, new Point(x, y));
     }
 }

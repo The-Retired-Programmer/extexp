@@ -58,12 +58,12 @@ public class RunControl extends Control {
 
         @Override
         public Image getWidgetImage() {
-            return CONTROLIMAGE;
+            return RUNIMAGE;
         }
 
         @Override
         public String getWidgetImageName() {
-            return CONTROLIMAGENAME;
+            return RUNIMAGENAME;
         }
 
         @Override
