@@ -30,7 +30,6 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
         iconBase = "uk/theretiredprogrammer/extexp/visualeditor/zoom.png",
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
-@TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "uk.theretiredprogrammer.extexp.visualeditor.VisualEditorTC")
 @Messages({
     "CTL_VETopComponent=Build Editor",
