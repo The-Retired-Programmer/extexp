@@ -57,9 +57,10 @@ public class IfDefinedControl extends Control {
 
 
         public IfDefinedWidgetData() {
-            addPinDef(new PinDef("If Defined", IfDefinedControl.this.getParam("If-defined")));
-            addPinDef(new PinDef("then"));
-            addPinDef(new PinDef("else"));
+            addPinDef("If-defined", new PinDef("If Defined", IfDefinedControl.this.getParam("If-defined")));
+            addPinDef("then", new PinDef("then"));
+            addPinDef("else", new PinDef("else"));
+            addExtraPinDefs(IfDefinedControl.this.getParams());
         }
 
         @Override

@@ -30,7 +30,7 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
  * @author richard
  */
 public class SubstituteExecutor extends Executor {
-    
+
     private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
     @Override
@@ -50,10 +50,11 @@ public class SubstituteExecutor extends Executor {
     }
 
     private class SubstituteExecutorWidgetData extends WidgetData {
-        
+
         public SubstituteExecutorWidgetData() {
-            addPinDef(new PinDef("from", SubstituteExecutor.this.getParam("from")));
-            addPinDef(new PinDef("to", SubstituteExecutor.this.getParam("to")));
+            addPinDef("from", new PinDef("from", SubstituteExecutor.this.getParam("from")));
+            addPinDef("to", new PinDef("to", SubstituteExecutor.this.getParam("to")));
+            addExtraPinDefs(SubstituteExecutor.this.getParams(),"Do");
         }
 
         @Override

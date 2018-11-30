@@ -48,6 +48,10 @@ public abstract class Command {
     protected String getParam(String name) {
         return parameters.get(name);
     }
+    
+    protected Map<String,String> getParams() {
+        return parameters;
+    }
 
     public String getOptionalLocalParameter(String name) {
         String val = parameters.get(name);

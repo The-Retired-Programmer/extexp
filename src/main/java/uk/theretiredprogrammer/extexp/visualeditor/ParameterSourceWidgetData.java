@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.Cate
 public class ParameterSourceWidgetData extends WidgetData {
     
     public ParameterSourceWidgetData() {
-        addPinDef(new PinDef("the parameter value"));
+        addPinDef("the parameter value", new PinDef("the parameter value"));
     }
     
     @Override

@@ -23,17 +23,18 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.Cate
  * @author richard
  */
 public class TemporaryFileInputOutputWidgetData extends WidgetData {
-    
+
     public TemporaryFileInputOutputWidgetData() {
-        addPinDef(new PinDef("the temporary file name"));
-        addPinDef(new PinDef("target"));
-        addPinDef(new PinDef("source"));
+        addPinDef("the temporary file name", new PinDef("the temporary file name"));
+        addPinDef("target", new PinDef("target"));
+        addPinDef("source", new PinDef("source"));
     }
-    
+
+    @Override
     public Image getWidgetImage() {
         return FILESOURCEIMAGE;
     }
-    
+
     @Override
     public String getWidgetImageName() {
         return FILESOURCEIMAGENAME;

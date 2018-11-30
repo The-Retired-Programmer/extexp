@@ -13,24 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
-
-import org.netbeans.api.visual.vmd.VMDPinWidget;
-import uk.theretiredprogrammer.extexp.visualeditor.ExtexpScene;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
+package uk.theretiredprogrammer.extexp.visualeditor;
 
 /**
  *
  * @author richard
  */
-public class ExtexpPinWidget extends VMDPinWidget {
+public class NamedPinDef {
     
-    public ExtexpPinWidget(final ExtexpScene scene, PinDef pindef) {
-        super(scene);
-        pindef.configPin(this);
+    public String name;
+    public PinDef pindef;
+    
+    public NamedPinDef(String name, PinDef pindef) {
+        this.name = name;
+        this.pindef = pindef;
     }
-    
-   public ExtexpPinWidget(final ExtexpScene scene) {
-        super(scene);
-    } 
 }

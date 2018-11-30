@@ -46,11 +46,13 @@ public class RunControl extends Control {
     }
 
     private class RunWidgetData extends WidgetData {
-        
-        private static final String RUNIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
+
+        private static final String RUNIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
 
         public RunWidgetData() {
-            addPinDef(new PinDef("Run", RunControl.this.getParam("Run")));
+            addPinDef("Run", new PinDef("Run", RunControl.this.getParam("Run")));
+            addPinDef("path", new PinDef("path", RunControl.this.getParam("path"), PinDef.OPTIONAL));
+            addExtraPinDefs(RunControl.this.getParams());
         }
 
         @Override

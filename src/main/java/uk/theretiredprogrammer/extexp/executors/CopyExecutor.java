@@ -53,8 +53,9 @@ public class CopyExecutor extends Executor {
         private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public CopyExecutorWidgetData() {
-            addPinDef(new PinDef("from", CopyExecutor.this.getParam("from")));
-            addPinDef(new PinDef("to", CopyExecutor.this.getParam("to")));
+            addPinDef("from", new PinDef("from", CopyExecutor.this.getParam("from")));
+            addPinDef("to", new PinDef("to", CopyExecutor.this.getParam("to")));
+            addExtraPinDefs(CopyExecutor.this.getParams(),"Do");
         }
 
         @Override

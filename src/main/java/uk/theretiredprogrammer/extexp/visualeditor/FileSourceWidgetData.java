@@ -25,9 +25,10 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.Cate
 public class FileSourceWidgetData extends WidgetData {
     
     public FileSourceWidgetData() {
-        addPinDef(new PinDef("path/to/the/file.ext"));
+        addPinDef("path/to/the/file.ext", new PinDef("path/to/the/file.ext"));
     }
     
+    @Override
     public Image getWidgetImage() {
         return FILESOURCEIMAGE;
     }

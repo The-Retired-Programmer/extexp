@@ -32,7 +32,7 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
  * @author richard
  */
 public class FopExecutor extends Executor {
-    
+
     @Override
     protected void executecommand() throws IOException {
         IOOutputPath pdf = new IOOutputPath(ee, this.getLocalParameter("pdf"));
@@ -65,12 +65,13 @@ public class FopExecutor extends Executor {
     }
 
     private class FopExecutorWidgetData extends WidgetData {
-        
+
         private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public FopExecutorWidgetData() {
-            addPinDef(new PinDef("fo-xsl", FopExecutor.this.getParam("fo-xsl")));
-            addPinDef(new PinDef("pdf", FopExecutor.this.getParam("pdf")));
+            addPinDef("fo-xsl", new PinDef("fo-xsl", FopExecutor.this.getParam("fo-xsl")));
+            addPinDef("pdf", new PinDef("pdf", FopExecutor.this.getParam("pdf")));
+            addExtraPinDefs(FopExecutor.this.getParams(),"Do");
         }
 
         @Override

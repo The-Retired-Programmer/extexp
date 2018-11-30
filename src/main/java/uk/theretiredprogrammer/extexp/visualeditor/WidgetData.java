@@ -19,6 +19,7 @@ import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
@@ -32,19 +33,20 @@ public abstract class WidgetData {
 
     public static final DataFlavor DATA_FLAVOR_WIDGETDATA = new DataFlavor(WidgetData.class, "widgetdata");
 
-    private final List<PinDef> pinlist = new ArrayList<>();
-    
-    protected static final String FILESOURCEIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/script.png";
+    private final List<NamedPinDef> pinlist = new ArrayList<>();
+    private final List<PinDef> extrapinlist = new ArrayList<>();
+
+    protected static final String FILESOURCEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/script.png";
     protected static final Image FILESOURCEIMAGE = ImageUtilities.loadImage(FILESOURCEIMAGENAME); // NOI18N
-    protected static final String FILETARGETIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/disk.png";
+    protected static final String FILETARGETIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/disk.png";
     protected static final Image FILETARGETIMAGE = ImageUtilities.loadImage(FILETARGETIMAGENAME); // NOI18N
     protected static final String PARAMETERSOURCEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/comment.png";
     protected static final Image PARAMETERSOURCEIMAGE = ImageUtilities.loadImage(PARAMETERSOURCEIMAGENAME); // N  OI18N
-    
+
     public abstract CategoryType getCategoryType();
 
     public abstract Image getWidgetImage();
-    
+
     public abstract String getWidgetImageName();
 
     public abstract String getDisplayName();
@@ -53,11 +55,37 @@ public abstract class WidgetData {
         return DATA_FLAVOR_WIDGETDATA;
     }
 
-    public List<PinDef> getPinDefList() {
+    public List<NamedPinDef> getPinDefList() {
         return pinlist;
     }
 
-    protected final void addPinDef(PinDef pindef) {
-        pinlist.add(pindef);
+    public List<PinDef> getExtraPinDefList() {
+        return extrapinlist;
+    }
+
+    protected final void addPinDef(String pname, PinDef pindef) {
+        pinlist.add(new NamedPinDef(pname, pindef));
+    }
+
+    protected final void addExtraPinDefs(Map<String, String> parameters) {
+        parameters.entrySet().forEach((param) -> {
+            String pname = param.getKey();
+            if (hasnotprocessed(pname)) {
+                extrapinlist.add(new PinDef(pname, param.getValue()));
+            }
+        });
+    }
+
+    protected final void addExtraPinDefs(Map<String, String> parameters, String exclude) {
+        parameters.entrySet().forEach((param) -> {
+            String pname = param.getKey();
+            if ((!exclude.equals(pname)) && hasnotprocessed(pname)) {
+                extrapinlist.add(new PinDef(pname, param.getValue()));
+            }
+        });
+    }
+
+    private boolean hasnotprocessed(String pname) {
+        return pinlist.stream().noneMatch((npd) -> (npd.name.equals(pname)));
     }
 }

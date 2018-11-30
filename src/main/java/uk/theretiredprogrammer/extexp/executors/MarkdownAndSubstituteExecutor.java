@@ -80,9 +80,10 @@ public class MarkdownAndSubstituteExecutor extends Executor {
         private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public MarkdownAndSubstituteExecutorWidgetData() {
-            addPinDef(new PinDef("from", MarkdownAndSubstituteExecutor.this.getParam("from")));
-            addPinDef(new PinDef("template", MarkdownAndSubstituteExecutor.this.getParam("template"), PinDef.OPTIONAL));
-            addPinDef(new PinDef("to", MarkdownAndSubstituteExecutor.this.getParam("to")));
+            addPinDef("from", new PinDef("from", MarkdownAndSubstituteExecutor.this.getParam("from")));
+            addPinDef("template", new PinDef("template", MarkdownAndSubstituteExecutor.this.getParam("template"), PinDef.OPTIONAL));
+            addPinDef("to", new PinDef("to", MarkdownAndSubstituteExecutor.this.getParam("to")));
+            addExtraPinDefs(MarkdownAndSubstituteExecutor.this.getParams(),"Do");
         }
 
         @Override

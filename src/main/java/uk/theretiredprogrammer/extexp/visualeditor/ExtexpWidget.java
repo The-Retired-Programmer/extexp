@@ -19,6 +19,7 @@ import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -42,22 +43,30 @@ public class ExtexpWidget extends VMDNodeWidget {
     private final LayerWidget connectionlayer;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public ExtexpWidget(final ExtexpScene scene, final LayerWidget widgetlayer, WidgetData widgetdata, Point pos, LayerWidget connectionlayer) {
+    public ExtexpWidget(final ExtexpScene scene, final LayerWidget widgetlayer,
+            WidgetData widgetdata, Point pos, LayerWidget connectionlayer) {
         super(scene);
         this.connectionlayer = connectionlayer;
         setNodeName(widgetdata.getDisplayName());
         setPreferredLocation(pos);
         this.setNodeImage(widgetdata.getWidgetImage());
-        for (PinDef pin : widgetdata.getPinDefList()) {
-            attachPinWidget(new ExtexpPinWidget(scene, pin));
+        widgetdata.getPinDefList().forEach((npin) -> {
+            attachPinWidget(new ExtexpPinWidget(scene, npin.pindef));
+        });
+        List<PinDef> extrapins = widgetdata.getExtraPinDefList();
+        if (!extrapins.isEmpty()) {
+            attachPinWidget(new ExtexpPinWidget(scene));
+            extrapins.forEach((pin) -> {
+                attachPinWidget(new ExtexpPinWidget(scene, pin));
+            });
         }
         widgetlayer.addChild(this);
         //
         getActions().addAction(ActionFactory.createExtendedConnectAction(
-               null,
-           connectionlayer, 
-           new ExtexpConnectProvider(),
-           MouseEvent.SHIFT_MASK
+                null,
+                connectionlayer,
+                new ExtexpConnectProvider(),
+                MouseEvent.SHIFT_MASK
         )
         );
         getActions().addAction(ActionFactory.createMoveAction());

@@ -36,7 +36,7 @@ public class ImagesetExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        IOWriter output = new IOWriter(ee,this.getLocalParameter("to"));
+        IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
         //
         String imagestring = getSubstitutedParameter("image");
         int p = imagestring.lastIndexOf('.');
@@ -107,14 +107,15 @@ public class ImagesetExecutor extends Executor {
     }
 
     private class ImagesetExecutorWidgetData extends WidgetData {
-        
+
         private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public ImagesetExecutorWidgetData() {
-            addPinDef(new PinDef("image",ImagesetExecutor.this.getParam("image"),PinDef.INHERITED));
-            addPinDef(new PinDef("width",ImagesetExecutor.this.getParam("width"),PinDef.INHERITED));
-            addPinDef(new PinDef("height",ImagesetExecutor.this.getParam("height"),PinDef.INHERITED));
-            addPinDef(new PinDef("to", ImagesetExecutor.this.getParam("from")));
+            addPinDef("image", new PinDef("image", ImagesetExecutor.this.getParam("image"), PinDef.INHERITED));
+            addPinDef("width", new PinDef("width", ImagesetExecutor.this.getParam("width"), PinDef.INHERITED));
+            addPinDef("height", new PinDef("height", ImagesetExecutor.this.getParam("height"), PinDef.INHERITED));
+            addPinDef("to", new PinDef("to", ImagesetExecutor.this.getParam("from")));
+            addExtraPinDefs(ImagesetExecutor.this.getParams(),"Do");
         }
 
         @Override

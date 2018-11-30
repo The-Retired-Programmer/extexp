@@ -72,9 +72,10 @@ public class XsltExecutor extends Executor {
         private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public XsltExecutorWidgetData() {
-            addPinDef(new PinDef("from", XsltExecutor.this.getParam("from")));
-            addPinDef(new PinDef("Stylesheet", XsltExecutor.this.getParam("stylesheet")));
-            addPinDef(new PinDef("to", XsltExecutor.this.getParam("to")));
+            addPinDef("from", new PinDef("from", XsltExecutor.this.getParam("from")));
+            addPinDef("stylesheet", new PinDef("stylesheet", XsltExecutor.this.getParam("stylesheet")));
+            addPinDef("to", new PinDef("to", XsltExecutor.this.getParam("to")));
+            addExtraPinDefs(XsltExecutor.this.getParams(),"Do");
         }
 
         @Override
