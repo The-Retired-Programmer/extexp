@@ -15,24 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import java.io.IOException;
-
 /**
  *
  * @author richard
  */
-public class IOInputPath extends IO<String> {
-
-    public IOInputPath(ExecutionEnvironment ee, String parametervalue) {
-        super(ee, parametervalue);
-    }
-
-    @Override
-    String setup() throws IOException {
-        String content = ee.tempfs.get(parametervalue);
-        return (content != null
-                ? IoUtil.stringToFile(ee.paths.getCachefolder(), parametervalue, content)
-                : IoUtil.findFile(parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder()))
-                .getPath();
-    }
+class EnvironmentEnvironment {
+    
 }

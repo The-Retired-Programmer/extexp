@@ -30,26 +30,26 @@ public class IOWriter extends IO<Writer> {
     private Writer writer;
     private String tempfilename;
 
-    public IOWriter(String parametervalue) {
-        super(parametervalue);
+    public IOWriter(ExecutionEnvironment ee, String parametervalue) {
+        super(ee, parametervalue);
     }
 
     @Override
-    Writer setup(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+    Writer setup() throws IOException {
         if (parametervalue.startsWith("!")) {
             writer = new StringWriter();
             tempfilename = parametervalue.substring(1);
         } else {
-            writer = new BufferedWriter(new OutputStreamWriter(IoUtil.getOutputStream(paths.getOutfolder(), parametervalue)));
+            writer = new BufferedWriter(new OutputStreamWriter(IoUtil.getOutputStream(ee.paths.getOutfolder(), parametervalue)));
         }
         return writer;
     }
 
     @Override
-    void drop(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+    void drop() throws IOException {
         writer.close();
         if (writer instanceof StringWriter) {
-            tempfs.put(tempfilename, ((StringWriter) writer).toString());
+            ee.tempfs.put(tempfilename, ((StringWriter) writer).toString());
         }
     }
 

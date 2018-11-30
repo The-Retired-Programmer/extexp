@@ -18,12 +18,9 @@ package uk.theretiredprogrammer.extexp.executors;
 import java.awt.Image;
 import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
-import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Do;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputString;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
@@ -35,14 +32,14 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class SubstituteExecutor extends Executor {
 
     @Override
-    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
-        IOInputString input = new IOInputString(this.getLocalParameter("from", paths, tempfs));
+    protected void executecommand() throws IOException {
+        IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
+        IOInputString input = new IOInputString(ee, this.getLocalParameter("from"));
         //
-        Do.substitute(input.get(paths, tempfs), (name) -> getOptionalSubstitutedParameter(name, paths, tempfs), output.get(paths, tempfs));
+        Do.substitute(input.get(), (name) -> getOptionalSubstitutedParameter(name), output.get());
         //
-        output.close(paths, tempfs);
-        input.close(paths, tempfs);
+        output.close();
+        input.close();
     }
 
     @Override

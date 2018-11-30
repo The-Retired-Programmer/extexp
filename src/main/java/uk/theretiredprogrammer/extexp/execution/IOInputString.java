@@ -22,16 +22,16 @@ import java.io.IOException;
  * @author richard
  */
 public class IOInputString extends IO<String> {
-    
-    public IOInputString(String parametervalue){
-        super(parametervalue);
+
+    public IOInputString(ExecutionEnvironment ee, String parametervalue) {
+        super(ee, parametervalue);
     }
 
     @Override
-    String setup(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        String content = tempfs.get(parametervalue);
+    String setup() throws IOException {
+        String content = ee.tempfs.get(parametervalue);
         return content == null
-                ? IoUtil.findFile(parametervalue, paths.getContentfolder(), paths.getSharedcontentfolder()).asText()
+                ? IoUtil.findFile(parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder()).asText()
                 : content;
     }
 }

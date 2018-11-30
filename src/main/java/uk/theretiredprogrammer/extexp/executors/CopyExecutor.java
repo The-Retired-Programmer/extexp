@@ -19,10 +19,7 @@ import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.awt.Image;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import java.io.IOException;
-import org.openide.windows.OutputWriter;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputString;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
@@ -34,14 +31,14 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class CopyExecutor extends Executor {
 
     @Override
-    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
-        IOInputString input = new IOInputString(this.getLocalParameter("from", paths, tempfs));
+    protected void executecommand() throws IOException {
+        IOWriter output = new IOWriter(ee,this.getLocalParameter("to"));
+        IOInputString input = new IOInputString(ee,this.getLocalParameter("from"));
         //
-        output.get(paths, tempfs).write(input.get(paths, tempfs));
+        output.get().write(input.get());
         //
-        output.close(paths, tempfs);
-        input.close(paths, tempfs);
+        output.close();
+        input.close();
     }
 
     @Override

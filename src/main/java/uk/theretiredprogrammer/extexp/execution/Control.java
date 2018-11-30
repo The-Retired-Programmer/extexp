@@ -62,7 +62,4 @@ public abstract class Control extends Command {
     public Command getOptionalCommand(String name) {
         return commands.get(name);
     }
-    
-    public abstract void execute(IOPaths paths, CommandSequenceStore commandsequencestore,
-            TemporaryFileStore temporaryfilestore) throws IOException;
 }

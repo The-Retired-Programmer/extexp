@@ -22,11 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
@@ -38,22 +35,22 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class MarkdownExecutor extends Executor {
 
     @Override
-    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
-        IOInputPath input = new IOInputPath(this.getLocalParameter("from", paths, tempfs));
-        IOInputPath template = new IOInputPath(this.getOptionalLocalParameter("template", paths, tempfs));
+    protected void executecommand() throws IOException {
+        IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
+        IOInputPath input = new IOInputPath(ee, this.getLocalParameter("from"));
+        IOInputPath template = new IOInputPath(ee, this.getOptionalLocalParameter("template"));
         //
         ProcessBuilder pb;
-        String templatepath = template.get(paths, tempfs);
+        String templatepath = template.get();
         if (templatepath == null) {
             pb = new ProcessBuilder("/usr/local/bin/kramdown", "--no-auto-ids");
         } else {
             pb = new ProcessBuilder("/usr/local/bin/kramdown", "--no-auto-ids", "--template", templatepath);
         }
-        pb.redirectInput(new File(input.get(paths, tempfs)));
+        pb.redirectInput(new File(input.get()));
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process process = pb.start();
-        Writer out = output.get(paths, tempfs);
+        Writer out = output.get();
         try (BufferedReader from = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = from.readLine()) != null) {
@@ -67,9 +64,9 @@ public class MarkdownExecutor extends Executor {
             throw new IOException(ex);
         }
         //
-        output.close(paths, tempfs);
-        input.close(paths, tempfs);
-        template.close(paths, tempfs);
+        output.close();
+        input.close();
+        template.close();
     }
 
     @Override

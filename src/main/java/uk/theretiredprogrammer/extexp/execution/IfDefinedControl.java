@@ -28,19 +28,19 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class IfDefinedControl extends Control {
 
     @Override
-    public void execute(IOPaths paths, CommandSequenceStore commandsequencestore, TemporaryFileStore tempfs) throws IOException {
-        String ifparam = getLocalParameter("If-defined", paths, tempfs);
-        if (isParamDefined(ifparam, paths, tempfs)) {
+    protected void executecommand() throws IOException {
+        String ifparam = getLocalParameter("If-defined");
+        if (isParamDefined(ifparam)) {
             Command thenpart = getOptionalCommand("then");
             if (thenpart != null) {
                 thenpart.setParent(this);
-                ProcessCommand.execute(paths, commandsequencestore, tempfs, thenpart);
+                thenpart.execute(ee);
             }
         } else {
             Command elsepart = getOptionalCommand("else");
             if (elsepart != null) {
                 elsepart.setParent(this);
-                ProcessCommand.execute(paths, commandsequencestore, tempfs, elsepart);
+                elsepart.execute(ee);
             }
         }
     }
@@ -53,8 +53,12 @@ public class IfDefinedControl extends Control {
     private class IfDefinedWidgetData extends WidgetData {
 
         public IfDefinedWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("param"));
+            String desc = IfDefinedControl.this.getParam("description");
+            if (desc != null) {
+                addPinDef(new PinDef("description: " + desc));
+            }
+            String test = IfDefinedControl.this.getParam("If-defined");
+            addPinDef(new PinDef("test: " + test));
             addPinDef(new PinDef("then"));
             addPinDef(new PinDef("else"));
         }

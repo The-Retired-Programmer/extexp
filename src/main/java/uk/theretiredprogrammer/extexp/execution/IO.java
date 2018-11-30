@@ -23,25 +23,27 @@ import java.io.IOException;
  */
 public abstract class IO<T> {
 
-    String parametervalue;
+    final String parametervalue;
+    protected final ExecutionEnvironment ee;
 
-    public IO(String parametervalue) {
+    public IO(ExecutionEnvironment ee, String parametervalue) {
         this.parametervalue = parametervalue;
+        this.ee = ee;
     }
 
-    public final T get(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        return parametervalue == null ? null : setup(paths, tempfs);
+    public final T get() throws IOException {
+        return parametervalue == null ? null : setup();
     }
 
-    abstract T setup(IOPaths paths, TemporaryFileStore tempfs) throws IOException;
+    abstract T setup() throws IOException;
 
-    public final void close(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+    public final void close() throws IOException {
         if (parametervalue != null) {
-            drop(paths, tempfs);
+            drop();
         }
     }
 
-    void drop(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+    void drop() throws IOException {
         // overwrite if closing activities required
     }
 

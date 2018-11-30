@@ -20,12 +20,9 @@ import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOOutputPath;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
@@ -34,21 +31,21 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
  * @author richard
  */
 public class FopExecutor extends Executor {
-
+    
     @Override
-    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        IOOutputPath pdf = new IOOutputPath(this.getLocalParameter("pdf", paths, tempfs));
-        IOInputPath foxsl = new IOInputPath(this.getLocalParameter("fo-xsl", paths, tempfs));
+    protected void executecommand() throws IOException {
+        IOOutputPath pdf = new IOOutputPath(ee, this.getLocalParameter("pdf"));
+        IOInputPath foxsl = new IOInputPath(ee, this.getLocalParameter("fo-xsl"));
         //
         ProcessBuilder pb = new ProcessBuilder("/Users/richard/Applications/fop-2.3/fop/fop",
-                "-fo", foxsl.get(paths, tempfs),
-                "-pdf", pdf.get(paths, tempfs));
+                "-fo", foxsl.get(),
+                "-pdf", pdf.get());
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process process = pb.start();
         try (BufferedReader fromReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = fromReader.readLine()) != null) {
-                msg.println(line);
+                ee.paths.getMsg().println(line);
             }
         }
         try {
@@ -57,8 +54,8 @@ public class FopExecutor extends Executor {
             throw new IOException(ex);
         }
         //
-        pdf.close(paths, tempfs);
-        foxsl.close(paths, tempfs);
+        pdf.close();
+        foxsl.close();
     }
 
     @Override
@@ -69,7 +66,6 @@ public class FopExecutor extends Executor {
     private class FopExecutorWidgetData extends WidgetData {
 
         public FopExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
             addPinDef(new PinDef("fo-xsl"));
             addPinDef(new PinDef("pdf"));
         }

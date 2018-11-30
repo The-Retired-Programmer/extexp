@@ -22,10 +22,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
 import org.openide.filesystems.FileObject;
-import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
@@ -37,19 +34,19 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class ImagesetExecutor extends Executor {
 
     @Override
-    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
+    protected void executecommand() throws IOException {
+        IOWriter output = new IOWriter(ee,this.getLocalParameter("to"));
         //
-        String imagestring = getSubstitutedParameter("image", paths, tempfs);
+        String imagestring = getSubstitutedParameter("image");
         int p = imagestring.lastIndexOf('.');
         String fn = imagestring.substring(0, p);
         String fext = imagestring.substring(p + 1);
         int fnsize = fn.length();
-        String widthstring = getSubstitutedParameter("width", paths, tempfs);
-        String heightstring = getSubstitutedParameter("height", paths, tempfs);
+        String widthstring = getSubstitutedParameter("width");
+        String heightstring = getSubstitutedParameter("height");
         Map<Integer, String> images = new TreeMap<>();
-        String relativeresourcesfolderpath = paths.getRelativepath();
-        for (FileObject child : paths.getResourcesfolder().getChildren()) {
+        String relativeresourcesfolderpath = ee.paths.getRelativepath();
+        for (FileObject child : ee.paths.getResourcesfolder().getChildren()) {
             if (child.isData()) {
                 String cn = child.getName();
                 String cext = child.getExt();
@@ -73,7 +70,7 @@ public class ImagesetExecutor extends Executor {
                 }
             }
         }
-        Writer out = output.get(paths, tempfs);
+        Writer out = output.get();
         out.append("<img width=\"");
         out.append(widthstring);
         out.append("\" height=\"");
@@ -100,7 +97,7 @@ public class ImagesetExecutor extends Executor {
         out.append(widthstring);
         out.append("px\" />\n");
         //
-        output.close(paths, tempfs);
+        output.close();
     }
 
     @Override

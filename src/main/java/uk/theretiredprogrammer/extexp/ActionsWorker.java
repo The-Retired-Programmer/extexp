@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp;
 
-import uk.theretiredprogrammer.extexp.execution.ProcessCommand;
 import java.io.IOException;
 import static java.lang.Math.round;
 import static java.lang.System.currentTimeMillis;
@@ -28,7 +27,6 @@ import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.BuildFile;
 import uk.theretiredprogrammer.extexp.execution.Command;
-import uk.theretiredprogrammer.extexp.execution.CommandSequence;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 
 /**
@@ -100,7 +98,7 @@ public class ActionsWorker implements Runnable {
         msg.println("Building...");
         ExecutionEnvironment env = BuildFile.initAndParse(projectfolder, msg, err);
         for (Command command : env.commandsequences.getSequence("MAIN")) {
-            ProcessCommand.execute(env.paths, env.commandsequences, env.tempfs, command);
+            command.execute(env);
         }
     }
 }

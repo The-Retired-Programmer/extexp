@@ -23,15 +23,15 @@ import java.io.IOException;
  */
 public class IOOutputPath extends IO<String> {
 
-    public IOOutputPath(String parametervalue) {
-        super(parametervalue);
+    public IOOutputPath(ExecutionEnvironment ee, String parametervalue) {
+        super(ee, parametervalue);
     }
 
     @Override
-    String setup(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+    String setup() throws IOException {
         if (parametervalue.startsWith("!")) {
             throw new IOException("Cannot use temporary filestore  for output path , please use a real filestore object");
         }
-        return paths.getOutPath() + "/" + parametervalue;
+        return ee.paths.getOutPath() + "/" + parametervalue;
     }
 }

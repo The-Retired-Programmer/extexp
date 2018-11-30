@@ -28,15 +28,14 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class RunControl extends Control {
 
     @Override
-    public void execute(IOPaths paths, CommandSequenceStore commandsequencestore,
-            TemporaryFileStore tempfs) throws IOException {
-        String pval = getOptionalLocalParameter("path", paths, tempfs);
-        IOPaths newpaths = pval == null ? paths : paths.updatePath(pval);
-        String runval = getLocalParameter("Run", paths, tempfs);
+    protected void executecommand() throws IOException {
+        String pval = getOptionalLocalParameter("path");
+        IOPaths newpaths = pval == null ? ee.paths : ee.paths.updatePath(pval);
+        String runval = getLocalParameter("Run");
         TemporaryFileStore newTFS = new TemporaryFileStore();
-        for (Command child : commandsequencestore.getSequence(runval)) {
+        for (Command child : ee.commandsequences.getSequence(runval)) {
             child.setParent(this);
-            ProcessCommand.execute(newpaths, commandsequencestore, newTFS, child);
+            child.execute(new ExecutionEnvironment(newpaths, newTFS, ee.commandsequences));
         }
     }
 
@@ -47,13 +46,9 @@ public class RunControl extends Control {
 
     private class RunWidgetData extends WidgetData {
 
-        public RunWidgetData(String recipe) {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef(recipe));
-        }
-
         public RunWidgetData() {
-            this("*recipe*");
+            String sequencename = RunControl.this.getParam("Run");
+            addPinDef(new PinDef("Run: "+sequencename));
         }
 
         @Override

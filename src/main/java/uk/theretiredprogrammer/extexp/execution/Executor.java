@@ -21,7 +21,6 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
-import org.openide.windows.OutputWriter;
 
 /**
  *
@@ -54,6 +53,4 @@ public abstract class Executor extends Command {
             }
         }
     }
-    
-    public abstract void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException;
 }

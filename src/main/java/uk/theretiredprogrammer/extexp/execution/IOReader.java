@@ -29,21 +29,21 @@ public class IOReader extends IO<Reader> {
 
     private Reader reader;
 
-    public IOReader(String parametervalue) {
-        super(parametervalue);
+    public IOReader(ExecutionEnvironment ee, String parametervalue) {
+        super(ee, parametervalue);
     }
 
     @Override
-    Reader setup(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        String content = tempfs.get(parametervalue);
+    Reader setup() throws IOException {
+        String content = ee.tempfs.get(parametervalue);
         return reader = content == null
                 ? new BufferedReader(new InputStreamReader(IoUtil.findFile(parametervalue,
-                        paths.getContentfolder(), paths.getSharedcontentfolder()).getInputStream()))
+                        ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder()).getInputStream()))
                 : new StringReader(content);
     }
 
     @Override
-    void drop(IOPaths paths, TemporaryFileStore tempfs) throws IOException {
+    void drop() throws IOException {
         reader.close();
     }
 

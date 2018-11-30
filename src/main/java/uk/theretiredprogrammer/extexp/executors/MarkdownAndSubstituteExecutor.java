@@ -21,12 +21,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.execution.Do;
 import uk.theretiredprogrammer.extexp.execution.Executor;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
-import uk.theretiredprogrammer.extexp.execution.TemporaryFileStore;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
@@ -38,19 +35,19 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class MarkdownAndSubstituteExecutor extends Executor {
 
     @Override
-    public void execute(OutputWriter msg, OutputWriter err, IOPaths paths, TemporaryFileStore tempfs) throws IOException {
-        IOWriter output = new IOWriter(this.getLocalParameter("to", paths, tempfs));
-        IOInputPath input = new IOInputPath(this.getLocalParameter("from", paths, tempfs));
-        IOInputPath template = new IOInputPath(this.getOptionalLocalParameter("template", paths, tempfs));
+    protected void executecommand() throws IOException {
+        IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
+        IOInputPath input = new IOInputPath(ee, this.getLocalParameter("from"));
+        IOInputPath template = new IOInputPath(ee, this.getOptionalLocalParameter("template"));
         //
         ProcessBuilder pb;
-        String templatepath = template.get(paths, tempfs);
+        String templatepath = template.get();
         if (templatepath == null) {
             pb = new ProcessBuilder("/usr/local/bin/kramdown", "--no-auto-ids");
         } else {
             pb = new ProcessBuilder("/usr/local/bin/kramdown", "--no-auto-ids", "--template", templatepath);
         }
-        pb.redirectInput(new File(input.get(paths, tempfs)));
+        pb.redirectInput(new File(input.get()));
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process process = pb.start();
         StringBuilder sb = new StringBuilder();
@@ -66,11 +63,11 @@ public class MarkdownAndSubstituteExecutor extends Executor {
         } catch (InterruptedException ex) {
             throw new IOException(ex);
         }
-        Do.substitute(sb.toString(), (name) -> getOptionalSubstitutedParameter(name, paths, tempfs), output.get(paths, tempfs));
+        Do.substitute(sb.toString(), (name) -> getOptionalSubstitutedParameter(name), output.get());
         //
-        output.close(paths, tempfs);
-        input.close(paths, tempfs);
-        template.close(paths, tempfs);
+        output.close();
+        input.close();
+        template.close();
     }
 
     @Override
