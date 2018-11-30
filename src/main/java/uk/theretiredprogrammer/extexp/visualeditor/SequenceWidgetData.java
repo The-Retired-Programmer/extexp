@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.Image;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /**
@@ -23,20 +24,18 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.Cate
  * @author richard
  */
 public class SequenceWidgetData extends WidgetData {
-
+    
+    private static final String CONTROLIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/star.png";
+    
     private String name;
     
     public SequenceWidgetData(String name) {
         this.name = name;
     }
     
-    public SequenceWidgetData() {
-        this("MAIN");
-    }
-    
     @Override
     public Image getWidgetImage() {
-        return CONTROLIMAGE;
+        return ImageUtilities.loadImage(CONTROLIMAGENAME);
     }
     
     @Override

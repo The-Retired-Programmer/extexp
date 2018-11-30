@@ -15,19 +15,54 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
+import java.awt.Color;
+import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
+
 /**
  *
  * @author richard
  */
 public class PinDef {
-    
+
+    public static final int REQUIRED = 0;
+    public static final int INHERITED = 1;
+    public static final int OPTIONAL = 2;
+
     private final String name;
-    
+    private final Color foreground;
+
     public PinDef(String name) {
         this.name = name;
+        foreground = Color.BLACK;
     }
-    
-    public String getName() {
-        return name;
+
+    public PinDef(String name, String value) {
+        this(name, value, 0);
+    }
+
+    public PinDef(String name, String value, int valuetype) {
+        if (value != null) {
+            this.name = name + ": " + value;
+            foreground = Color.BLACK;
+            return;
+        }
+        switch (valuetype) {
+            case INHERITED:
+                foreground = Color.ORANGE;
+                this.name = name + ": ??inherited??";
+                break;
+            case OPTIONAL:
+                foreground = Color.BLACK;
+                this.name = name + ": <<undefined - is optional>>";
+                break;
+            default: // case REQUIRED or any other unknown valuetypes
+                foreground = Color.CYAN;
+                this.name = name + ": <<undefined>>";
+        }
+    }
+
+    public void configPin(ExtexpPinWidget pin) {
+        pin.setForeground(foreground);
+        pin.setPinName(name);
     }
 }

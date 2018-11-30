@@ -27,6 +27,6 @@ public class ExtexpPinWidget extends VMDPinWidget {
     
     public ExtexpPinWidget(final ExtexpScene scene, PinDef pindef) {
         super(scene);
-        this.setPinName(pindef.getName());
+        pindef.configPin(this);
     }
 }

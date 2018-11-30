@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
@@ -76,16 +77,17 @@ public class MarkdownExecutor extends Executor {
 
     private class MarkdownExecutorWidgetData extends WidgetData {
 
+        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
+
         public MarkdownExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("from"));
-            addPinDef(new PinDef("template"));
-            addPinDef(new PinDef("to"));
+            addPinDef(new PinDef("from", MarkdownExecutor.this.getParam("from")));
+            addPinDef(new PinDef("template", MarkdownExecutor.this.getParam("template"), PinDef.OPTIONAL));
+            addPinDef(new PinDef("to", MarkdownExecutor.this.getParam("to")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override

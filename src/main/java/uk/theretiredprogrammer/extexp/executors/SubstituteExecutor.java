@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.extexp.executors;
 import java.awt.Image;
 import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
-import uk.theretiredprogrammer.extexp.execution.Do;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputString;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
@@ -30,13 +30,15 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
  * @author richard
  */
 public class SubstituteExecutor extends Executor {
+    
+    private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
     @Override
     protected void executecommand() throws IOException {
         IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
         IOInputString input = new IOInputString(ee, this.getLocalParameter("from"));
         //
-        Do.substitute(input.get(), (name) -> getOptionalSubstitutedParameter(name), output.get());
+        substitute(input.get(), (name) -> getOptionalSubstitutedParameter(name), output.get());
         //
         output.close();
         input.close();
@@ -48,16 +50,15 @@ public class SubstituteExecutor extends Executor {
     }
 
     private class SubstituteExecutorWidgetData extends WidgetData {
-
+        
         public SubstituteExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("from"));
-            addPinDef(new PinDef("to"));
+            addPinDef(new PinDef("from", SubstituteExecutor.this.getParam("from")));
+            addPinDef(new PinDef("to", SubstituteExecutor.this.getParam("to")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override

@@ -34,21 +34,13 @@ public abstract class WidgetData {
 
     private final List<PinDef> pinlist = new ArrayList<>();
     
-    protected static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-    protected static final Image EXECUTORIMAGE = ImageUtilities.loadImage(EXECUTORIMAGENAME); // NOI18N
-    protected static final String CONTROLIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/star.png";
-    protected static final Image CONTROLIMAGE = ImageUtilities.loadImage(CONTROLIMAGENAME); // NOI18N
     protected static final String FILESOURCEIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/script.png";
     protected static final Image FILESOURCEIMAGE = ImageUtilities.loadImage(FILESOURCEIMAGENAME); // NOI18N
     protected static final String FILETARGETIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/disk.png";
     protected static final Image FILETARGETIMAGE = ImageUtilities.loadImage(FILETARGETIMAGENAME); // NOI18N
     protected static final String PARAMETERSOURCEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/comment.png";
     protected static final Image PARAMETERSOURCEIMAGE = ImageUtilities.loadImage(PARAMETERSOURCEIMAGENAME); // N  OI18N
-    protected static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
-    protected static final Image IFIMAGE = ImageUtilities.loadImage(IFIMAGENAME); // NOI18N
-    protected static final String RUNIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
-    protected static final Image RUNIMAGE = ImageUtilities.loadImage(RUNIMAGENAME); // NOI18N
-
+    
     public abstract CategoryType getCategoryType();
 
     public abstract Image getWidgetImage();

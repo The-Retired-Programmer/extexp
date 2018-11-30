@@ -19,8 +19,10 @@ import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.awt.Image;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import java.io.IOException;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.IOInputString;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
+import uk.theretiredprogrammer.extexp.execution.RunControl;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
@@ -47,16 +49,17 @@ public class CopyExecutor extends Executor {
     }
 
     private class CopyExecutorWidgetData extends WidgetData {
+        
+        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public CopyExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("from"));
-            addPinDef(new PinDef("to"));
+            addPinDef(new PinDef("from", CopyExecutor.this.getParam("from")));
+            addPinDef(new PinDef("to", CopyExecutor.this.getParam("to")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override

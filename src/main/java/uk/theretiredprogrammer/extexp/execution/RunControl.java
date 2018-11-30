@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.extexp.execution;
 import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.awt.Image;
 import java.io.IOException;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
@@ -45,15 +46,16 @@ public class RunControl extends Control {
     }
 
     private class RunWidgetData extends WidgetData {
+        
+        private static final String RUNIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
 
         public RunWidgetData() {
-            String sequencename = RunControl.this.getParam("Run");
-            addPinDef(new PinDef("Run: "+sequencename));
+            addPinDef(new PinDef("Run", RunControl.this.getParam("Run")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return RUNIMAGE;
+            return ImageUtilities.loadImage(RUNIMAGENAME);
         }
 
         @Override

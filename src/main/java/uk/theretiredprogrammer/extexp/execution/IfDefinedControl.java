@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.extexp.execution;
 import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.awt.Image;
 import java.io.IOException;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
@@ -51,21 +52,19 @@ public class IfDefinedControl extends Control {
     }
 
     private class IfDefinedWidgetData extends WidgetData {
+        
+        private static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
+
 
         public IfDefinedWidgetData() {
-            String desc = IfDefinedControl.this.getParam("description");
-            if (desc != null) {
-                addPinDef(new PinDef("description: " + desc));
-            }
-            String test = IfDefinedControl.this.getParam("If-defined");
-            addPinDef(new PinDef("test: " + test));
+            addPinDef(new PinDef("If Defined", IfDefinedControl.this.getParam("If-defined")));
             addPinDef(new PinDef("then"));
             addPinDef(new PinDef("else"));
         }
 
         @Override
         public Image getWidgetImage() {
-            return IFIMAGE;
+            return ImageUtilities.loadImage(IFIMAGENAME);
         }
 
         @Override

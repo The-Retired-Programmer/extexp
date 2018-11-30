@@ -25,6 +25,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.openide.util.ImageUtilities;
 import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOReader;
@@ -68,16 +69,17 @@ public class XsltExecutor extends Executor {
 
     private class XsltExecutorWidgetData extends WidgetData {
 
+        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
+
         public XsltExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("from"));
-            addPinDef(new PinDef("stylesheet"));
-            addPinDef(new PinDef("to"));
+            addPinDef(new PinDef("from", XsltExecutor.this.getParam("from")));
+            addPinDef(new PinDef("Stylesheet", XsltExecutor.this.getParam("stylesheet")));
+            addPinDef(new PinDef("to", XsltExecutor.this.getParam("to")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override

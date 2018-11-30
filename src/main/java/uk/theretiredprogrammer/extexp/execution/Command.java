@@ -17,8 +17,10 @@ package uk.theretiredprogrammer.extexp.execution;
 
 import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  *
@@ -43,7 +45,7 @@ public abstract class Command {
         parameters.put(pname, pvalue);
     }
     
-    String getParam(String name) {
+    protected String getParam(String name) {
         return parameters.get(name);
     }
 
@@ -52,7 +54,7 @@ public abstract class Command {
         if (val == null) {
             return null;
         }
-        return Do.substitute(val, (s) -> getSubText(s));
+        return substitute(val, (s) -> getSubText(s));
     }
 
     public String getLocalParameter(String name) throws IOException {
@@ -60,7 +62,7 @@ public abstract class Command {
         if (val == null) {
             throw new IOException("Parameter \"" + name + "\" missing");
         }
-        return Do.substitute(val, (s) -> getSubText(s));
+        return substitute(val, (s) -> getSubText(s));
     }
 
     public boolean hasLocalParameter(String pname) {
@@ -76,7 +78,7 @@ public abstract class Command {
         if (paramval == null) {
             throw new IOException("Parameter \"" + name + "\" missing");
         }
-        return Do.substitute(paramval, (s) -> getSubText(s));
+        return substitute(paramval, (s) -> getSubText(s));
     }
 
     public String getOptionalSubstitutedParameter(String name) {
@@ -84,7 +86,7 @@ public abstract class Command {
         if (paramval == null) {
             return null;
         }
-        return Do.substitute(paramval, (s) -> getSubText(s));
+        return substitute(paramval, (s) -> getSubText(s));
     }
 
     private String getSubText(String name) {
@@ -133,4 +135,38 @@ public abstract class Command {
     }
 
     public abstract WidgetData getWidgetData();
+    
+    protected void substitute(String in, Function<String, String> getoptionalparam, Writer out) throws IOException {
+        out.write(substitute(in, getoptionalparam));
+    }
+    
+    protected String substitute(String in, Function<String, String> getoptionalparam) {
+      StringBuilder sb = new StringBuilder();
+      substitute(in, getoptionalparam, sb);
+      return sb.toString();
+    }
+    
+    private void substitute(String in, Function<String, String> getoptionalparam, StringBuilder out) {
+        int p = in.indexOf("${");
+        if (p == -1) {
+            out.append(in);
+            return;
+        }
+        String fragment = in.substring(0, p);
+        if (fragment != null && !fragment.isEmpty()) {
+            out.append(fragment);
+        }
+        int q = in.indexOf("}", p + 2);
+        String name = in.substring(p + 2, q);
+
+        fragment = getoptionalparam.apply(name);
+        if (fragment != null && !fragment.isEmpty()) {
+            substitute(fragment, getoptionalparam, out);
+        }
+
+        fragment = in.substring(q + 1);
+        if (fragment != null && !fragment.isEmpty()) {
+            substitute(fragment, getoptionalparam, out);
+        }
+    }  
 }

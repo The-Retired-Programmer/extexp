@@ -22,6 +22,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
 import org.openide.filesystems.FileObject;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
@@ -106,18 +107,19 @@ public class ImagesetExecutor extends Executor {
     }
 
     private class ImagesetExecutorWidgetData extends WidgetData {
+        
+        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public ImagesetExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("image"));
-            addPinDef(new PinDef("width"));
-            addPinDef(new PinDef("height"));
-            addPinDef(new PinDef("to"));
+            addPinDef(new PinDef("image",ImagesetExecutor.this.getParam("image"),PinDef.INHERITED));
+            addPinDef(new PinDef("width",ImagesetExecutor.this.getParam("width"),PinDef.INHERITED));
+            addPinDef(new PinDef("height",ImagesetExecutor.this.getParam("height"),PinDef.INHERITED));
+            addPinDef(new PinDef("to", ImagesetExecutor.this.getParam("from")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override

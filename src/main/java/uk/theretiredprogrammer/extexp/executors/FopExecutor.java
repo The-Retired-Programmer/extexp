@@ -20,6 +20,7 @@ import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOOutputPath;
@@ -64,15 +65,17 @@ public class FopExecutor extends Executor {
     }
 
     private class FopExecutorWidgetData extends WidgetData {
+        
+        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public FopExecutorWidgetData() {
-            addPinDef(new PinDef("fo-xsl"));
-            addPinDef(new PinDef("pdf"));
+            addPinDef(new PinDef("fo-xsl", FopExecutor.this.getParam("fo-xsl")));
+            addPinDef(new PinDef("pdf", FopExecutor.this.getParam("pdf")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override

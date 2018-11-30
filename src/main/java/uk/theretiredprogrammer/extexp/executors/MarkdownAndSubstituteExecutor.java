@@ -21,7 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import uk.theretiredprogrammer.extexp.execution.Do;
+import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
@@ -63,7 +63,7 @@ public class MarkdownAndSubstituteExecutor extends Executor {
         } catch (InterruptedException ex) {
             throw new IOException(ex);
         }
-        Do.substitute(sb.toString(), (name) -> getOptionalSubstitutedParameter(name), output.get());
+        substitute(sb.toString(), (name) -> getOptionalSubstitutedParameter(name), output.get());
         //
         output.close();
         input.close();
@@ -76,17 +76,18 @@ public class MarkdownAndSubstituteExecutor extends Executor {
     }
 
     private class MarkdownAndSubstituteExecutorWidgetData extends WidgetData {
+        
+        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
         public MarkdownAndSubstituteExecutorWidgetData() {
-            addPinDef(new PinDef("description"));
-            addPinDef(new PinDef("from"));
-            addPinDef(new PinDef("template"));
-            addPinDef(new PinDef("to"));
+            addPinDef(new PinDef("from", MarkdownAndSubstituteExecutor.this.getParam("from")));
+            addPinDef(new PinDef("template", MarkdownAndSubstituteExecutor.this.getParam("template"), PinDef.OPTIONAL));
+            addPinDef(new PinDef("to", MarkdownAndSubstituteExecutor.this.getParam("to")));
         }
 
         @Override
         public Image getWidgetImage() {
-            return EXECUTORIMAGE;
+            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
         }
 
         @Override
