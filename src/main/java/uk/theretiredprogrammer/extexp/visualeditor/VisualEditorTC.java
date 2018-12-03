@@ -9,6 +9,8 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.function.Function;
 import javax.json.JsonObject;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -37,29 +39,33 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 })
 public final class VisualEditorTC extends TopComponent {
     
-    private final ExtexpScene scene;
     private final ExtexpSceneSerialise serialiser = new ExtexpSceneSerialise();
+    private final JPanel contentpanel = new JPanel();
     
     public VisualEditorTC() {
         initComponents();
         setName(Bundle.CTL_VETopComponent());
         setToolTipText(Bundle.HINT_VETopComponent());
         JScrollPane scrollpane = new JScrollPane();
-        scene = new ExtexpScene();
-        scrollpane.setViewportView(scene.createView());
+        contentpanel.setLayout(new BoxLayout(contentpanel, BoxLayout.LINE_AXIS));
+        scrollpane.setViewportView(contentpanel);
         setLayout(new BorderLayout());
         add(scrollpane, BorderLayout.CENTER);
-        add(scene.createSatelliteView(), BorderLayout.WEST);
+        //add(scene.createSatelliteView(), BorderLayout.WEST);
         associateLookup(Lookups.singleton(PaletteSupport.createPalette()));
     }
-    
     
     public void setSaveSource(Function<JsonObject, Boolean> savesource) {
         serialiser.setOutputFunction(savesource);
     }
     
     public void deserialise(ExecutionEnvironment env) throws IOException {
-        serialiser.deserialize(scene,env);
+        for (int i = 0; i < env.commandsequences.getNamedSequences().size(); i++) {
+            ExtexpScene scene = new ExtexpScene();
+            contentpanel.add(scene.createView());
+            serialiser.deserialize(scene, env, i);
+            scene.layout();
+        }
     }
 
     /**
@@ -96,7 +102,7 @@ public final class VisualEditorTC extends TopComponent {
     
     @Override
     public void componentActivated() {
-        scene.getView().requestFocusInWindow();
+        contentpanel.requestFocusInWindow();
     }
 
     void writeProperties(java.util.Properties p) {

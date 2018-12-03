@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.util.function.Function;
 import javax.json.JsonObject;
@@ -40,25 +39,15 @@ public class ExtexpSceneSerialise {
     public void serialize(ExtexpScene scene) {
     }
 
-    private int col;
-    private int row;
-
     // call in AWT to deserialize scene
-    public void deserialize(ExtexpScene scene, ExecutionEnvironment env) throws IOException {
-        col = 0;
-        for (NamedCommandSequence ncs : env.commandsequences.getNamedSequences()) {
-            putSequence(scene, ncs.name, ncs.commandsequence);
-            col++;
-        }
+    public void deserialize(ExtexpScene scene, ExecutionEnvironment env, int sequenceindex) throws IOException {
+//        env.commandsequences.getNamedSequences()
+//                .forEach((ncs) -> putSequence(scene, ncs.name, ncs.commandsequence));
+        NamedCommandSequence nseq = env.commandsequences.getNamedSequences().get(sequenceindex);
+        putSequence(scene, nseq.name, nseq.commandsequence);
     }
 
-    private static final int ROWSTEP = 120;
-    private static final int COLSTEP = 200;
-    private static final int COLINITOFFSET = 100;
-    private static final int ROWINITOFFSET = 20;
-
     private void putSequence(ExtexpScene scene, String name, CommandSequence commandsequence) {
-        row = 0;
         ExtexpWidget previouswidget = putWidget(scene, new SequenceWidgetData(name));
         for (Command command : commandsequence) {
             ExtexpWidget currentwidget = putWidget(scene, command.getWidgetData());
@@ -68,8 +57,6 @@ public class ExtexpSceneSerialise {
     }
 
     private ExtexpWidget putWidget(ExtexpScene scene, WidgetData widgetdata) {
-        int x = COLINITOFFSET + COLSTEP * col;
-        int y = ROWINITOFFSET + ROWSTEP * row++;
-        return scene.insertWidget(widgetdata, new Point(x, y));
+        return scene.insertWidget(widgetdata);
     }
 }
