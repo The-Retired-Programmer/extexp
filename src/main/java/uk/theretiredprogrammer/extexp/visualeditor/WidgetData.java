@@ -18,9 +18,12 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /*
@@ -61,6 +64,11 @@ public abstract class WidgetData {
 
     public List<PinDef> getExtraPinDefList() {
         return extrapinlist;
+    }
+    
+    public List<ExtexpWidget> addAndConnectChildWidgets(ExtexpWidget widget,
+            BiFunction<WidgetData, ExtexpPinWidget ,List<ExtexpWidget>> insertWidgetAndConnect){
+        return Arrays.asList(widget);
     }
 
     protected final void addPinDef(String pname, PinDef pindef) {

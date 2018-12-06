@@ -18,7 +18,12 @@ package uk.theretiredprogrammer.extexp.execution;
 import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.visualeditor.ExtexpWidget;
 import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 
@@ -52,9 +57,8 @@ public class IfDefinedControl extends Control {
     }
 
     private class IfDefinedWidgetData extends WidgetData {
-        
-        private static final String IFIMAGENAME ="uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
 
+        private static final String IFIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_divide_down.png";
 
         public IfDefinedWidgetData() {
             addPinDef("If-defined", new PinDef("If Defined", IfDefinedControl.this.getParam("If-defined")));
@@ -81,6 +85,21 @@ public class IfDefinedControl extends Control {
         @Override
         public String getDisplayName() {
             return "If Defined";
+        }
+
+        @Override
+        public List<ExtexpWidget> addAndConnectChildWidgets(ExtexpWidget widget,
+                BiFunction<WidgetData, ExtexpPinWidget, List<ExtexpWidget>> insertWidgetAndConnect) {
+            List<ExtexpWidget> ends = new ArrayList<>();
+            Command thenpart = getOptionalCommand("then");
+            if (thenpart != null) {
+                ends.addAll(insertWidgetAndConnect.apply(thenpart.getWidgetData(), widget.getPin("then")));
+            }
+            Command elsepart = getOptionalCommand("else");
+            if (elsepart != null) {
+                ends.addAll(insertWidgetAndConnect.apply(elsepart.getWidgetData(), widget.getPin("else")));
+            }
+            return ends.isEmpty() ? Arrays.asList(widget) : ends;
         }
     }
 

@@ -40,10 +40,33 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public class ExtexpWidget extends VMDNodeWidget {
 
+    public static final WidgetStartAndEnd create(final ExtexpScene scene, final LayerWidget widgetlayer,
+            WidgetData widgetdata, LayerWidget connectionlayer) {
+        ExtexpWidget w = new ExtexpWidget(scene, widgetlayer, widgetdata, connectionlayer);
+        List<ExtexpWidget> e = widgetdata.addAndConnectChildWidgets(w, (wd, pin) -> addAndConnect(scene, w, wd, pin));
+        return new WidgetStartAndEnd(w, e);
+    }
+
+    private static List<ExtexpWidget> addAndConnect(final ExtexpScene scene, ExtexpWidget w,
+            WidgetData widgetdata, ExtexpPinWidget pin) {
+        WidgetStartAndEnd newwidgets = scene.insertWidget(widgetdata);
+        scene.connectPinToWidget(pin, newwidgets.startwidget);
+        return newwidgets.endwidgets;
+    }
+
+    public ExtexpPinWidget getPin(String pinname) {
+        for (Widget child : getChildren()) {
+            if (child instanceof ExtexpPinWidget && ((ExtexpPinWidget) child).getPinName().equals(pinname)) {
+                return ((ExtexpPinWidget) child);
+            }
+        }
+        return null;
+    }
+
     private final LayerWidget connectionlayer;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public ExtexpWidget(final ExtexpScene scene, final LayerWidget widgetlayer,
+    private ExtexpWidget(final ExtexpScene scene, final LayerWidget widgetlayer,
             WidgetData widgetdata, LayerWidget connectionlayer) {
         super(scene);
         this.connectionlayer = connectionlayer;

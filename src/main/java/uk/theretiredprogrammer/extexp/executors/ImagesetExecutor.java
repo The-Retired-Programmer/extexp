@@ -114,7 +114,7 @@ public class ImagesetExecutor extends Executor {
             addPinDef("image", new PinDef("image", ImagesetExecutor.this.getParam("image"), PinDef.INHERITED));
             addPinDef("width", new PinDef("width", ImagesetExecutor.this.getParam("width"), PinDef.INHERITED));
             addPinDef("height", new PinDef("height", ImagesetExecutor.this.getParam("height"), PinDef.INHERITED));
-            addPinDef("to", new PinDef("to", ImagesetExecutor.this.getParam("from")));
+            addPinDef("to", new PinDef("to", ImagesetExecutor.this.getParam("to")));
             addExtraPinDefs(ImagesetExecutor.this.getParams(),"Do");
         }
 

@@ -48,15 +48,11 @@ public class ExtexpSceneSerialise {
     }
 
     private void putSequence(ExtexpScene scene, String name, CommandSequence commandsequence) {
-        ExtexpWidget previouswidget = putWidget(scene, new SequenceWidgetData(name));
+        WidgetStartAndEnd previous = scene.insertWidget(new SequenceWidgetData(name));
         for (Command command : commandsequence) {
-            ExtexpWidget currentwidget = putWidget(scene, command.getWidgetData());
-            scene.insertConnection(previouswidget, currentwidget);
-            previouswidget = currentwidget;
+            WidgetStartAndEnd current = scene.insertWidget(command.getWidgetData());
+            previous.endwidgets.stream().forEach(w -> scene.insertConnection(w, current.startwidget));
+            previous = current;
         }
-    }
-
-    private ExtexpWidget putWidget(ExtexpScene scene, WidgetData widgetdata) {
-        return scene.insertWidget(widgetdata);
     }
 }

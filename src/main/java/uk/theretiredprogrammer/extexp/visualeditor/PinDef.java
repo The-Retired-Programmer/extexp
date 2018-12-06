@@ -49,15 +49,15 @@ public class PinDef {
         switch (valuetype) {
             case INHERITED:
                 foreground = Color.ORANGE;
-                this.name = name + ": ??inherited??";
+                this.name = name + ": \u00abfrom Run\u00bb";
                 break;
             case OPTIONAL:
                 foreground = Color.BLACK;
-                this.name = name + ": <<undefined - is optional>>";
+                this.name = name + ": \u00aboptional - from Run\u00bb";
                 break;
             default: // case REQUIRED or any other unknown valuetypes
                 foreground = Color.CYAN;
-                this.name = name + ": <<undefined>>";
+                this.name = name + ": \u00abundefined\u00bb";
         }
     }
 

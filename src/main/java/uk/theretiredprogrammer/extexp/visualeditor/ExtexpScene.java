@@ -22,30 +22,32 @@ import java.io.IOException;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectorState;
-import org.netbeans.api.visual.graph.layout.GridGraphLayout;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import static org.netbeans.api.visual.layout.LayoutFactory.SerialAlignment.CENTER;
 import org.netbeans.api.visual.layout.SceneLayout;
+import org.netbeans.api.visual.router.Router;
+import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.vmd.VMDGraphScene;
 import org.netbeans.api.visual.widget.EventProcessingType;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
 import static uk.theretiredprogrammer.extexp.visualeditor.WidgetData.DATA_FLAVOR_WIDGETDATA;
 
 public class ExtexpScene extends VMDGraphScene {
 
     private final LayerWidget layerwidget;
     private final LayerWidget connectionlayerwidget;
-
+    private final Router connectionRouter;
     /**
      * Creates a new instance of MyScene
      */
-
     public ExtexpScene() {
         layerwidget = new LayerWidget(this);
         addChild(layerwidget);
         connectionlayerwidget = new LayerWidget(this);
         addChild(connectionlayerwidget);
+        connectionRouter = RouterFactory.createOrthogonalSearchRouter(layerwidget, connectionlayerwidget);
         setKeyEventProcessingType(EventProcessingType.FOCUSED_WIDGET_AND_ITS_CHILDREN);
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptProvider() {
 
@@ -65,16 +67,24 @@ public class ExtexpScene extends VMDGraphScene {
         }));
     }
 
-    public ExtexpWidget insertWidget(WidgetData widgetdata) {
-        return new ExtexpWidget(this, layerwidget, widgetdata, connectionlayerwidget);
+    public WidgetStartAndEnd insertWidget(WidgetData widgetdata) {
+        return ExtexpWidget.create(this, layerwidget, widgetdata, connectionlayerwidget);
     }
 
     public ExtexpConnection insertConnection(ExtexpWidget source, ExtexpWidget target) {
         return new ExtexpConnection(this, connectionlayerwidget, source, target);
     }
     
+    public ExtexpConnection connectPinToWidget(ExtexpPinWidget source, ExtexpWidget target) {
+        return new ExtexpConnection(this, connectionlayerwidget, source, target);
+    }
+    
+    public Router getRouter() {
+        return connectionRouter;
+    }
+    
     public void layout(){
-        SceneLayout  devolveLayout = LayoutFactory.createDevolveWidgetLayout (layerwidget, LayoutFactory.createVerticalFlowLayout(CENTER,20), true);
+        SceneLayout  devolveLayout = LayoutFactory.createDevolveWidgetLayout (layerwidget, LayoutFactory.createVerticalFlowLayout(CENTER,40), true);
         devolveLayout.invokeLayout();
     }
 }

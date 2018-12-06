@@ -17,22 +17,31 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
-import org.netbeans.api.visual.vmd.VMDNodeWidget;
-import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.router.RouterFactory;
+import org.netbeans.api.visual.vmd.VMDConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
-
+import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
 /**
  *
  * @author richard
  */
-public class ExtexpConnection extends VMDNodeWidget {
+public class ExtexpConnection extends VMDConnectionWidget {
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public ExtexpConnection(final ExtexpScene scene, LayerWidget connectionlayer, ExtexpWidget source, ExtexpWidget target) {
-        super(scene);
-        ConnectionWidget conn = new ConnectionWidget(scene);
-        conn.setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
-        conn.setTargetAnchor(AnchorFactory.createRectangularAnchor(target));
-        conn.setSourceAnchor(AnchorFactory.createRectangularAnchor(source));
-        connectionlayer.addChild(conn);
+        super(scene, scene.getRouter());
+        setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
+        setTargetAnchor(AnchorFactory.createRectangularAnchor(target));
+        setSourceAnchor(AnchorFactory.createRectangularAnchor(source));
+        connectionlayer.addChild(this);
+    }
+    
+    @SuppressWarnings("LeakingThisInConstructor")
+    public ExtexpConnection(final ExtexpScene scene, LayerWidget connectionlayer, ExtexpPinWidget source, ExtexpWidget target) {
+        super(scene, scene.getRouter());
+        setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
+        setTargetAnchor(AnchorFactory.createRectangularAnchor(target));
+        setSourceAnchor(AnchorFactory.createDirectionalAnchor(source, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
+        connectionlayer.addChild(this);
     }
 }
