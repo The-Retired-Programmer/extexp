@@ -40,8 +40,6 @@ public class SerialiseBuildInstructions {
 
     // call in AWT to deserialize scene
     public void deserialize(PScene scene, ExecutionEnvironment env, int sequenceindex) throws IOException {
-//        env.commandsequences.getNamedSequences()
-//                .forEach((ncs) -> putSequence(scene, ncs.name, ncs.commandsequence));
         NamedCommandSequence nseq = env.commandsequences.getNamedSequences().get(sequenceindex);
         putSequence(scene, nseq.name, nseq.commandsequence);
     }

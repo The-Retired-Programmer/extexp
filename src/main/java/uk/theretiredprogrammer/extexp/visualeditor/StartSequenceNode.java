@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.extexp.visualeditor;
 
 import org.openide.util.ImageUtilities;
-import static uk.theretiredprogrammer.extexp.visualeditor.PNode.Position.NORMAL;
 
 /**
  *
