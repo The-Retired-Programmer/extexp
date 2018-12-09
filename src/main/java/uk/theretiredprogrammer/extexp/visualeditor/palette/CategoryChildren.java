@@ -15,33 +15,18 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor.palette;
 
-/*
- * CategoryChildren.java
- *
- * Created on September 21, 2006, 9:00 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- *
- * To understand this class, see https://platform.netbeans.org/tutorials/nbm-nodesapi3.html
- */
-
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
  *
- * @author Geertjan Wielenga
+ * @author richard
  */
 public class CategoryChildren extends Children.Keys {
 
     public static enum CategoryType {
-        CONTROL("Executor Controls"),
-        EXECUTOR("Executors"),
-        SOURCE("Sources"),
-        TARGET("Targets"),
-        BOTH("Both (Target and Source)"),
-        CONNECTOR("Connectors");
+        CONTROL("Controls"),
+        EXECUTOR("Executors");
         
         public String title;
 

@@ -15,10 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
-import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.List;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -26,11 +26,7 @@ import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.action.MoveProvider;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
-import org.netbeans.api.visual.anchor.AnchorFactory;
-import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
-import org.netbeans.api.visual.widget.ConnectionWidget;
-import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -38,55 +34,23 @@ import org.netbeans.api.visual.widget.Widget;
  *
  * @author richard
  */
-public class ExtexpWidget extends VMDNodeWidget {
+public class PNode extends VMDNodeWidget {
 
-    public static final WidgetStartAndEnd create(final ExtexpScene scene, final LayerWidget widgetlayer,
-            WidgetData widgetdata, LayerWidget connectionlayer) {
-        ExtexpWidget w = new ExtexpWidget(scene, widgetlayer, widgetdata, connectionlayer);
-        List<ExtexpWidget> e = widgetdata.addAndConnectChildWidgets(w, (wd, pin) -> addAndConnect(scene, w, wd, pin));
-        return new WidgetStartAndEnd(w, e);
+    
+    public static enum Position {
+        LEFT, NORMAL, RIGHT
     }
+    
+    private final Position position;
+    
 
-    private static List<ExtexpWidget> addAndConnect(final ExtexpScene scene, ExtexpWidget w,
-            WidgetData widgetdata, ExtexpPinWidget pin) {
-        WidgetStartAndEnd newwidgets = scene.insertWidget(widgetdata);
-        scene.connectPinToWidget(pin, newwidgets.startwidget);
-        return newwidgets.endwidgets;
-    }
-
-    public ExtexpPinWidget getPin(String pinname) {
-        for (Widget child : getChildren()) {
-            if (child instanceof ExtexpPinWidget && ((ExtexpPinWidget) child).getPinName().equals(pinname)) {
-                return ((ExtexpPinWidget) child);
-            }
-        }
-        return null;
-    }
-
-    private final LayerWidget connectionlayer;
-
-    @SuppressWarnings("LeakingThisInConstructor")
-    private ExtexpWidget(final ExtexpScene scene, final LayerWidget widgetlayer,
-            WidgetData widgetdata, LayerWidget connectionlayer) {
+    public PNode(final PScene scene, Position position){
         super(scene);
-        this.connectionlayer = connectionlayer;
-        setNodeName(widgetdata.getDisplayName());
-        this.setNodeImage(widgetdata.getWidgetImage());
-        widgetdata.getPinDefList().forEach((npin) -> {
-            attachPinWidget(new ExtexpPinWidget(scene, npin.pindef));
-        });
-        List<PinDef> extrapins = widgetdata.getExtraPinDefList();
-        if (!extrapins.isEmpty()) {
-            attachPinWidget(new ExtexpPinWidget(scene));
-            extrapins.forEach((pin) -> {
-                attachPinWidget(new ExtexpPinWidget(scene, pin));
-            });
-        }
-        widgetlayer.addChild(this);
+        this.position = position;
         //
         getActions().addAction(ActionFactory.createExtendedConnectAction(
                 null,
-                connectionlayer,
+                scene.getConnectionLayer(),
                 new ExtexpConnectProvider(),
                 MouseEvent.SHIFT_MASK
         )
@@ -156,12 +120,12 @@ public class ExtexpWidget extends VMDNodeWidget {
 
         @Override
         public boolean isSourceWidget(Widget source) {
-            return source != null && source instanceof ExtexpWidget;
+            return source != null && source instanceof PNode;
         }
 
         @Override
         public ConnectorState isTargetWidget(Widget src, Widget trg) {
-            return src != trg && trg instanceof ExtexpWidget
+            return src != trg && trg instanceof PNode
                     ? ConnectorState.ACCEPT : ConnectorState.REJECT;
         }
 
@@ -176,12 +140,26 @@ public class ExtexpWidget extends VMDNodeWidget {
         }
 
         @Override
+        @SuppressWarnings("ResultOfObjectAllocationIgnored")
         public void createConnection(Widget source, Widget target) {
-            ConnectionWidget conn = new ConnectionWidget(ExtexpWidget.this.getScene());
-            conn.setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
-            conn.setTargetAnchor(AnchorFactory.createRectangularAnchor(target));
-            conn.setSourceAnchor(AnchorFactory.createRectangularAnchor(source));
-            connectionlayer.addChild(conn);
+            new PConnection((PScene) getScene(), (PNode)source, (PNode)target);
         }
+    }
+    
+    public List<Widget> getConnections(PScene scene) {
+        return Arrays.asList(this);
+    }
+    
+    public PPin getPin(String pinname) {
+        for (Widget child : getChildren()) {
+            if (child instanceof PPin && ((PPin) child).getPinName().equals(pinname)) {
+                return ((PPin) child);
+            }
+        }
+        return null;
+    }
+    
+    public Position getPosition(){
+        return position;
     }
 }

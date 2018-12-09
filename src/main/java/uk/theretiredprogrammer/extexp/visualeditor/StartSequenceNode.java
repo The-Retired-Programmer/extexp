@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.visualeditor;
+
+import org.openide.util.ImageUtilities;
+import static uk.theretiredprogrammer.extexp.visualeditor.PNode.Position.NORMAL;
 
 /**
  *
  * @author richard
  */
-class EnvironmentEnvironment {
-    
+public class StartSequenceNode extends PNode {
+
+    private static final String CONTROLIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/star.png";
+
+    public StartSequenceNode(PScene scene, String name, Position position) {
+        super(scene,position);
+        setNodeName(name);
+        setNodeImage(ImageUtilities.loadImage(CONTROLIMAGENAME));
+        scene.getWidgetLayer().addChild(this);
+    }
 }

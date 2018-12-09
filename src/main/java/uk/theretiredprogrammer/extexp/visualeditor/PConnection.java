@@ -17,31 +17,25 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
-import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.vmd.VMDConnectionWidget;
-import org.netbeans.api.visual.widget.LayerWidget;
-import uk.theretiredprogrammer.extexp.execution.ExtexpPinWidget;
+import org.netbeans.api.visual.widget.Widget;
+
 /**
  *
  * @author richard
  */
-public class ExtexpConnection extends VMDConnectionWidget {
+public class PConnection extends VMDConnectionWidget {
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public ExtexpConnection(final ExtexpScene scene, LayerWidget connectionlayer, ExtexpWidget source, ExtexpWidget target) {
+    public PConnection(final PScene scene, Widget source, PNode target) {
         super(scene, scene.getRouter());
         setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
         setTargetAnchor(AnchorFactory.createRectangularAnchor(target));
-        setSourceAnchor(AnchorFactory.createRectangularAnchor(source));
-        connectionlayer.addChild(this);
-    }
-    
-    @SuppressWarnings("LeakingThisInConstructor")
-    public ExtexpConnection(final ExtexpScene scene, LayerWidget connectionlayer, ExtexpPinWidget source, ExtexpWidget target) {
-        super(scene, scene.getRouter());
-        setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
-        setTargetAnchor(AnchorFactory.createRectangularAnchor(target));
-        setSourceAnchor(AnchorFactory.createDirectionalAnchor(source, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
-        connectionlayer.addChild(this);
+        if (source instanceof PPin) {
+            setSourceAnchor(AnchorFactory.createDirectionalAnchor(source, AnchorFactory.DirectionalAnchorKind.HORIZONTAL));
+        } else if (source instanceof PNode) {
+            setSourceAnchor(AnchorFactory.createRectangularAnchor(source));
+        }
+        scene.getConnectionLayer().addChild(this);
     }
 }

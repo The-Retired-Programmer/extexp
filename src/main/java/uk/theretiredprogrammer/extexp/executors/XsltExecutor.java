@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import java.awt.Image;
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -30,14 +30,45 @@ import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOReader;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
+import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.visualeditor.PScene;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
 
 /**
  *
  * @author richard
  */
 public class XsltExecutor extends Executor {
+
+    @Override
+    public String getDisplayName() {
+        return "XSLT";
+    }
+
+    @Override
+    public PNode createNode(PScene scene, Position position) {
+        return new XsltNode(scene, position);
+    }
+
+    private class XsltNode extends PNode {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        public XsltNode(PScene scene, Position position) {
+            super(scene, position);
+            setNodeName(getDisplayName());
+            setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
+            attachPinWidget(new PPin(scene, "from", XsltExecutor.this.getParam("from")));
+            attachPinWidget(new PPin(scene, "stylesheet", XsltExecutor.this.getParam("stylesheet")));
+            attachPinWidget(new PPin(scene, "to", XsltExecutor.this.getParam("to")));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "from", "stylesheet", "to");
+            if (!extrapins.isEmpty()) {
+                attachPinWidget(new PPin(scene));
+                extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
+            }
+            scene.getWidgetLayer().addChild(this);
+        }
+    }
 
     @Override
     protected void executecommand() throws IOException {
@@ -60,42 +91,5 @@ public class XsltExecutor extends Executor {
         output.close();
         input.close();
         stylesheet.close();
-    }
-
-    @Override
-    public WidgetData getWidgetData() {
-        return new XsltExecutorWidgetData();
-    }
-
-    private class XsltExecutorWidgetData extends WidgetData {
-
-        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-
-        public XsltExecutorWidgetData() {
-            addPinDef("from", new PinDef("from", XsltExecutor.this.getParam("from")));
-            addPinDef("stylesheet", new PinDef("stylesheet", XsltExecutor.this.getParam("stylesheet")));
-            addPinDef("to", new PinDef("to", XsltExecutor.this.getParam("to")));
-            addExtraPinDefs(XsltExecutor.this.getParams(),"Do");
-        }
-
-        @Override
-        public Image getWidgetImage() {
-            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
-        }
-
-        @Override
-        public String getWidgetImageName() {
-            return EXECUTORIMAGENAME;
-        }
-
-        @Override
-        public CategoryChildren.CategoryType getCategoryType() {
-            return CategoryChildren.CategoryType.EXECUTOR;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "XSLT";
-        }
     }
 }

@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 import java.io.IOException;
 import java.util.function.Function;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.extexp.execution.Command;
 import uk.theretiredprogrammer.extexp.execution.CommandSequence;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.execution.NamedCommandSequence;
@@ -27,7 +26,7 @@ import uk.theretiredprogrammer.extexp.execution.NamedCommandSequence;
  *
  * @author richard
  */
-public class ExtexpSceneSerialise {
+public class SerialiseBuildInstructions {
 
     private Function<JsonObject, Boolean> outputfunction;
 
@@ -36,23 +35,19 @@ public class ExtexpSceneSerialise {
     }
 
     // call in AWT to serialize scene
-    public void serialize(ExtexpScene scene) {
+    public void serialize(PScene scene) {
     }
 
     // call in AWT to deserialize scene
-    public void deserialize(ExtexpScene scene, ExecutionEnvironment env, int sequenceindex) throws IOException {
+    public void deserialize(PScene scene, ExecutionEnvironment env, int sequenceindex) throws IOException {
 //        env.commandsequences.getNamedSequences()
 //                .forEach((ncs) -> putSequence(scene, ncs.name, ncs.commandsequence));
         NamedCommandSequence nseq = env.commandsequences.getNamedSequences().get(sequenceindex);
         putSequence(scene, nseq.name, nseq.commandsequence);
     }
 
-    private void putSequence(ExtexpScene scene, String name, CommandSequence commandsequence) {
-        WidgetStartAndEnd previous = scene.insertWidget(new SequenceWidgetData(name));
-        for (Command command : commandsequence) {
-            WidgetStartAndEnd current = scene.insertWidget(command.getWidgetData());
-            previous.endwidgets.stream().forEach(w -> scene.insertConnection(w, current.startwidget));
-            previous = current;
-        }
+    private void putSequence(PScene scene, String name, CommandSequence commandsequence) {
+        PNode previous = scene.insertStart(name);
+        scene.insertSequence(commandsequence, previous);
     }
 }

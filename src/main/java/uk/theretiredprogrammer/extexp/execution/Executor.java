@@ -29,6 +29,14 @@ import javax.json.JsonValue;
  */
 public abstract class Executor extends Command {
     
+    protected static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
+
+    
+    @Override
+    public String getWidgetImageName() {
+        return EXECUTORIMAGENAME;
+    }
+
     public final void parse(JsonObject jobj) throws IOException{
         for (Map.Entry<String,JsonValue> paramdef : jobj.entrySet()){
             JsonValue val = paramdef.getValue();

@@ -15,17 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor.palette;
 
-/*
- * PaletteSupport.java
- *
- * Created on September 25, 2006, 2:22 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- *
- * To understand this class, see https://platform.netbeans.org/tutorials/nbm-nodesapi3.html
- */
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import javax.swing.Action;
@@ -36,11 +25,12 @@ import org.netbeans.spi.palette.PaletteFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 import org.openide.util.datatransfer.ExTransferable;
-import static uk.theretiredprogrammer.extexp.visualeditor.WidgetData.DATA_FLAVOR_WIDGETDATA;
+import uk.theretiredprogrammer.extexp.execution.Command;
+import static uk.theretiredprogrammer.extexp.execution.Command.DATA_FLAVOR_COMMAND;
 
 /**
  *
- * @author dave
+ * @author richard
  */
 public class PaletteSupport {
 
@@ -82,12 +72,12 @@ public class PaletteSupport {
 
         @Override
         public void customize(ExTransferable exTransferable, Lookup lookup) {
-            WidgetData widgetdata = lookup.lookup(WidgetData.class);
-            exTransferable.put(new ExTransferable.Single(DATA_FLAVOR_WIDGETDATA) {
+            Command command = lookup.lookup(Command.class);
+            exTransferable.put(new ExTransferable.Single(DATA_FLAVOR_COMMAND) {
 
                 @Override
-                protected WidgetData getData() throws IOException, UnsupportedFlavorException {
-                    return widgetdata;
+                protected Command getData() throws IOException, UnsupportedFlavorException {
+                    return command;
                 }
             });
         }

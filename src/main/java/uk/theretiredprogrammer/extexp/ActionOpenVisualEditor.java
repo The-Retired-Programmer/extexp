@@ -28,7 +28,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import uk.theretiredprogrammer.extexp.execution.BuildFile;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.visualeditor.VisualEditorTC;
+import uk.theretiredprogrammer.extexp.visualeditor.PTC;
 
 /**
  *
@@ -45,14 +45,15 @@ public class ActionOpenVisualEditor extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        VisualEditorTC tc = new VisualEditorTC();
+        PTC tc = new PTC();
         try {
             ExecutionEnvironment env = BuildFile.initAndParse(project.getProjectDirectory(), null, null);
-            tc.deserialise(env);
+            //tc.deserialise(env);
             tc.setSaveSource((jo) -> updateBuildFile(jo));
             tc.setDisplayName(project.getProjectDirectory().getName());
             tc.open();
             tc.requestActive();
+            tc.deserialise(env);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

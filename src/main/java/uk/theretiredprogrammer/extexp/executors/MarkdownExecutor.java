@@ -15,25 +15,56 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import java.awt.Image;
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.List;
+import java.util.Map;
 import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
+import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.visualeditor.PScene;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
 
 /**
  *
  * @author richard
  */
 public class MarkdownExecutor extends Executor {
+
+    @Override
+    public String getDisplayName() {
+        return "MARKDOWN";
+    }
+
+    @Override
+    public PNode createNode(PScene scene, Position position) {
+        return new MarkdownNode(scene, position);
+    }
+
+    private class MarkdownNode extends PNode {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        public MarkdownNode(PScene scene, Position position) {
+            super(scene, position);
+            setNodeName(getDisplayName());
+            setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
+            attachPinWidget(new PPin(scene, "from", MarkdownExecutor.this.getParam("from")));
+            attachPinWidget(new PPin(scene, "template", MarkdownExecutor.this.getParam("template")));
+            attachPinWidget(new PPin(scene, "to", MarkdownExecutor.this.getParam("to")));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "from", "template", "to");
+            if (!extrapins.isEmpty()) {
+                attachPinWidget(new PPin(scene));
+                extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
+            }
+            scene.getWidgetLayer().addChild(this);
+        }
+    }
 
     @Override
     protected void executecommand() throws IOException {
@@ -68,42 +99,5 @@ public class MarkdownExecutor extends Executor {
         output.close();
         input.close();
         template.close();
-    }
-
-    @Override
-    public WidgetData getWidgetData() {
-        return new MarkdownExecutorWidgetData();
-    }
-
-    private class MarkdownExecutorWidgetData extends WidgetData {
-
-        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-
-        public MarkdownExecutorWidgetData() {
-            addPinDef("from", new PinDef("from", MarkdownExecutor.this.getParam("from")));
-            addPinDef("template", new PinDef("template", MarkdownExecutor.this.getParam("template"), PinDef.OPTIONAL));
-            addPinDef("to", new PinDef("to", MarkdownExecutor.this.getParam("to")));
-            addExtraPinDefs(MarkdownExecutor.this.getParams(),"Do");
-        }
-
-        @Override
-        public Image getWidgetImage() {
-            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
-        }
-
-        @Override
-        public String getWidgetImageName() {
-            return EXECUTORIMAGENAME;
-        }
-
-        @Override
-        public CategoryChildren.CategoryType getCategoryType() {
-            return CategoryChildren.CategoryType.EXECUTOR;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "Markdown";
-        }
     }
 }

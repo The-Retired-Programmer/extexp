@@ -15,24 +15,55 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import java.awt.Image;
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.openide.filesystems.FileObject;
 import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.visualeditor.PScene;
 
 /**
  *
  * @author richard
  */
 public class ImagesetExecutor extends Executor {
+
+    @Override
+    public String getDisplayName() {
+        return "IMAGESET";
+    }
+
+    @Override
+    public PNode createNode(PScene scene, Position position) {
+        return new ImagesetNode(scene, position);
+    }
+
+    private class ImagesetNode extends PNode {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        public ImagesetNode(PScene scene, Position position) {
+            super(scene, position);
+            setNodeName("IMAGESET");
+            setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
+            attachPinWidget(new PPin(scene, "image", ImagesetExecutor.this.getParam("image"), PPin.INHERITED));
+            attachPinWidget(new PPin(scene, "width", ImagesetExecutor.this.getParam("width"), PPin.INHERITED));
+            attachPinWidget(new PPin(scene, "height", ImagesetExecutor.this.getParam("height"), PPin.INHERITED));
+            attachPinWidget(new PPin(scene, "to", ImagesetExecutor.this.getParam("to")));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "image", "width", "height", "to");
+            if (!extrapins.isEmpty()) {
+                attachPinWidget(new PPin(scene));
+                extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
+            }
+            scene.getWidgetLayer().addChild(this);
+        }
+    }
 
     @Override
     protected void executecommand() throws IOException {
@@ -99,43 +130,5 @@ public class ImagesetExecutor extends Executor {
         out.append("px\" />\n");
         //
         output.close();
-    }
-
-    @Override
-    public WidgetData getWidgetData() {
-        return new ImagesetExecutorWidgetData();
-    }
-
-    private class ImagesetExecutorWidgetData extends WidgetData {
-
-        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-
-        public ImagesetExecutorWidgetData() {
-            addPinDef("image", new PinDef("image", ImagesetExecutor.this.getParam("image"), PinDef.INHERITED));
-            addPinDef("width", new PinDef("width", ImagesetExecutor.this.getParam("width"), PinDef.INHERITED));
-            addPinDef("height", new PinDef("height", ImagesetExecutor.this.getParam("height"), PinDef.INHERITED));
-            addPinDef("to", new PinDef("to", ImagesetExecutor.this.getParam("to")));
-            addExtraPinDefs(ImagesetExecutor.this.getParams(),"Do");
-        }
-
-        @Override
-        public Image getWidgetImage() {
-            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
-        }
-
-        @Override
-        public String getWidgetImageName() {
-            return EXECUTORIMAGENAME;
-        }
-
-        @Override
-        public CategoryChildren.CategoryType getCategoryType() {
-            return CategoryChildren.CategoryType.EXECUTOR;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "Imageset";
-        }
     }
 }

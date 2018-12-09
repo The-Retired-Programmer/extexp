@@ -37,12 +37,12 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
     "CTL_VETopComponent=Build Editor",
     "HINT_VETopComponent=This is a Build Editor window"
 })
-public final class VisualEditorTC extends TopComponent {
+public final class PTC extends TopComponent {
     
-    private final ExtexpSceneSerialise serialiser = new ExtexpSceneSerialise();
+    private final SerialiseBuildInstructions serialiser = new SerialiseBuildInstructions();
     private final JPanel contentpanel = new JPanel();
     
-    public VisualEditorTC() {
+    public PTC() {
         initComponents();
         setName(Bundle.CTL_VETopComponent());
         setToolTipText(Bundle.HINT_VETopComponent());
@@ -61,7 +61,7 @@ public final class VisualEditorTC extends TopComponent {
     
     public void deserialise(ExecutionEnvironment env) throws IOException {
         for (int i = 0; i < env.commandsequences.getNamedSequences().size(); i++) {
-            ExtexpScene scene = new ExtexpScene();
+            PScene scene = new PScene();
             contentpanel.add(scene.createView());
             serialiser.deserialize(scene, env, i);
             scene.layout();

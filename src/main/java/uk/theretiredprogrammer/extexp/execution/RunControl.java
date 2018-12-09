@@ -15,18 +15,55 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
-import java.awt.Image;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.openide.util.ImageUtilities;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
+import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.visualeditor.PScene;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
 
 /**
  *
  * @author richard
  */
 public class RunControl extends Control {
+
+    private static final String RUNIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
+
+    @Override
+    public String getWidgetImageName() {
+        return RUNIMAGENAME;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "RUN";
+    }
+
+    @Override
+    public PNode createNode(PScene scene, Position position) {
+        return new RunNode(scene, position);
+    }
+
+    private class RunNode extends PNode {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        public RunNode(PScene scene, Position position) {
+            super(scene, position);
+            setNodeName(getDisplayName());
+            setNodeImage(ImageUtilities.loadImage(RUNIMAGENAME));
+            attachPinWidget(new PPin(scene, "Run", RunControl.this.getParam("Run")));
+            attachPinWidget(new PPin(scene, "path", RunControl.this.getParam("path"), PPin.OPTIONAL));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Run", "path");
+            if (!extrapins.isEmpty()) {
+                attachPinWidget(new PPin(scene));
+                extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
+            }
+            scene.getWidgetLayer().addChild(this);
+        }
+    }
 
     @Override
     protected void executecommand() throws IOException {
@@ -37,42 +74,6 @@ public class RunControl extends Control {
         for (Command child : ee.commandsequences.getSequence(runval)) {
             child.setParent(this);
             child.execute(new ExecutionEnvironment(newpaths, newTFS, ee.commandsequences));
-        }
-    }
-
-    @Override
-    public WidgetData getWidgetData() {
-        return new RunWidgetData();
-    }
-
-    private class RunWidgetData extends WidgetData {
-
-        private static final String RUNIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
-
-        public RunWidgetData() {
-            addPinDef("Run", new PinDef("Run", RunControl.this.getParam("Run")));
-            addPinDef("path", new PinDef("path", RunControl.this.getParam("path"), PinDef.OPTIONAL));
-            addExtraPinDefs(RunControl.this.getParams());
-        }
-
-        @Override
-        public Image getWidgetImage() {
-            return ImageUtilities.loadImage(RUNIMAGENAME);
-        }
-
-        @Override
-        public String getWidgetImageName() {
-            return RUNIMAGENAME;
-        }
-
-        @Override
-        public CategoryChildren.CategoryType getCategoryType() {
-            return CategoryChildren.CategoryType.CONTROL;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "Run";
         }
     }
 }

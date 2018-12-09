@@ -15,23 +15,53 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import java.awt.Image;
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
 import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOOutputPath;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.visualeditor.PScene;
 
 /**
  *
  * @author richard
  */
 public class FopExecutor extends Executor {
+
+    @Override
+    public String getDisplayName() {
+        return "FOP";
+    }
+
+    @Override
+    public PNode createNode(PScene scene, Position position) {
+        return new FopNode(scene, position);
+    }
+
+    private class FopNode extends PNode {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        public FopNode(PScene scene, Position position) {
+            super(scene, position);
+            setNodeName(getDisplayName());
+            setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
+            attachPinWidget(new PPin(scene, "from", FopExecutor.this.getParam("fo-xsl")));
+            attachPinWidget(new PPin(scene, "to", FopExecutor.this.getParam("pdf")));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "fo-xsl", "pdf");
+            if (!extrapins.isEmpty()) {
+                attachPinWidget(new PPin(scene));
+                extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
+            }
+            scene.getWidgetLayer().addChild(this);
+        }
+    }
 
     @Override
     protected void executecommand() throws IOException {
@@ -57,41 +87,5 @@ public class FopExecutor extends Executor {
         //
         pdf.close();
         foxsl.close();
-    }
-
-    @Override
-    public WidgetData getWidgetData() {
-        return new FopExecutorWidgetData();
-    }
-
-    private class FopExecutorWidgetData extends WidgetData {
-
-        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-
-        public FopExecutorWidgetData() {
-            addPinDef("fo-xsl", new PinDef("fo-xsl", FopExecutor.this.getParam("fo-xsl")));
-            addPinDef("pdf", new PinDef("pdf", FopExecutor.this.getParam("pdf")));
-            addExtraPinDefs(FopExecutor.this.getParams(),"Do");
-        }
-
-        @Override
-        public Image getWidgetImage() {
-            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
-        }
-
-        @Override
-        public String getWidgetImageName() {
-            return EXECUTORIMAGENAME;
-        }
-
-        @Override
-        public CategoryChildren.CategoryType getCategoryType() {
-            return CategoryChildren.CategoryType.EXECUTOR;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "FOP";
-        }
     }
 }

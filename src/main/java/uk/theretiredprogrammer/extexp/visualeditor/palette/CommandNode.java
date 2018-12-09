@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.visualeditor;
+package uk.theretiredprogrammer.extexp.visualeditor.palette;
 
-import java.util.List;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.util.lookup.Lookups;
+import uk.theretiredprogrammer.extexp.execution.Command;
 
 /**
  *
  * @author richard
  */
-public class WidgetStartAndEnd {
+public class CommandNode extends AbstractNode {
     
-    public final ExtexpWidget startwidget;
+    private final Command command;
     
-    public final List<ExtexpWidget> endwidgets;
+    public CommandNode(Command command) {
+        super(Children.LEAF, Lookups.fixed( new Object[] {command} ) );
+        this.command = command;
+        setIconBaseWithExtension(command.getWidgetImageName());
+        this.setDisplayName(command.getDisplayName());
+    }
     
-    public WidgetStartAndEnd(ExtexpWidget startwidget, List<ExtexpWidget> endwidgets){
-        this.startwidget = startwidget;
-        this.endwidgets = endwidgets;
+    public Command getCommand() {
+        return command;
     }
     
 }

@@ -15,16 +15,17 @@
  */
 package uk.theretiredprogrammer.extexp.executors;
 
-import uk.theretiredprogrammer.extexp.visualeditor.WidgetData;
-import java.awt.Image;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.execution.IOInputString;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
-import uk.theretiredprogrammer.extexp.execution.RunControl;
-import uk.theretiredprogrammer.extexp.visualeditor.PinDef;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode;
+import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.visualeditor.PScene;
 
 /**
  *
@@ -33,50 +34,41 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren;
 public class CopyExecutor extends Executor {
 
     @Override
+    public String getDisplayName() {
+        return "COPY";
+    }
+
+    @Override
+    public PNode createNode(PScene scene, Position position) {
+        return new CopyNode(scene, position);
+    }
+
+    private class CopyNode extends PNode {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        public CopyNode(PScene scene, Position position) {
+            super(scene, position);
+            setNodeName(getDisplayName());
+            setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
+            attachPinWidget(new PPin(scene, "from", CopyExecutor.this.getParam("from")));
+            attachPinWidget(new PPin(scene, "to", CopyExecutor.this.getParam("to")));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "from", "to");
+            if (!extrapins.isEmpty()) {
+                attachPinWidget(new PPin(scene));
+                extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
+            }
+            scene.getWidgetLayer().addChild(this);
+        }
+    }
+
+    @Override
     protected void executecommand() throws IOException {
-        IOWriter output = new IOWriter(ee,this.getLocalParameter("to"));
-        IOInputString input = new IOInputString(ee,this.getLocalParameter("from"));
+        IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
+        IOInputString input = new IOInputString(ee, this.getLocalParameter("from"));
         //
         output.get().write(input.get());
         //
         output.close();
         input.close();
     }
-
-    @Override
-    public WidgetData getWidgetData() {
-        return new CopyExecutorWidgetData();
-    }
-
-    private class CopyExecutorWidgetData extends WidgetData {
-        
-        private static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
-
-        public CopyExecutorWidgetData() {
-            addPinDef("from", new PinDef("from", CopyExecutor.this.getParam("from")));
-            addPinDef("to", new PinDef("to", CopyExecutor.this.getParam("to")));
-            addExtraPinDefs(CopyExecutor.this.getParams(),"Do");
-        }
-
-        @Override
-        public Image getWidgetImage() {
-            return ImageUtilities.loadImage(EXECUTORIMAGENAME);
-        }
-
-        @Override
-        public String getWidgetImageName() {
-            return EXECUTORIMAGENAME;
-        }
-
-        @Override
-        public CategoryChildren.CategoryType getCategoryType() {
-            return CategoryChildren.CategoryType.EXECUTOR;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return "Copy";
-        }
-    }
-
 }
