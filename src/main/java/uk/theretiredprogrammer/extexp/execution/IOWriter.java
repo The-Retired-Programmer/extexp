@@ -29,6 +29,7 @@ public class IOWriter extends IO<Writer> {
 
     private Writer writer;
     private String tempfilename;
+    private boolean append;
 
     public IOWriter(ExecutionEnvironment ee, String parametervalue) {
         super(ee, parametervalue);
@@ -39,6 +40,11 @@ public class IOWriter extends IO<Writer> {
         if (parametervalue.startsWith("!")) {
             writer = new StringWriter();
             tempfilename = parametervalue.substring(1);
+            append = false;
+        } else if (parametervalue.startsWith("+")) {
+            writer = new StringWriter();
+            tempfilename = parametervalue.substring(1);
+            append = true;
         } else {
             writer = new BufferedWriter(new OutputStreamWriter(IoUtil.getOutputStream(ee.paths.getOutfolder(), parametervalue)));
         }
@@ -49,7 +55,12 @@ public class IOWriter extends IO<Writer> {
     void drop() throws IOException {
         writer.close();
         if (writer instanceof StringWriter) {
-            ee.tempfs.put(tempfilename, ((StringWriter) writer).toString());
+            String previous = ee.tempfs.get(tempfilename);
+            if (append && previous != null) {
+                ee.tempfs.put(tempfilename, previous+((StringWriter) writer).toString());
+            } else {
+                ee.tempfs.put(tempfilename, ((StringWriter) writer).toString());
+            }
         }
     }
 

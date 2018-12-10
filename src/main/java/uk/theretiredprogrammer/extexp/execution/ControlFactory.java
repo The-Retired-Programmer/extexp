@@ -31,6 +31,12 @@ public class ControlFactory {
             rc.parse(jobj);
             return rc;
         }
+        String usename = jobj.getString("Use", "");
+        if (!usename.isEmpty()) {
+            UseControl uc = new UseControl();
+            uc.parse(jobj);
+            return uc;
+        }
         String ifdefinedname = jobj.getString("If-defined", "");
         if (!ifdefinedname.isEmpty()) {
             IfDefinedControl idc = new IfDefinedControl();

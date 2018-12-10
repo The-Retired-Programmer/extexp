@@ -54,7 +54,6 @@ public class BuildFile {
             jobj = rdr.readObject();
         }
         CommandSequenceStore commandsequencestore = new CommandSequenceStore();
-        TemporaryFileStore temporaryfilestore = new TemporaryFileStore();
         String parseresult = BuildFile.parse(jobj,
                 (name, sequence) -> insertSequence(commandsequencestore, name, sequence));
         if (!parseresult.isEmpty()) {
@@ -64,7 +63,7 @@ public class BuildFile {
         if (commandsequence == null) {
             throw new IOException("Command sequence \"MAIN\" missing");
         }
-        return new ExecutionEnvironment(paths, temporaryfilestore, commandsequencestore);
+        return ExecutionEnvironment.create(paths, commandsequencestore);
     }
 
     private static String insertSequence(CommandSequenceStore commandsequencestore, String name, JsonArray sequence) {

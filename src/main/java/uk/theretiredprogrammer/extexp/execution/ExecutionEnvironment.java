@@ -24,8 +24,20 @@ public class ExecutionEnvironment {
     public final IOPaths paths;
     public final TemporaryFileStore tempfs;
     public final CommandSequenceStore commandsequences;
+    
+    public static final ExecutionEnvironment create(IOPaths paths, CommandSequenceStore commandsequences) {
+        return new ExecutionEnvironment(paths, new TemporaryFileStore(), commandsequences);
+    }
+    
+    public final ExecutionEnvironment clone(IOPaths paths) {
+        return new ExecutionEnvironment(paths, this.tempfs, this.commandsequences);
+    }
+    
+    public final ExecutionEnvironment cloneWithNewTFS(IOPaths paths) {
+        return new ExecutionEnvironment(paths, new TemporaryFileStore(), this.commandsequences);
+    }
 
-    public ExecutionEnvironment(IOPaths paths, TemporaryFileStore tempfs, CommandSequenceStore commandsequences) {
+    private ExecutionEnvironment(IOPaths paths, TemporaryFileStore tempfs, CommandSequenceStore commandsequences) {
         this.paths = paths;
         this.tempfs = tempfs;
         this.commandsequences = commandsequences;

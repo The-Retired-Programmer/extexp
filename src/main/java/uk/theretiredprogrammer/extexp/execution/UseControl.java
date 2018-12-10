@@ -28,35 +28,35 @@ import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
  *
  * @author richard
  */
-public class RunControl extends Control {
+public class UseControl extends Control {
 
-    private static final String RUNIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
+    private static final String USEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
 
     @Override
     public String getWidgetImageName() {
-        return RUNIMAGENAME;
+        return USEIMAGENAME;
     }
 
     @Override
     public String getDisplayName() {
-        return "RUN";
+        return "USE";
     }
 
     @Override
     public PNode createNode(PScene scene, Position position) {
-        return new RunNode(scene, position);
+        return new UseNode(scene, position);
     }
 
-    private class RunNode extends PNode {
+    private class UseNode extends PNode {
 
         @SuppressWarnings("LeakingThisInConstructor")
-        public RunNode(PScene scene, Position position) {
+        public UseNode(PScene scene, Position position) {
             super(scene, position);
             setNodeName(getDisplayName());
-            setNodeImage(ImageUtilities.loadImage(RUNIMAGENAME));
-            attachPinWidget(new PPin(scene, "Run", RunControl.this.getParam("Run")));
-            attachPinWidget(new PPin(scene, "path", RunControl.this.getParam("path"), PPin.OPTIONAL));
-            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Run", "path");
+            setNodeImage(ImageUtilities.loadImage(USEIMAGENAME));
+            attachPinWidget(new PPin(scene, "Use", UseControl.this.getParam("Use")));
+            attachPinWidget(new PPin(scene, "path", UseControl.this.getParam("path"), PPin.OPTIONAL));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Use", "path");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
                 extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
@@ -69,9 +69,9 @@ public class RunControl extends Control {
     protected void executecommand() throws IOException {
         String pval = getOptionalLocalParameter("path");
         IOPaths newpaths = pval == null ? ee.paths : ee.paths.updatePath(pval);
-        String runval = getLocalParameter("Run");
-        ExecutionEnvironment newee = ee.cloneWithNewTFS(newpaths);
-        for (Command child : ee.commandsequences.getSequence(runval)) {
+        String useval = getLocalParameter("Use");
+        ExecutionEnvironment newee = ee.clone(newpaths);
+        for (Command child : ee.commandsequences.getSequence(useval)) {
             child.setParent(this);
             child.execute(newee);
         }

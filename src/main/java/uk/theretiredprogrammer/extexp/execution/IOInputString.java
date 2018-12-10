@@ -30,8 +30,14 @@ public class IOInputString extends IO<String> {
     @Override
     String setup() throws IOException {
         String content = ee.tempfs.get(parametervalue);
-        return content == null
-                ? IoUtil.findFile(parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder()).asText()
-                : content;
+        if (content != null) {
+            return content;
+        }
+        try {
+            return IoUtil.findFile(parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder()).asText();
+        } catch (IOException ex) {
+            return parametervalue;
+        }
     }
+
 }
