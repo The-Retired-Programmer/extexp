@@ -37,9 +37,9 @@ public class ActionsWorker implements Runnable {
 
     private final boolean cleanrequired;
     private final boolean buildrequired;
-    private final ExTexPProject project;
+    private final PProject project;
 
-    public ActionsWorker(ExTexPProject project, boolean cleanrequired, boolean buildrequired) {
+    public ActionsWorker(PProject project, boolean cleanrequired, boolean buildrequired) {
         this.cleanrequired = cleanrequired;
         this.buildrequired = buildrequired;
         this.project = project;

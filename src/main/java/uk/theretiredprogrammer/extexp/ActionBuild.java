@@ -25,9 +25,9 @@ import org.openide.util.RequestProcessor;
  */
 public class ActionBuild extends AbstractAction {
 
-    private final ExTexPProject project;
+    private final PProject project;
 
-    public ActionBuild(ExTexPProject project) {
+    public ActionBuild(PProject project) {
         super("Build");
         this.project = project;
     }

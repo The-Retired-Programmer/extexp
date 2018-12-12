@@ -44,13 +44,13 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author richard
  */
-public class ExTexPProject implements Project {
+public class PProject implements Project {
 
     private final FileObject projectDir;
     private final ProjectState state;
     private Lookup lkp;
 
-    ExTexPProject(FileObject dir, ProjectState state) {
+    PProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;
     }
@@ -66,7 +66,7 @@ public class ExTexPProject implements Project {
             lkp = Lookups.fixed(new Object[]{
                 this,
                 new Info(),
-                new ExTexPProjectLogicalView(this)
+                new PProjectLogicalView(this)
             });
         }
         return lkp;
@@ -104,18 +104,18 @@ public class ExTexPProject implements Project {
 
         @Override
         public Project getProject() {
-            return ExTexPProject.this;
+            return PProject.this;
         }
     }
 
-    class ExTexPProjectLogicalView implements LogicalViewProvider {
+    class PProjectLogicalView implements LogicalViewProvider {
 
         @StaticResource()
         public static final String EXTEXP_ICON = "uk/theretiredprogrammer/extexp/wrench.png";
 
-        private final ExTexPProject project;
+        private final PProject project;
 
-        public ExTexPProjectLogicalView(ExTexPProject project) {
+        public PProjectLogicalView(PProject project) {
             this.project = project;
         }
 
@@ -138,9 +138,9 @@ public class ExTexPProject implements Project {
 
         private final class ProjectNode extends FilterNode {
 
-            final ExTexPProject project;
+            final PProject project;
 
-            public ProjectNode(Node node, ExTexPProject project)
+            public ProjectNode(Node node, PProject project)
                     throws DataObjectNotFoundException {
                 super(node,
                         NodeFactorySupport.createCompositeChildren(

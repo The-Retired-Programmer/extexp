@@ -40,16 +40,16 @@ public class OutputNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        ExTexPProject p = project.getLookup().lookup(ExTexPProject.class);
+        PProject p = project.getLookup().lookup(PProject.class);
         assert p != null;
         return new OutputNodeList(p);
     }
 
     private class OutputNodeList implements NodeList<Node> {
 
-        ExTexPProject project;
+        PProject project;
 
-        public OutputNodeList(ExTexPProject project) {
+        public OutputNodeList(PProject project) {
             this.project = project;
         }
 

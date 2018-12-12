@@ -41,16 +41,16 @@ public class BuildNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        ExTexPProject p = project.getLookup().lookup(ExTexPProject.class);
+        PProject p = project.getLookup().lookup(PProject.class);
         assert p != null;
         return new BuildNodeList(p);
     }
 
     private class BuildNodeList implements NodeList<Node> {
 
-        ExTexPProject project;
+        PProject project;
 
-        public BuildNodeList(ExTexPProject project) {
+        public BuildNodeList(PProject project) {
             this.project = project;
         }
 

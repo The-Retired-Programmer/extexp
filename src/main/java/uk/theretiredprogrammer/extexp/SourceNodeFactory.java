@@ -40,16 +40,16 @@ public class SourceNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        ExTexPProject p = project.getLookup().lookup(ExTexPProject.class);
+        PProject p = project.getLookup().lookup(PProject.class);
         assert p != null;
         return new SourceNodeList(p);
     }
 
     private class SourceNodeList implements NodeList<Node> {
 
-        ExTexPProject project;
+        PProject project;
 
-        public SourceNodeList(ExTexPProject project) {
+        public SourceNodeList(PProject project) {
             this.project = project;
         }
 

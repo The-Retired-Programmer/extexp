@@ -25,9 +25,9 @@ import org.openide.util.RequestProcessor;
  */
 public class ActionClean extends AbstractAction {
 
-    private final ExTexPProject project;
+    private final PProject project;
 
-    public ActionClean(ExTexPProject project) {
+    public ActionClean(PProject project) {
         super("Clean");
         this.project = project;
     }

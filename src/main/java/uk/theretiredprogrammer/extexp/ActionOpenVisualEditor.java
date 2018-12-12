@@ -36,9 +36,9 @@ import uk.theretiredprogrammer.extexp.visualeditor.PTC;
  */
 public class ActionOpenVisualEditor extends AbstractAction {
 
-    private final ExTexPProject project;
+    private final PProject project;
 
-    public ActionOpenVisualEditor(ExTexPProject project) {
+    public ActionOpenVisualEditor(PProject project) {
         super("Open Visual Editor");
         this.project = project;
     }

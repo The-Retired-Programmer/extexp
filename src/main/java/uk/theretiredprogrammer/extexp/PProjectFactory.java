@@ -28,7 +28,7 @@ import org.openide.util.lookup.ServiceProvider;
  */
 
 @ServiceProvider(service = ProjectFactory.class)
-public class ExTexPProjectFactory implements ProjectFactory {
+public class PProjectFactory implements ProjectFactory {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
@@ -38,7 +38,7 @@ public class ExTexPProjectFactory implements ProjectFactory {
     //Specifies when the project will be opened, i.e., if the project exists:
     @Override
     public Project loadProject(FileObject dir, ProjectState state) throws IOException {
-        return isProject(dir) ? new ExTexPProject(dir, state) : null;
+        return isProject(dir) ? new PProject(dir, state) : null;
     }
 
     @Override
