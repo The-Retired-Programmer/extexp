@@ -80,17 +80,13 @@ public class ActionsWorker implements Runnable {
         msg.println("Cleaning...");
         FileObject cachefolder = projectfolder.getFileObject("cache");
         if (cachefolder != null) {
-            msg.println("   ...cache directory");
+            msg.println("   ...cache folder");
             cachefolder.delete();
         }
         FileObject outputfolder = projectfolder.getFileObject("output");
         if (outputfolder != null) {
-            msg.println("   ...output content");
-            for (FileObject child : outputfolder.getChildren()) {
-                if (child.isData()) {
-                    child.delete();
-                }
-            }
+            msg.println("   ...output folder");
+            outputfolder.delete();
         }
     }
 

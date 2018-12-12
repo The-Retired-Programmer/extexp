@@ -39,8 +39,9 @@ public class BuildFile {
                 projectfolder.getFileObject("src"),
                 IoUtil.useOrCreateFolder(projectfolder, "cache"),
                 IoUtil.useOrCreateFolder(projectfolder, "output"),
-                IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
-                "resources/",
+                null,
+                //IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
+                "resources",
                 msg,
                 err
         );
@@ -83,7 +84,7 @@ public class BuildFile {
                     }
                     break;
                 default:
-                    return "parsing - Illegal Json File content (3)";
+                    return "parsing - Illegal Json File content";
             }
         }
         return "";

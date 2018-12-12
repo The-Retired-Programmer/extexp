@@ -31,7 +31,7 @@ public class IOPaths {
     private final FileObject sharedcontentfolder;
     private final FileObject cachefolder;
     private final FileObject outfolder;
-    private final FileObject resourcesfolder;
+    private FileObject resourcesfolder;
     private final String relativepath;
     private final OutputWriter msg;
     private final OutputWriter err;
@@ -107,12 +107,17 @@ public class IOPaths {
     public FileObject getResourcesfolder() {
         return resourcesfolder;
     }
+    
+    public FileObject setResourcesfolder(FileObject root) throws IOException  {
+        resourcesfolder = IoUtil.useOrCreateFolder(root, relativepath);
+        return resourcesfolder;
+    }
 
     /**
      * @return the relativepath
      */
     public String getRelativepath() {
-        return relativepath;
+        return relativepath+'/';
     }
     
     /**
