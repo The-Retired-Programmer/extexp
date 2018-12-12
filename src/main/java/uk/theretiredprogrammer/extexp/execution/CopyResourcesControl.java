@@ -72,6 +72,12 @@ public class CopyResourcesControl extends Control {
         String target = getLocalParameter("Copy-resources");
         FileObject toFO;
         switch (target){
+            case "":
+                toFO = ee.paths.getResourcesfolder();
+                String foldername = ee.paths.getRelativepath();
+                FileObject fromFO = ee.paths.getContentfolder().getFileObject(foldername);
+                copyresources(fromFO, toFO);
+                break;
             case "output":
                 toFO = ee.paths.getOutfolder();
                 break;

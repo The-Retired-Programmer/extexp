@@ -39,8 +39,8 @@ public class BuildFile {
                 projectfolder.getFileObject("src"),
                 IoUtil.useOrCreateFolder(projectfolder, "cache"),
                 IoUtil.useOrCreateFolder(projectfolder, "output"),
-                null,
-                null,
+                IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
+                "resources",
                 msg,
                 err
         );
