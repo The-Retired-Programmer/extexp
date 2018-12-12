@@ -71,10 +71,10 @@ public abstract class Command {
         return parameters;
     }
 
-    public String getOptionalLocalParameter(String name) {
+    public String getOptionalLocalParameter(String name, String defaultvalue) {
         String val = parameters.get(name);
         if (val == null) {
-            return null;
+            val = defaultvalue;
         }
         return substitute(val, (s) -> getSubText(s));
     }
@@ -103,10 +103,10 @@ public abstract class Command {
         return substitute(paramval, (s) -> getSubText(s));
     }
 
-    public String getOptionalSubstitutedParameter(String name) {
+    public String getOptionalSubstitutedParameter(String name, String defaultvalue) {
         String paramval = getSubText(name);
         if (paramval == null) {
-            return null;
+           paramval = defaultvalue;
         }
         return substitute(paramval, (s) -> getSubText(s));
     }
@@ -191,19 +191,19 @@ public abstract class Command {
             return;
         }
         String fragment = in.substring(0, p);
-        if (fragment != null && !fragment.isEmpty()) {
+        if (!fragment.isEmpty()) {
             out.append(fragment);
         }
         int q = in.indexOf("}", p + 2);
         String name = in.substring(p + 2, q);
 
         fragment = getoptionalparam.apply(name);
-        if (fragment != null && !fragment.isEmpty()) {
+        if (!fragment.isEmpty()) {
             substitute(fragment, getoptionalparam, out);
         }
 
         fragment = in.substring(q + 1);
-        if (fragment != null && !fragment.isEmpty()) {
+        if (!fragment.isEmpty()) {
             substitute(fragment, getoptionalparam, out);
         }
     }

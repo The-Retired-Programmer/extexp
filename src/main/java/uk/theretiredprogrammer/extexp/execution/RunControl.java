@@ -67,7 +67,7 @@ public class RunControl extends Control {
 
     @Override
     protected void executecommand() throws IOException {
-        String pval = getOptionalLocalParameter("path");
+        String pval = getOptionalLocalParameter("path", null);
         IOPaths newpaths = pval == null ? ee.paths : ee.paths.updatePath(pval);
         String runval = getLocalParameter("Run");
         ExecutionEnvironment newee = ee.cloneWithNewTFS(newpaths);

@@ -40,8 +40,7 @@ public class BuildFile {
                 IoUtil.useOrCreateFolder(projectfolder, "cache"),
                 IoUtil.useOrCreateFolder(projectfolder, "output"),
                 null,
-                //IoUtil.useOrCreateFolder(projectfolder, "output", "resources"),
-                "resources",
+                null,
                 msg,
                 err
         );

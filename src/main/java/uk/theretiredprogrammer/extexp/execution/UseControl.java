@@ -67,7 +67,7 @@ public class UseControl extends Control {
 
     @Override
     protected void executecommand() throws IOException {
-        String pval = getOptionalLocalParameter("path");
+        String pval = getOptionalLocalParameter("path", null);
         IOPaths newpaths = pval == null ? ee.paths : ee.paths.updatePath(pval);
         String useval = getLocalParameter("Use");
         ExecutionEnvironment newee = ee.clone(newpaths);

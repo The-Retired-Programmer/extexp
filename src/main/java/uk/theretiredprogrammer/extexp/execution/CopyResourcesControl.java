@@ -81,8 +81,7 @@ public class CopyResourcesControl extends Control {
             default:
                 throw new IOException("Illegal parameter value in Copy-Resource Control");
         }
-        String foldername = getOptionalLocalParameter("foldername");
-        foldername = foldername == null ? "resources" : foldername;
+        String foldername = getOptionalLocalParameter("foldername", "resources");
         toFO = ee.paths.setResourcesfolder(toFO, foldername);
         FileObject fromFO = ee.paths.getContentfolder().getFileObject(foldername);
         copyresources(fromFO, toFO);

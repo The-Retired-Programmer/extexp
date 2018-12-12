@@ -70,7 +70,7 @@ public class MarkdownExecutor extends Executor {
     protected void executecommand() throws IOException {
         IOWriter output = new IOWriter(ee, this.getLocalParameter("to"));
         IOInputPath input = new IOInputPath(ee, this.getLocalParameter("from"));
-        IOInputPath template = new IOInputPath(ee, this.getOptionalLocalParameter("template"));
+        IOInputPath template = new IOInputPath(ee, this.getOptionalLocalParameter("template", null));
         //
         ProcessBuilder pb;
         String templatepath = template.get();
