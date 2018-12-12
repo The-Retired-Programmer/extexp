@@ -55,7 +55,7 @@ public class MarkdownExecutor extends Executor {
             setNodeName(getDisplayName());
             setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
             attachPinWidget(new PPin(scene, "from", MarkdownExecutor.this.getParam("from")));
-            attachPinWidget(new PPin(scene, "template", MarkdownExecutor.this.getParam("template")));
+            attachPinWidget(new PPin(scene, "template", MarkdownExecutor.this.getParam("template"), PPin.OPTIONAL));
             attachPinWidget(new PPin(scene, "to", MarkdownExecutor.this.getParam("to")));
             List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "from", "template", "to");
             if (!extrapins.isEmpty()) {

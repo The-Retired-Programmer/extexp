@@ -32,7 +32,7 @@ public class IOPaths {
     private final FileObject cachefolder;
     private final FileObject outfolder;
     private FileObject resourcesfolder;
-    private final String relativepath;
+    private String relativepath;
     private final OutputWriter msg;
     private final OutputWriter err;
     
@@ -108,7 +108,8 @@ public class IOPaths {
         return resourcesfolder;
     }
     
-    public FileObject setResourcesfolder(FileObject root) throws IOException  {
+    public FileObject setResourcesfolder(FileObject root, String foldername) throws IOException  {
+        relativepath = foldername;
         resourcesfolder = IoUtil.useOrCreateFolder(root, relativepath);
         return resourcesfolder;
     }

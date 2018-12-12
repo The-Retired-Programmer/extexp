@@ -46,18 +46,19 @@ public class CopyResourcesControl extends Control {
 
     @Override
     public PNode createNode(PScene scene, Position position) {
-        return new RunNode(scene, position);
+        return new CopyResourceNode(scene, position);
     }
 
-    private class RunNode extends PNode {
+    private class CopyResourceNode extends PNode {
 
         @SuppressWarnings("LeakingThisInConstructor")
-        public RunNode(PScene scene, Position position) {
+        public CopyResourceNode(PScene scene, Position position) {
             super(scene, position);
             setNodeName(getDisplayName());
             setNodeImage(ImageUtilities.loadImage(COPYRESOURCESIMAGENAME));
             attachPinWidget(new PPin(scene, "Copy-resources", CopyResourcesControl.this.getParam("Copy-resources")));
-            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Copy-resources");
+            attachPinWidget(new PPin(scene, "foldername", CopyResourcesControl.this.getParam("foldername"), PPin.OPTIONAL));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Copy-resources", "foldername");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
                 extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
@@ -80,8 +81,10 @@ public class CopyResourcesControl extends Control {
             default:
                 throw new IOException("Illegal parameter value in Copy-Resource Control");
         }
-        toFO = ee.paths.setResourcesfolder(toFO);
-        FileObject fromFO = ee.paths.getContentfolder().getFileObject("resources");
+        String foldername = getOptionalLocalParameter("foldername");
+        foldername = foldername == null ? "resources" : foldername;
+        toFO = ee.paths.setResourcesfolder(toFO, foldername);
+        FileObject fromFO = ee.paths.getContentfolder().getFileObject(foldername);
         copyresources(fromFO, toFO);
     }
     

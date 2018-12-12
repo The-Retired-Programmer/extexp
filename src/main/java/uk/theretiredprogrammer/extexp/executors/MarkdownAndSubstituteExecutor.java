@@ -54,7 +54,7 @@ public class MarkdownAndSubstituteExecutor extends Executor {
             setNodeName(getDisplayName());
             setNodeImage(ImageUtilities.loadImage(EXECUTORIMAGENAME));
             attachPinWidget(new PPin(scene, "from", MarkdownAndSubstituteExecutor.this.getParam("from")));
-            attachPinWidget(new PPin(scene, "template", MarkdownAndSubstituteExecutor.this.getParam("template")));
+            attachPinWidget(new PPin(scene, "template", MarkdownAndSubstituteExecutor.this.getParam("template"), PPin.OPTIONAL));
             attachPinWidget(new PPin(scene, "to", MarkdownAndSubstituteExecutor.this.getParam("to")));
             List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "from", "template", "to");
             if (!extrapins.isEmpty()) {

@@ -48,8 +48,8 @@ public class PPin extends VMDPinWidget {
     public PPin(final PScene scene, String name, String value, int valuetype) {
         this(scene,
                 name + ": " + (value != null ? value
-                        : valuetype == INHERITED ? "\u00abfrom Run\u00bb"
-                                : valuetype == OPTIONAL ? "\u00aboptional - from Run\u00bb"
+                        : valuetype == INHERITED ? "\u00abinherited\u00bb"
+                                : valuetype == OPTIONAL ? "\u00aboptional\u00bb"
                                         : "\u00abundefined\u00bb"));
     }
 }
