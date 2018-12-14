@@ -62,6 +62,14 @@ public class IOPaths {
                 resourcesfolder,relativepath, getMsg(), getErr());
     }
     
+    public IOPaths updateBothPath(String path) throws IOException {
+        return new IOPaths(getProjectfolder(), contentfolder.getFileObject(path),
+                sharedcontentfolder == null ? contentfolder : sharedcontentfolder,
+                IoUtil.useOrCreateFolder(cachefolder, path),
+                IoUtil.useOrCreateFolder(outfolder, path),
+                resourcesfolder,relativepath, getMsg(), getErr());
+    }
+    
     /**
      * @return the projectfolder
      */

@@ -76,7 +76,7 @@ public abstract class Command {
         if (val == null) {
             val = defaultvalue;
         }
-        return substitute(val, (s) -> getSubText(s));
+        return val == null? val : substitute(val, (s) -> getSubText(s));
     }
 
     public String getLocalParameter(String name) throws IOException {
@@ -108,7 +108,7 @@ public abstract class Command {
         if (paramval == null) {
            paramval = defaultvalue;
         }
-        return substitute(paramval, (s) -> getSubText(s));
+        return paramval == null ? null : substitute(paramval, (s) -> getSubText(s));
     }
 
     private String getSubText(String name) {

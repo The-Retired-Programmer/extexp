@@ -56,7 +56,8 @@ public class RunControl extends Control {
             setNodeImage(ImageUtilities.loadImage(RUNIMAGENAME));
             attachPinWidget(new PPin(scene, "Run", RunControl.this.getParam("Run")));
             attachPinWidget(new PPin(scene, "path", RunControl.this.getParam("path"), PPin.OPTIONAL));
-            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Run", "path");
+            attachPinWidget(new PPin(scene, "inputpath", RunControl.this.getParam("inputpath"), PPin.OPTIONAL));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Run", "path","inputpath");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
                 extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
@@ -67,8 +68,14 @@ public class RunControl extends Control {
 
     @Override
     protected void executecommand() throws IOException {
+        IOPaths newpaths;
         String pval = getOptionalLocalParameter("path", null);
-        IOPaths newpaths = pval == null ? ee.paths : ee.paths.updatePath(pval);
+        if (pval != null) {
+            newpaths = ee.paths.updateBothPath(pval);
+        } else {
+             String ipval = getOptionalLocalParameter("inputpath", null);
+             newpaths = ipval == null ? ee.paths : ee.paths.updatePath(ipval);
+        }
         String runval = getLocalParameter("Run");
         ExecutionEnvironment newee = ee.cloneWithNewTFS(newpaths);
         for (Command child : ee.commandsequences.getSequence(runval)) {

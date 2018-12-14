@@ -56,7 +56,8 @@ public class UseControl extends Control {
             setNodeImage(ImageUtilities.loadImage(USEIMAGENAME));
             attachPinWidget(new PPin(scene, "Use", UseControl.this.getParam("Use")));
             attachPinWidget(new PPin(scene, "path", UseControl.this.getParam("path"), PPin.OPTIONAL));
-            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Use", "path");
+            attachPinWidget(new PPin(scene, "inputpath", UseControl.this.getParam("inputpath"), PPin.OPTIONAL));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Run", "path","inputpath");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
                 extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
@@ -67,8 +68,14 @@ public class UseControl extends Control {
 
     @Override
     protected void executecommand() throws IOException {
+        IOPaths newpaths;
         String pval = getOptionalLocalParameter("path", null);
-        IOPaths newpaths = pval == null ? ee.paths : ee.paths.updatePath(pval);
+        if (pval != null) {
+            newpaths = ee.paths.updateBothPath(pval);
+        } else {
+             String ipval = getOptionalLocalParameter("inputpath", null);
+             newpaths = ipval == null ? ee.paths : ee.paths.updatePath(ipval);
+        }
         String useval = getLocalParameter("Use");
         ExecutionEnvironment newee = ee.clone(newpaths);
         for (Command child : ee.commandsequences.getSequence(useval)) {

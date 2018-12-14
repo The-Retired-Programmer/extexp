@@ -90,7 +90,7 @@ public class IfDefinedControl extends Control {
 
     @Override
     protected void executecommand() throws IOException {
-        String ifparam = getLocalParameter("IF-DEFINED");
+        String ifparam = getLocalParameter("If-defined");
         if (isParamDefined(ifparam)) {
             Command thenpart = getOptionalCommand("then");
             if (thenpart != null) {
