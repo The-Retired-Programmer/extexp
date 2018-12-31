@@ -55,8 +55,9 @@ public class ImagesetExecutor extends Executor {
             attachPinWidget(new PPin(scene, "image", ImagesetExecutor.this.getParam("image"), PPin.INHERITED));
             attachPinWidget(new PPin(scene, "width", ImagesetExecutor.this.getParam("width"), PPin.INHERITED));
             attachPinWidget(new PPin(scene, "height", ImagesetExecutor.this.getParam("height"), PPin.INHERITED));
+            attachPinWidget(new PPin(scene, "class", ImagesetExecutor.this.getParam("class")));
             attachPinWidget(new PPin(scene, "to", ImagesetExecutor.this.getParam("to")));
-            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "image", "width", "height", "to");
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "image", "width", "height", "class", "to");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
                 extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
@@ -76,6 +77,7 @@ public class ImagesetExecutor extends Executor {
         int fnsize = fn.length();
         String widthstring = getSubstitutedParameter("width");
         String heightstring = getSubstitutedParameter("height");
+        String classstring = getSubstitutedParameter("class");
         Map<Integer, String> images = new TreeMap<>();
         String relativeresourcesfolderpath = ee.paths.getRelativepath();
         for (FileObject child : ee.paths.getResourcesfolder().getChildren()) {
@@ -112,7 +114,9 @@ public class ImagesetExecutor extends Executor {
         out.append(fn);
         out.append('.');
         out.append(fext);
-        out.append("\"\n    class=\"attachment-full size-full\" alt=\"\"\n    srcset=\"");
+        out.append("\"\n    class=\"");
+        out.append(classstring);
+        out.append("\" alt=\"\"\n    srcset=\"");
         String prefix = "";
         for (Map.Entry<Integer, String> es : images.entrySet()) {
             out.append(prefix);
