@@ -73,10 +73,7 @@ public abstract class Command {
 
     public String getOptionalLocalParameter(String name, String defaultvalue) {
         String val = parameters.get(name);
-        if (val == null) {
-            val = defaultvalue;
-        }
-        return val == null ? val : substitute(val, (s) -> getSubText(s));
+        return val == null ? defaultvalue : substitute(val, (s) -> getSubText(s, defaultvalue));
     }
 
     public String getLocalParameter(String name) throws IOException {
@@ -84,7 +81,7 @@ public abstract class Command {
         if (val == null) {
             throw new IOException("Parameter \"" + name + "\" missing");
         }
-        return substitute(val, (s) -> getSubText(s));
+        return substitute(val, (s) -> getSubText(s,null));
     }
 
     public boolean hasLocalParameter(String pname) {
@@ -96,23 +93,18 @@ public abstract class Command {
     }
 
     public String getSubstitutedParameter(String name) throws IOException {
-        String paramval = getSubText(name);
+        String paramval = getSubText(name, null);
         if (paramval == null) {
             throw new IOException("Parameter \"" + name + "\" missing");
         }
-        return substitute(paramval, (s) -> getSubText(s));
+        return substitute(paramval, (s) -> getSubText(s, null));
     }
 
     public String getOptionalSubstitutedParameter(String name, String defaultvalue) {
-        String paramval = getSubText(name);
-        if (paramval == null) {
-            return defaultvalue;
-        }
-        paramval = substitute(paramval, (s) -> getSubText(s));
-        return paramval == null ? defaultvalue : paramval;
+        return substitute(getSubText(name, defaultvalue), (s) -> getSubText(s,defaultvalue));
     }
 
-    private String getSubText(String name) {
+    private String getSubText(String name, String defaultvalue) {
         // precedence; TEMPORARY FILES, PARAMETERS (WITH FULL PARENT DESCENT); FILES
         //
         // TEMPORARY FILES
@@ -133,12 +125,12 @@ public abstract class Command {
         try {
             return IoUtil.findFile(name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder()).asText();
         } catch (IOException ex) {
-            return null;
+            return defaultvalue;
         }
     }
 
     public boolean isParamDefined(String name) {
-        // precedence; TEMPORARY FILES, PARAMETERS (WITH FULL PARENT DESCENT); FILES
+        // precedence; TEMPORARY FILES, PARAMETERS (WITH FULL PARENT DESCENT);
         //
         // TEMPORARY FILES
         String val = ee.tempfs.get(name);
