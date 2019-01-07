@@ -189,12 +189,15 @@ public abstract class Command {
         }
         int q = in.indexOf("}", p + 2);
         String name = in.substring(p + 2, q);
-
-        fragment = getoptionalparam.apply(name);
-        if (!fragment.isEmpty()) {
-            substitute(fragment, getoptionalparam, out);
+        
+        if (name.equals("*")) {
+            out.append(ee.idgenerator.generateID());
+        } else {
+            fragment = getoptionalparam.apply(name);
+            if (!fragment.isEmpty()) {
+                substitute(fragment, getoptionalparam, out);
+            }
         }
-
         fragment = in.substring(q + 1);
         if (!fragment.isEmpty()) {
             substitute(fragment, getoptionalparam, out);

@@ -24,22 +24,25 @@ public class ExecutionEnvironment {
     public final IOPaths paths;
     public final TemporaryFileStore tempfs;
     public final CommandSequenceStore commandsequences;
+    public final IDGenerator idgenerator;
     
     public static final ExecutionEnvironment create(IOPaths paths, CommandSequenceStore commandsequences) {
-        return new ExecutionEnvironment(paths, new TemporaryFileStore(), commandsequences);
+        return new ExecutionEnvironment(paths, new TemporaryFileStore(), commandsequences, new IDGenerator());
     }
     
     public final ExecutionEnvironment clone(IOPaths paths) {
-        return new ExecutionEnvironment(paths, this.tempfs, this.commandsequences);
+        return new ExecutionEnvironment(paths, this.tempfs, this.commandsequences, this.idgenerator);
     }
     
     public final ExecutionEnvironment cloneWithNewTFS(IOPaths paths) {
-        return new ExecutionEnvironment(paths, new TemporaryFileStore(), this.commandsequences);
+        return new ExecutionEnvironment(paths, new TemporaryFileStore(), this.commandsequences, this.idgenerator);
     }
 
-    private ExecutionEnvironment(IOPaths paths, TemporaryFileStore tempfs, CommandSequenceStore commandsequences) {
+    private ExecutionEnvironment(IOPaths paths, TemporaryFileStore tempfs, CommandSequenceStore commandsequences,
+            IDGenerator idgenerator) {
         this.paths = paths;
         this.tempfs = tempfs;
         this.commandsequences = commandsequences;
+        this.idgenerator = idgenerator;
     }
 }
