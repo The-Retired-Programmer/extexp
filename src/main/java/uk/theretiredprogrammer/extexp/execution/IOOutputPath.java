@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
+import uk.theretiredprogrammer.extexp.execution.impl.IO;
 
 /**
  *
@@ -28,7 +29,7 @@ public class IOOutputPath extends IO<String> {
     }
 
     @Override
-    String setup() throws IOException {
+    protected String setup() throws IOException {
         if (parametervalue.startsWith("!")) {
             throw new IOException("Cannot use temporary filestore  for output path , please use a real filestore object");
         }

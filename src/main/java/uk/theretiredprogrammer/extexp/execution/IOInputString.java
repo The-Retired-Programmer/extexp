@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
+import uk.theretiredprogrammer.extexp.execution.impl.IO;
+import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *
@@ -28,7 +30,7 @@ public class IOInputString extends IO<String> {
     }
 
     @Override
-    String setup() throws IOException {
+    protected String setup() throws IOException {
         String content = ee.tempfs.get(parametervalue);
         if (content != null) {
             return content;
@@ -39,5 +41,4 @@ public class IOInputString extends IO<String> {
             return parametervalue;
         }
     }
-
 }

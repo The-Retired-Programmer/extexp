@@ -27,13 +27,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.openide.util.ImageUtilities;
 import org.w3c.dom.Document;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOReader;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
-import uk.theretiredprogrammer.extexp.visualeditor.PPin;
-import uk.theretiredprogrammer.extexp.visualeditor.PScene;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.PPin;
+import uk.theretiredprogrammer.extexp.execution.PScene;
 
 /**
  *

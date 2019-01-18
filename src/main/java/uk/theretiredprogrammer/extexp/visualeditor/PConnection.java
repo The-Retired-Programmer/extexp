@@ -15,10 +15,13 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
+import uk.theretiredprogrammer.extexp.execution.PPin;
+import uk.theretiredprogrammer.extexp.execution.PScene;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.vmd.VMDConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
+import uk.theretiredprogrammer.extexp.execution.PNode;
 
 /**
  *

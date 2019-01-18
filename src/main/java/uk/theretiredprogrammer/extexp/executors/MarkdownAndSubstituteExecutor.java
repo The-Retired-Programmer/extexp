@@ -22,13 +22,13 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
 import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.IOInputPath;
 import uk.theretiredprogrammer.extexp.execution.IOWriter;
-import uk.theretiredprogrammer.extexp.visualeditor.PPin;
-import uk.theretiredprogrammer.extexp.visualeditor.PScene;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.PPin;
+import uk.theretiredprogrammer.extexp.execution.PScene;
 
 /**
  *

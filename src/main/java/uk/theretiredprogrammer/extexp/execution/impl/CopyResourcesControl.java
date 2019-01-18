@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,10 +21,10 @@ import java.util.Map;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
-import uk.theretiredprogrammer.extexp.visualeditor.PPin;
-import uk.theretiredprogrammer.extexp.visualeditor.PScene;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.PPin;
+import uk.theretiredprogrammer.extexp.execution.PScene;
 
 /**
  *
@@ -49,7 +49,7 @@ public class CopyResourcesControl extends Control {
         return new CopyResourceNode(scene, position);
     }
 
-    private class CopyResourceNode extends PNode {
+    private class CopyResourceNode extends PNode{
 
         @SuppressWarnings("LeakingThisInConstructor")
         public CopyResourceNode(PScene scene, Position position) {

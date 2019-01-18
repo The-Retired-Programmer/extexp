@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.visualeditor;
+package uk.theretiredprogrammer.extexp.execution;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -29,6 +29,7 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
+import uk.theretiredprogrammer.extexp.visualeditor.PConnection;
 
 /**
  *
@@ -36,13 +37,11 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public class PNode extends VMDNodeWidget {
 
-    
-    public static enum Position {
+     public static enum Position {
         LEFT, NORMAL, RIGHT
     }
     
     private final Position position;
-    
 
     public PNode(final PScene scene, Position position){
         super(scene);
@@ -142,7 +141,7 @@ public class PNode extends VMDNodeWidget {
         @Override
         @SuppressWarnings("ResultOfObjectAllocationIgnored")
         public void createConnection(Widget source, Widget target) {
-            new PConnection((PScene) getScene(), (PNode)source, (PNode)target);
+            new PConnection((PScene) getScene(), (PNode)source, (PNode) target);
         }
     }
     

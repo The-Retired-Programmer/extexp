@@ -15,7 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
+import uk.theretiredprogrammer.extexp.execution.PScene;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
 
 /**
  *
@@ -25,6 +28,7 @@ public class StartSequenceNode extends PNode {
 
     private static final String CONTROLIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/star.png";
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public StartSequenceNode(PScene scene, String name, Position position) {
         super(scene,position);
         setNodeName(name);

@@ -15,25 +15,13 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor.palette;
 
-/*
- * CategoryNode.java
- *
- * Created on September 21, 2006, 9:02 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- *
- * To understand this class, see https://platform.netbeans.org/tutorials/nbm-nodesapi3.html
- */
-
-
 import org.openide.nodes.AbstractNode;
 import org.openide.util.lookup.Lookups;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /**
  *
- * @author Geertjan Wielenga
+ * @author richard
  */
 public class CategoryNode extends AbstractNode {
 

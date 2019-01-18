@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import javax.json.JsonObject;
  */
 public class CommandSequenceStore {
 
-    private List<NamedCommandSequence> commandsequences = new ArrayList<>();
+    private final List<NamedCommandSequence> commandsequences = new ArrayList<>();
 
     public String addSequence(String name, JsonArray sequence) {
         try {
@@ -41,7 +41,7 @@ public class CommandSequenceStore {
     private CommandSequence getCommandSequence(JsonArray sequence) throws IOException {
         CommandSequence res = new CommandSequence();
         for (JsonObject jobj : sequence.getValuesAs(JsonObject.class)) {
-            res.add(CommandFactory.create(jobj));
+            res.add(CommandCreate.newCommand(jobj));
         }
         return res;
     }

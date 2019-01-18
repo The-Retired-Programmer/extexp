@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.visualeditor;
+package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.execution.impl.Command;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -36,13 +38,17 @@ import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
-import uk.theretiredprogrammer.extexp.execution.Command;
-import static uk.theretiredprogrammer.extexp.execution.Command.DATA_FLAVOR_COMMAND;
-import uk.theretiredprogrammer.extexp.execution.CommandSequence;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
-import static uk.theretiredprogrammer.extexp.visualeditor.PNode.Position.NORMAL;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
+import static uk.theretiredprogrammer.extexp.execution.PNode.Position.LEFT;
+import static uk.theretiredprogrammer.extexp.execution.PNode.Position.NORMAL;
+import static uk.theretiredprogrammer.extexp.execution.PNode.Position.RIGHT;
+import uk.theretiredprogrammer.extexp.execution.impl.CommandSequence;
+import uk.theretiredprogrammer.extexp.visualeditor.PConnection;
+import uk.theretiredprogrammer.extexp.visualeditor.StartSequenceNode;
 
 public class PScene extends VMDGraphScene {
+
+    public static final DataFlavor DATA_FLAVOR_COMMAND = new DataFlavor(Command.class, "command");
 
     private final LayerWidget widgetlayer;
     private final LayerWidget connectionlayer;

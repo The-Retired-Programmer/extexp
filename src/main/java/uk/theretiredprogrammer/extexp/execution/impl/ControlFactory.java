@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
 import javax.json.JsonObject;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author richard
  */
-public class ControlFactory {
+@ServiceProvider(service = CommandFactory.class)
+public class ControlFactory implements CommandFactory {
 
-    public static final Control create(JsonObject jobj) throws IOException {
+    @Override
+    public Command create(JsonObject jobj) throws IOException {
         String runname = jobj.getString("Run", "");
         if (!runname.isEmpty()) {
             RunControl rc = new RunControl();

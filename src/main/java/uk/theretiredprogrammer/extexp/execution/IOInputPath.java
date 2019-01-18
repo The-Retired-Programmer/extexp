@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
+import uk.theretiredprogrammer.extexp.execution.impl.IO;
+import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *
@@ -28,7 +30,7 @@ public class IOInputPath extends IO<String> {
     }
 
     @Override
-    String setup() throws IOException {
+    protected String setup() throws IOException {
         String content = ee.tempfs.get(parametervalue);
         return (content != null
                 ? IoUtil.stringToFile(ee.paths.getCachefolder(), parametervalue, content)

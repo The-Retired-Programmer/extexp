@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 
 /**
  *
@@ -63,7 +64,7 @@ public class BuildFile {
         if (commandsequence == null) {
             throw new IOException("Command sequence \"MAIN\" missing");
         }
-        return ExecutionEnvironment.create(paths, commandsequencestore);
+        return new ExecutionEnvironment(paths, commandsequencestore);
     }
 
     private static String insertSequence(CommandSequenceStore commandsequencestore, String name, JsonArray sequence) {

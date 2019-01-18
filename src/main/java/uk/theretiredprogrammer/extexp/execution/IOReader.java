@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import uk.theretiredprogrammer.extexp.execution.impl.IO;
+import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *
@@ -34,7 +36,7 @@ public class IOReader extends IO<Reader> {
     }
 
     @Override
-    Reader setup() throws IOException {
+    protected Reader setup() throws IOException {
         String content = ee.tempfs.get(parametervalue);
         return reader = content == null
                 ? new BufferedReader(new InputStreamReader(IoUtil.findFile(parametervalue,
@@ -43,8 +45,7 @@ public class IOReader extends IO<Reader> {
     }
 
     @Override
-    void drop() throws IOException {
+    protected void drop() throws IOException {
         reader.close();
     }
-
 }

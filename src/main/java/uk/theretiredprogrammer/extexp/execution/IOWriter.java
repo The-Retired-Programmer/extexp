@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import uk.theretiredprogrammer.extexp.execution.impl.IO;
+import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *
@@ -36,7 +38,7 @@ public class IOWriter extends IO<Writer> {
     }
 
     @Override
-    Writer setup() throws IOException {
+    protected Writer setup() throws IOException {
         if (parametervalue.startsWith("!")) {
             writer = new StringWriter();
             tempfilename = parametervalue.substring(1);
@@ -52,7 +54,7 @@ public class IOWriter extends IO<Writer> {
     }
 
     @Override
-    void drop() throws IOException {
+    protected void drop() throws IOException {
         writer.close();
         if (writer instanceof StringWriter) {
             String previous = ee.tempfs.get(tempfilename);
@@ -63,5 +65,4 @@ public class IOWriter extends IO<Writer> {
             }
         }
     }
-
 }

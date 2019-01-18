@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public abstract class Control extends Command {
             JsonValue val = paramdef.getValue();
             switch (val.getValueType()){
                 case OBJECT:
-                    commands.put(paramdef.getKey(),CommandFactory.create((JsonObject) val));
+                    commands.put(paramdef.getKey(),CommandCreate.newCommand((JsonObject) val));
                     break;
                 case ARRAY:
                     throw new IOException("illegal parameter type in Control");

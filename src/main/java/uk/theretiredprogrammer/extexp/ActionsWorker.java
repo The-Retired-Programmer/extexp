@@ -25,8 +25,8 @@ import org.openide.filesystems.FileObject;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
-import uk.theretiredprogrammer.extexp.execution.BuildFile;
-import uk.theretiredprogrammer.extexp.execution.Command;
+import uk.theretiredprogrammer.extexp.execution.impl.BuildFile;
+import uk.theretiredprogrammer.extexp.execution.impl.Command;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 
 /**

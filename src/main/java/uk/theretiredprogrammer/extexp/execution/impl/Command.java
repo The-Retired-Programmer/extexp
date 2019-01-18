@@ -13,29 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
-import java.awt.datatransfer.DataFlavor;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Function;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
-import static uk.theretiredprogrammer.extexp.visualeditor.PNode.Position.NORMAL;
-import uk.theretiredprogrammer.extexp.visualeditor.PScene;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.PScene;
+import static uk.theretiredprogrammer.extexp.execution.PNode.Position.NORMAL;
+import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *
  * @author richard
  */
 public abstract class Command {
-
-    public static final DataFlavor DATA_FLAVOR_COMMAND = new DataFlavor(Command.class, "command");
 
     protected ExecutionEnvironment ee;
 
@@ -45,23 +43,23 @@ public abstract class Command {
     public PNode createNode(PScene scene) {
         return this.createNode(scene, NORMAL);
     }
-
+    
+    public abstract String getWidgetImageName();
+    
+    public abstract String getDisplayName();
+    
     public abstract PNode createNode(PScene scene, Position position);
 
     public final void execute(ExecutionEnvironment ee) throws IOException {
-        this.ee = ee;
+        this.ee =  ee;
         executecommand();
     }
 
     protected abstract void executecommand() throws IOException;
 
-    void putParameter(String pname, String pvalue) {
+    protected void putParameter(String pname, String pvalue) {
         parameters.put(pname, pvalue);
     }
-
-    public abstract String getWidgetImageName();
-
-    public abstract String getDisplayName();
 
     protected String getParam(String name) {
         return parameters.get(name);
@@ -89,7 +87,7 @@ public abstract class Command {
     }
 
     public void setParent(Command parent) {
-        this.parent = parent;
+        this.parent = (Command) parent;
     }
 
     public String getSubstitutedParameter(String name) throws IOException {
@@ -149,10 +147,10 @@ public abstract class Command {
         return false;
     }
 
-    protected final List<Entry<String, String>> getFilteredParameters(String... ignore) {
-        List<Entry<String, String>> extras = new ArrayList<>();
+    protected final List<Map.Entry<String, String>> getFilteredParameters(String... ignore) {
+        List<Map.Entry<String, String>> extras = new ArrayList<>();
         boolean match;
-        for (Entry<String, String> param : parameters.entrySet()) {
+        for (Map.Entry<String, String> param : parameters.entrySet()) {
             match = false;
             for (String pname : ignore) {
                 if (pname.equals(param.getKey())) {

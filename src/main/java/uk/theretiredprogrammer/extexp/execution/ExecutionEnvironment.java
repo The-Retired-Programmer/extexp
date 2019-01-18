@@ -15,19 +15,25 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.execution.impl.CommandSequenceStore;
+import uk.theretiredprogrammer.extexp.execution.impl.IDGenerator;
+import uk.theretiredprogrammer.extexp.execution.impl.IOPaths;
+import uk.theretiredprogrammer.extexp.execution.impl.TemporaryFileStore;
+
+
 /**
  *
  * @author richard
  */
 public class ExecutionEnvironment {
-
+    
     public final IOPaths paths;
     public final TemporaryFileStore tempfs;
     public final CommandSequenceStore commandsequences;
     public final IDGenerator idgenerator;
     
-    public static final ExecutionEnvironment create(IOPaths paths, CommandSequenceStore commandsequences) {
-        return new ExecutionEnvironment(paths, new TemporaryFileStore(), commandsequences, new IDGenerator());
+    public ExecutionEnvironment(IOPaths paths, CommandSequenceStore commandsequences) {
+        this(paths, new TemporaryFileStore(), commandsequences, new IDGenerator());
     }
     
     public final ExecutionEnvironment clone(IOPaths paths) {

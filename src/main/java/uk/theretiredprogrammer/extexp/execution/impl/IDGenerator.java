@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2019 richard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
-
-import java.util.HashMap;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 /**
  *
  * @author richard
  */
-public class TemporaryFileStore extends HashMap<String, String> {
+public class IDGenerator {
     
+    private final static int SALT = 8642;
+    private final static String IDPREFIX = "PP";
+    private int nextidint;
+    
+    public IDGenerator() {
+        nextidint = SALT;
+    }
+    
+    public String generateID() {
+        return IDPREFIX+nextidint++;
+    }
 }

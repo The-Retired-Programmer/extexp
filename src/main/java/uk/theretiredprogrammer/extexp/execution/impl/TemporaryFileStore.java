@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author richard
  */
-public class CommandSequence extends ArrayList<Command> {
+public class TemporaryFileStore extends HashMap<String, String> {
     
 }

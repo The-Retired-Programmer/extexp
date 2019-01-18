@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
-import uk.theretiredprogrammer.extexp.visualeditor.PPin;
+import uk.theretiredprogrammer.extexp.execution.PPin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
-import uk.theretiredprogrammer.extexp.visualeditor.PScene;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
-import static uk.theretiredprogrammer.extexp.visualeditor.PNode.Position.LEFT;
-import static uk.theretiredprogrammer.extexp.visualeditor.PNode.Position.RIGHT;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
+import static uk.theretiredprogrammer.extexp.execution.PNode.Position.LEFT;
+import static uk.theretiredprogrammer.extexp.execution.PNode.Position.RIGHT;
+import uk.theretiredprogrammer.extexp.execution.PScene;
 
 /**
  *

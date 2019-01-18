@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
+
+import uk.theretiredprogrammer.extexp.execution.impl.Command;
+import java.io.IOException;
+import javax.json.JsonObject;
 
 /**
  *
  * @author richard
  */
-public class NamedCommandSequence {
-    
-    public String name;
-    public CommandSequence commandsequence;
-    
-    public NamedCommandSequence(String name, CommandSequence commandsequence) {
-        this.name = name;
-        this.commandsequence = commandsequence;
-    }
+public interface CommandFactory {
+
+    public Command create(JsonObject jobj) throws IOException;
 }

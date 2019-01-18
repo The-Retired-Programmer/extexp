@@ -13,50 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.openide.util.ImageUtilities;
-import uk.theretiredprogrammer.extexp.visualeditor.PPin;
-import uk.theretiredprogrammer.extexp.visualeditor.PScene;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode;
-import uk.theretiredprogrammer.extexp.visualeditor.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.execution.PNode;
+import uk.theretiredprogrammer.extexp.execution.PNode.Position;
+import uk.theretiredprogrammer.extexp.execution.PPin;
+import uk.theretiredprogrammer.extexp.execution.PScene;
 
 /**
  *
  * @author richard
  */
-public class UseControl extends Control {
+public class RunControl extends Control {
 
-    private static final String USEIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
+    private static final String RUNIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_right.png";
 
     @Override
     public String getWidgetImageName() {
-        return USEIMAGENAME;
+        return RUNIMAGENAME;
     }
 
     @Override
     public String getDisplayName() {
-        return "USE";
+        return "RUN";
     }
 
     @Override
     public PNode createNode(PScene scene, Position position) {
-        return new UseNode(scene, position);
+        return new RunNode(scene, position);
     }
 
-    private class UseNode extends PNode {
+    private class RunNode extends PNode {
 
         @SuppressWarnings("LeakingThisInConstructor")
-        public UseNode(PScene scene, Position position) {
+        public RunNode(PScene scene, Position position) {
             super(scene, position);
             setNodeName(getDisplayName());
-            setNodeImage(ImageUtilities.loadImage(USEIMAGENAME));
-            attachPinWidget(new PPin(scene, "Use", UseControl.this.getParam("Use")));
-            attachPinWidget(new PPin(scene, "path", UseControl.this.getParam("path"), PPin.OPTIONAL));
-            attachPinWidget(new PPin(scene, "inputpath", UseControl.this.getParam("inputpath"), PPin.OPTIONAL));
+            setNodeImage(ImageUtilities.loadImage(RUNIMAGENAME));
+            attachPinWidget(new PPin(scene, "Run", RunControl.this.getParam("Run")));
+            attachPinWidget(new PPin(scene, "path", RunControl.this.getParam("path"), PPin.OPTIONAL));
+            attachPinWidget(new PPin(scene, "inputpath", RunControl.this.getParam("inputpath"), PPin.OPTIONAL));
             List<Map.Entry<String, String>> extrapins = getFilteredParameters("Run", "path","inputpath");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
@@ -76,9 +77,9 @@ public class UseControl extends Control {
              String ipval = getOptionalLocalParameter("inputpath", null);
              newpaths = ipval == null ? ee.paths : ee.paths.updatePath(ipval);
         }
-        String useval = getLocalParameter("Use");
-        ExecutionEnvironment newee = ee.clone(newpaths);
-        for (Command child : ee.commandsequences.getSequence(useval)) {
+        String runval = getLocalParameter("Run");
+        ExecutionEnvironment newee = ee.cloneWithNewTFS(newpaths);
+        for (Command child : ee.commandsequences.getSequence(runval)) {
             child.setParent(this);
             child.execute(newee);
         }

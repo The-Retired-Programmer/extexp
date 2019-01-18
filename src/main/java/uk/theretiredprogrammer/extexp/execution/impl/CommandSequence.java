@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
-import java.io.IOException;
-import javax.json.JsonObject;
+import java.util.ArrayList;
 
 /**
  *
  * @author richard
  */
-public class CommandFactory {
-
-    public static final Command create(JsonObject jobj) throws IOException {
-        Command command;
-        command = ControlFactory.create(jobj);
-        if (command == null ) {
-            command = ExecutorFactory.create(jobj);
-        }
-        if (command == null) {
-            throw new IOException("CommandFactory - cannot parse the json command object");
-        }
-        return command;
-    }
+public class CommandSequence extends ArrayList<Command> {
+    
 }

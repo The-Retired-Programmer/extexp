@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
+import uk.theretiredprogrammer.extexp.execution.PScene;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.function.Function;

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.visualeditor;
+package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.execution.PScene;
 import java.util.Map.Entry;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 

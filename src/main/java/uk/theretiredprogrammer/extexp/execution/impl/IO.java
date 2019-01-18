@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution;
+package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
+import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 
 /**
  *
@@ -23,7 +24,7 @@ import java.io.IOException;
  */
 public abstract class IO<T> {
 
-    final String parametervalue;
+    protected final String parametervalue;
     protected final ExecutionEnvironment ee;
 
     public IO(ExecutionEnvironment ee, String parametervalue) {
@@ -35,7 +36,7 @@ public abstract class IO<T> {
         return parametervalue == null ? null : setup();
     }
 
-    abstract T setup() throws IOException;
+    protected abstract T setup() throws IOException;
 
     public final void close() throws IOException {
         if (parametervalue != null) {
@@ -43,7 +44,7 @@ public abstract class IO<T> {
         }
     }
 
-    void drop() throws IOException {
+    protected void drop() throws IOException {
         // overwrite if closing activities required
     }
 

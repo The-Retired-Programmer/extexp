@@ -15,8 +15,12 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.execution.Executor;
 import java.io.IOException;
 import javax.json.JsonObject;
+import org.openide.util.lookup.ServiceProvider;
+import uk.theretiredprogrammer.extexp.execution.impl.Command;
+import uk.theretiredprogrammer.extexp.execution.impl.CommandFactory;
 import uk.theretiredprogrammer.extexp.executors.CopyExecutor;
 import uk.theretiredprogrammer.extexp.executors.FopExecutor;
 import uk.theretiredprogrammer.extexp.executors.ImagesetExecutor;
@@ -29,9 +33,11 @@ import uk.theretiredprogrammer.extexp.executors.XsltExecutor;
  *
  * @author richard
  */
-public class ExecutorFactory {
+@ServiceProvider(service = CommandFactory.class)
+public class ExecutorFactory implements CommandFactory {
 
-    public static final Executor create(JsonObject jobj) throws IOException {
+    @Override
+    public Command create(JsonObject jobj) throws IOException {
         Executor exec;
         String actionname = jobj.getString("Do", "");
         switch (actionname) {
