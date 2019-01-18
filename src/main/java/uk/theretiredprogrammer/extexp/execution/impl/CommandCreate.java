@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
+import java.util.Collection;
 import javax.json.JsonObject;
 import org.openide.util.Lookup;
 
@@ -25,6 +26,12 @@ import org.openide.util.Lookup;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class CommandCreate {
+    
+    public static Collection<? extends CommandFactory> factories = null;
+    
+    public static void init() {
+        factories = null;
+    }
 
     /**
      * Create a new Instance of the target class.
@@ -33,7 +40,10 @@ public class CommandCreate {
      * @return a new instance of the requested command
      */
     public static Command newCommand(JsonObject jobj) throws IOException {
-        for (CommandFactory factory : Lookup.getDefault().lookupAll(CommandFactory.class)) {
+        if (factories == null) {
+            factories = Lookup.getDefault().lookupAll(CommandFactory.class);
+        }
+        for (CommandFactory factory : factories) {
             Command cmd = factory.create(jobj);
             if (cmd != null) {
                 return cmd;

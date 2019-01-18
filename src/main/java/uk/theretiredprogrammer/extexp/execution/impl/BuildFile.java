@@ -35,6 +35,7 @@ import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 public class BuildFile {
 
     public static ExecutionEnvironment initAndParse(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException {
+        CommandCreate.init();
         IOPaths paths = new IOPaths(
                 projectfolder,
                 projectfolder.getFileObject("src"),
