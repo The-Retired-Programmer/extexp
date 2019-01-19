@@ -40,12 +40,6 @@ public class ControlFactory implements CommandFactory {
             uc.parse(jobj);
             return uc;
         }
-        String copyresourcesname = jobj.getString("Copy-resources", "");
-        if (!copyresourcesname.isEmpty()) {
-            CopyResourcesControl crc = new CopyResourcesControl();
-            crc.parse(jobj);
-            return crc;
-        }
         String ifdefinedname = jobj.getString("If-defined", "");
         if (!ifdefinedname.isEmpty()) {
             IfDefinedControl idc = new IfDefinedControl();

@@ -15,12 +15,12 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import uk.theretiredprogrammer.extexp.execution.Executor;
 import java.io.IOException;
 import javax.json.JsonObject;
 import org.openide.util.lookup.ServiceProvider;
 import uk.theretiredprogrammer.extexp.execution.impl.Command;
 import uk.theretiredprogrammer.extexp.execution.impl.CommandFactory;
+import uk.theretiredprogrammer.extexp.executors.CopyResourcesExecutor;
 import uk.theretiredprogrammer.extexp.executors.CopyExecutor;
 import uk.theretiredprogrammer.extexp.executors.FopExecutor;
 import uk.theretiredprogrammer.extexp.executors.ImagesetExecutor;
@@ -61,6 +61,9 @@ public class ExecutorFactory implements CommandFactory {
                 break;
             case "create-imageset":
                 exec = new ImagesetExecutor();
+                break;
+            case "copy-resources":
+                exec = new CopyResourcesExecutor();
                 break;
             default:
                 exec = null;

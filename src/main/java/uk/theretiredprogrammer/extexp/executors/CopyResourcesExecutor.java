@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution.impl;
+package uk.theretiredprogrammer.extexp.executors;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.Map;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.execution.Executor;
 import uk.theretiredprogrammer.extexp.execution.PNode;
 import uk.theretiredprogrammer.extexp.execution.PNode.Position;
 import uk.theretiredprogrammer.extexp.execution.PPin;
@@ -30,7 +31,7 @@ import uk.theretiredprogrammer.extexp.execution.PScene;
  *
  * @author richard
  */
-public class CopyResourcesControl extends Control {
+public class CopyResourcesExecutor extends Executor {
 
     private static final String COPYRESOURCESIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_in.png";
 
@@ -56,9 +57,9 @@ public class CopyResourcesControl extends Control {
             super(scene, position);
             setNodeName(getDisplayName());
             setNodeImage(ImageUtilities.loadImage(COPYRESOURCESIMAGENAME));
-            attachPinWidget(new PPin(scene, "Copy-resources", CopyResourcesControl.this.getParam("Copy-resources")));
-            attachPinWidget(new PPin(scene, "foldername", CopyResourcesControl.this.getParam("foldername"), PPin.OPTIONAL));
-            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Copy-resources", "foldername");
+            attachPinWidget(new PPin(scene, "to", CopyResourcesExecutor.this.getParam("to")));
+            attachPinWidget(new PPin(scene, "foldername", CopyResourcesExecutor.this.getParam("foldername"), PPin.OPTIONAL));
+            List<Map.Entry<String, String>> extrapins = getFilteredParameters("Do", "to", "foldername");
             if (!extrapins.isEmpty()) {
                 attachPinWidget(new PPin(scene));
                 extrapins.forEach((e) -> attachPinWidget(new PPin(scene, e)));
@@ -69,7 +70,7 @@ public class CopyResourcesControl extends Control {
 
     @Override
     protected void executecommand() throws IOException {
-        String target = getLocalParameter("Copy-resources");
+        String target = getLocalParameter("to");
         FileObject toFO;
         switch (target){
             case "output":
@@ -79,7 +80,7 @@ public class CopyResourcesControl extends Control {
                 toFO = ee.paths.getCachefolder();
                 break;
             default:
-                throw new IOException("Illegal parameter value in Copy-Resource Control");
+                throw new IOException("Illegal \"to\" parameter value in copy-resource");
         }
         String foldername = getOptionalLocalParameter("foldername", "resources");
         toFO = ee.paths.setResourcesfolder(toFO, foldername);
