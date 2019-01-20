@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution.impl;
+package uk.theretiredprogrammer.extexp.execution;
 
 import java.util.ArrayList;
 import uk.theretiredprogrammer.extexp.execution.Command;

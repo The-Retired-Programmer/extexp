@@ -21,7 +21,7 @@ import java.util.function.Function;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.execution.PNode;
-import uk.theretiredprogrammer.extexp.execution.impl.CommandSequence;
+import uk.theretiredprogrammer.extexp.execution.CommandSequence;
 import uk.theretiredprogrammer.extexp.execution.impl.NamedCommandSequence;
 
 /**

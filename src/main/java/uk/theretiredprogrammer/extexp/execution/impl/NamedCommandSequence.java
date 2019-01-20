@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.execution.impl;
 
+import uk.theretiredprogrammer.extexp.execution.CommandSequence;
+
 /**
  *
  * @author richard

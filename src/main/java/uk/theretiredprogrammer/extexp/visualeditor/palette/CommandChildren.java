@@ -18,14 +18,6 @@ package uk.theretiredprogrammer.extexp.visualeditor.palette;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.nodes.Index;
-import uk.theretiredprogrammer.extexp.execution.impl.IfDefinedControl;
-import uk.theretiredprogrammer.extexp.execution.impl.RunControl;
-import uk.theretiredprogrammer.extexp.executors.CopyExecutor;
-import uk.theretiredprogrammer.extexp.executors.ImagesetExecutor;
-import uk.theretiredprogrammer.extexp.executors.MarkdownAndSubstituteExecutor;
-import uk.theretiredprogrammer.extexp.executors.MarkdownExecutor;
-import uk.theretiredprogrammer.extexp.executors.SubstituteExecutor;
-import uk.theretiredprogrammer.extexp.executors.XsltExecutor;
 
 /**
  *
@@ -44,16 +36,16 @@ public class CommandChildren  extends Index.ArrayChildren {
         List<CommandNode> childrenNodes = new ArrayList<>();
         switch (category.getType()) {
             case CONTROL:
-                childrenNodes.add(new CommandNode(new IfDefinedControl()));
-                childrenNodes.add(new CommandNode(new RunControl()));
+//                childrenNodes.add(new CommandNode(new IfDefinedControl()));
+//                childrenNodes.add(new CommandNode(new RunControl()));
                 break;
             case EXECUTOR:
-                childrenNodes.add(new CommandNode(new CopyExecutor()));
-                childrenNodes.add(new CommandNode(new ImagesetExecutor()));
-                childrenNodes.add(new CommandNode(new MarkdownAndSubstituteExecutor()));
-                childrenNodes.add(new CommandNode(new MarkdownExecutor()));
-                childrenNodes.add(new CommandNode(new SubstituteExecutor()));
-                childrenNodes.add(new CommandNode(new XsltExecutor()));
+//                childrenNodes.add(new CommandNode(new CopyExecutor()));
+//                childrenNodes.add(new CommandNode(new ImagesetExecutor()));
+//                childrenNodes.add(new CommandNode(new MarkdownAndSubstituteExecutor()));
+//                childrenNodes.add(new CommandNode(new MarkdownExecutor()));
+//                childrenNodes.add(new CommandNode(new SubstituteExecutor()));
+//                childrenNodes.add(new CommandNode(new XsltExecutor()));
         }
         return childrenNodes;
     }

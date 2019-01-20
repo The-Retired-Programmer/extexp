@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import uk.theretiredprogrammer.extexp.execution.impl.CommandSequenceStore;
 import uk.theretiredprogrammer.extexp.execution.impl.IDGenerator;
 import uk.theretiredprogrammer.extexp.execution.impl.TemporaryFileStore;
 

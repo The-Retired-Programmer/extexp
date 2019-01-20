@@ -41,7 +41,6 @@ import uk.theretiredprogrammer.extexp.execution.PNode.Position;
 import static uk.theretiredprogrammer.extexp.execution.PNode.Position.LEFT;
 import static uk.theretiredprogrammer.extexp.execution.PNode.Position.NORMAL;
 import static uk.theretiredprogrammer.extexp.execution.PNode.Position.RIGHT;
-import uk.theretiredprogrammer.extexp.execution.impl.CommandSequence;
 import uk.theretiredprogrammer.extexp.visualeditor.PConnection;
 import uk.theretiredprogrammer.extexp.visualeditor.StartSequenceNode;
 

@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.execution.impl;
 
-import uk.theretiredprogrammer.extexp.execution.CommandFactory;
+import uk.theretiredprogrammer.extexp.execution.Control;
 import java.io.IOException;
 import java.util.Collection;
 import javax.json.JsonObject;

@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.execution.impl;
 
+import uk.theretiredprogrammer.extexp.execution.CommandSequenceStore;
+import uk.theretiredprogrammer.extexp.execution.CommandSequence;
 import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import java.io.IOException;
 import java.io.InputStream;

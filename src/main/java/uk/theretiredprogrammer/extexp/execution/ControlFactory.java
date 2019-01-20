@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.extexp.execution;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import uk.theretiredprogrammer.extexp.execution.impl.Control;
 
 /**
  *
