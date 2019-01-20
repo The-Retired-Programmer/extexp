@@ -16,61 +16,13 @@
 package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
-import javax.json.JsonObject;
-import org.openide.util.lookup.ServiceProvider;
-import uk.theretiredprogrammer.extexp.execution.impl.Command;
-import uk.theretiredprogrammer.extexp.execution.impl.CommandFactory;
-import uk.theretiredprogrammer.extexp.executors.CopyResourcesExecutor;
-import uk.theretiredprogrammer.extexp.executors.CopyExecutor;
-import uk.theretiredprogrammer.extexp.executors.FopExecutor;
-import uk.theretiredprogrammer.extexp.executors.ImagesetExecutor;
-import uk.theretiredprogrammer.extexp.executors.MarkdownAndSubstituteExecutor;
-import uk.theretiredprogrammer.extexp.executors.MarkdownExecutor;
-import uk.theretiredprogrammer.extexp.executors.SubstituteExecutor;
-import uk.theretiredprogrammer.extexp.executors.XsltExecutor;
 
 /**
  *
  * @author richard
+ * @param <T>
  */
-@ServiceProvider(service = CommandFactory.class)
-public class ExecutorFactory implements CommandFactory {
+public interface ExecutorFactory {
 
-    @Override
-    public Command create(JsonObject jobj) throws IOException {
-        Executor exec;
-        String actionname = jobj.getString("Do", "");
-        switch (actionname) {
-            case "markdown":
-                exec = new MarkdownExecutor();
-                break;
-            case "markdown-substitute":
-                exec = new MarkdownAndSubstituteExecutor();
-                break;
-            case "copy":
-                exec = new CopyExecutor();
-                break;
-            case "substitute":
-                exec = new SubstituteExecutor();
-                break;
-            case "xslt":
-                exec = new XsltExecutor();
-                break;
-            case "fop":
-                exec = new FopExecutor();
-                break;
-            case "create-imageset":
-                exec = new ImagesetExecutor();
-                break;
-            case "copy-resources":
-                exec = new CopyResourcesExecutor();
-                break;
-            default:
-                exec = null;
-        }
-        if (exec != null) {
-            exec.parse(jobj);
-        }
-        return exec;
-    }
+    public Executor create(String name) throws IOException;
 }

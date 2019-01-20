@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.execution.Command;
 import uk.theretiredprogrammer.extexp.execution.PNode;
 import uk.theretiredprogrammer.extexp.execution.PNode.Position;
 import static uk.theretiredprogrammer.extexp.execution.PNode.Position.LEFT;

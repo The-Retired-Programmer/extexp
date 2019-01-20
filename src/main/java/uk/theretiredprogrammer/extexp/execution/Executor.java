@@ -21,7 +21,6 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
-import uk.theretiredprogrammer.extexp.execution.impl.Command;
 
 /**
  *
@@ -32,7 +31,6 @@ public abstract class Executor extends Command {
     
     protected static final String EXECUTORIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/arrow_switch.png";
 
-    
     @Override
     public String getWidgetImageName() {
         return EXECUTORIMAGENAME;

@@ -21,7 +21,6 @@ import org.openide.nodes.Index;
 import uk.theretiredprogrammer.extexp.execution.impl.IfDefinedControl;
 import uk.theretiredprogrammer.extexp.execution.impl.RunControl;
 import uk.theretiredprogrammer.extexp.executors.CopyExecutor;
-import uk.theretiredprogrammer.extexp.executors.FopExecutor;
 import uk.theretiredprogrammer.extexp.executors.ImagesetExecutor;
 import uk.theretiredprogrammer.extexp.executors.MarkdownAndSubstituteExecutor;
 import uk.theretiredprogrammer.extexp.executors.MarkdownExecutor;
@@ -50,7 +49,6 @@ public class CommandChildren  extends Index.ArrayChildren {
                 break;
             case EXECUTOR:
                 childrenNodes.add(new CommandNode(new CopyExecutor()));
-                childrenNodes.add(new CommandNode(new FopExecutor()));
                 childrenNodes.add(new CommandNode(new ImagesetExecutor()));
                 childrenNodes.add(new CommandNode(new MarkdownAndSubstituteExecutor()));
                 childrenNodes.add(new CommandNode(new MarkdownExecutor()));

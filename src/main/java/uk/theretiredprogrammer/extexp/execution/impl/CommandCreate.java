@@ -15,10 +15,15 @@
  */
 package uk.theretiredprogrammer.extexp.execution.impl;
 
+import uk.theretiredprogrammer.extexp.execution.CommandFactory;
 import java.io.IOException;
 import java.util.Collection;
 import javax.json.JsonObject;
 import org.openide.util.Lookup;
+import uk.theretiredprogrammer.extexp.execution.Command;
+import uk.theretiredprogrammer.extexp.execution.ControlFactory;
+import uk.theretiredprogrammer.extexp.execution.Executor;
+import uk.theretiredprogrammer.extexp.execution.ExecutorFactory;
 
 /**
  * The Create a new Command Object.
@@ -27,10 +32,13 @@ import org.openide.util.Lookup;
  */
 public class CommandCreate {
     
-    public static Collection<? extends CommandFactory> factories = null;
+    public static Collection<? extends ControlFactory> controlfactories = null;
+    public static Collection<? extends ExecutorFactory> executorfactories = null;
+    public static boolean loaded = false;
     
+
     public static void init() {
-        factories = null;
+        loaded = false;
     }
 
     /**
@@ -40,13 +48,22 @@ public class CommandCreate {
      * @return a new instance of the requested command
      */
     public static Command newCommand(JsonObject jobj) throws IOException {
-        if (factories == null) {
-            factories = Lookup.getDefault().lookupAll(CommandFactory.class);
+        if (!loaded) {
+            controlfactories = Lookup.getDefault().lookupAll(ControlFactory.class);
+            executorfactories = Lookup.getDefault().lookupAll(ExecutorFactory.class);
         }
-        for (CommandFactory factory : factories) {
-            Command cmd = factory.create(jobj);
-            if (cmd != null) {
-                return cmd;
+        for (ControlFactory factory : controlfactories) {
+            Control control = factory.create(jobj.keySet());
+            if (control != null) {
+                control.parse(jobj);
+                return control;
+            }
+        }
+        for (ExecutorFactory factory : executorfactories) {
+            Executor executor = factory.create(jobj.getString("Do",""));
+            if (executor != null) {
+                executor.parse(jobj);
+                return executor;
             }
         }
         return null;

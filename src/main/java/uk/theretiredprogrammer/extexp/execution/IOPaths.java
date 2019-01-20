@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution.impl;
+package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
+import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *

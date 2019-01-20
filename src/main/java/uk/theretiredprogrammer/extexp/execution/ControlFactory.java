@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution.impl;
+package uk.theretiredprogrammer.extexp.execution;
 
 import java.io.IOException;
-import javax.json.JsonObject;
+import java.util.Map;
+import java.util.Set;
+import uk.theretiredprogrammer.extexp.execution.impl.Control;
 
 /**
  *
  * @author richard
+ * @param <T>
  */
-public interface CommandFactory {
+public interface ControlFactory {
 
-    public Command create(JsonObject jobj) throws IOException;
+    public Control create(Set<String> keys) throws IOException;
 }

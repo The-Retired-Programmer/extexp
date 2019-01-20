@@ -25,7 +25,7 @@ import org.netbeans.spi.palette.PaletteFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 import org.openide.util.datatransfer.ExTransferable;
-import uk.theretiredprogrammer.extexp.execution.impl.Command;
+import uk.theretiredprogrammer.extexp.execution.Command;
 import static uk.theretiredprogrammer.extexp.execution.PScene.DATA_FLAVOR_COMMAND;
 
 /**

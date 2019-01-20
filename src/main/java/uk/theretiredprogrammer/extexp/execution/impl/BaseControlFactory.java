@@ -16,35 +16,27 @@
 package uk.theretiredprogrammer.extexp.execution.impl;
 
 import java.io.IOException;
-import javax.json.JsonObject;
+import java.util.Set;
 import org.openide.util.lookup.ServiceProvider;
+import uk.theretiredprogrammer.extexp.execution.ControlFactory;
 
 /**
  *
  * @author richard
  */
-@ServiceProvider(service = CommandFactory.class)
-public class ControlFactory implements CommandFactory {
+@ServiceProvider(service = ControlFactory.class)
+public class BaseControlFactory implements ControlFactory {
 
     @Override
-    public Command create(JsonObject jobj) throws IOException {
-        String runname = jobj.getString("Run", "");
-        if (!runname.isEmpty()) {
-            RunControl rc = new RunControl();
-            rc.parse(jobj);
-            return rc;
+    public Control create(Set<String> keys) throws IOException {
+        if (keys.contains("Run")) {
+            return new RunControl();
         }
-        String usename = jobj.getString("Use", "");
-        if (!usename.isEmpty()) {
-            UseControl uc = new UseControl();
-            uc.parse(jobj);
-            return uc;
+        if (keys.contains("Use")) {
+            return new UseControl();
         }
-        String ifdefinedname = jobj.getString("If-defined", "");
-        if (!ifdefinedname.isEmpty()) {
-            IfDefinedControl idc = new IfDefinedControl();
-            idc.parse(jobj);
-            return idc;
+        if (keys.contains("If-defined")) {
+            return new IfDefinedControl();
         }
         return null;
     }

@@ -15,10 +15,12 @@
  */
 package uk.theretiredprogrammer.extexp.execution.impl;
 
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.execution.Command;
 import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.execution.PNode;
 import uk.theretiredprogrammer.extexp.execution.PNode.Position;

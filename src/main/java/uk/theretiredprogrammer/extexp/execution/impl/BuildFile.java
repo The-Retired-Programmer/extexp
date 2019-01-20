@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.execution.impl;
 
+import uk.theretiredprogrammer.extexp.execution.IOPaths;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

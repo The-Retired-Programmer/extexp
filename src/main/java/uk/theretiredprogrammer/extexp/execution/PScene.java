@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.execution;
 
-import uk.theretiredprogrammer.extexp.execution.impl.Command;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;

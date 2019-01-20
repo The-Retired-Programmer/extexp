@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution.impl;
+package uk.theretiredprogrammer.extexp.execution;
 
+import uk.theretiredprogrammer.extexp.execution.impl.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -22,12 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.execution.PNode;
 import uk.theretiredprogrammer.extexp.execution.PNode.Position;
-import uk.theretiredprogrammer.extexp.execution.PScene;
 import static uk.theretiredprogrammer.extexp.execution.PNode.Position.NORMAL;
-import uk.theretiredprogrammer.extexp.execution.impl.IoUtil;
 
 /**
  *
