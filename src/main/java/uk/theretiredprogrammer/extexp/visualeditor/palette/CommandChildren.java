@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.extexp.visualeditor.palette;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.nodes.Index;
+import uk.theretiredprogrammer.extexp.support.CommandCreate;
 
 /**
  *
@@ -36,16 +37,10 @@ public class CommandChildren  extends Index.ArrayChildren {
         List<CommandNode> childrenNodes = new ArrayList<>();
         switch (category.getType()) {
             case CONTROL:
-//                childrenNodes.add(new CommandNode(new IfDefinedControl()));
-//                childrenNodes.add(new CommandNode(new RunControl()));
+                CommandCreate.consumeAllCommands((control)-> childrenNodes.add(new CommandNode(control)));
                 break;
             case EXECUTOR:
-//                childrenNodes.add(new CommandNode(new CopyExecutor()));
-//                childrenNodes.add(new CommandNode(new ImagesetExecutor()));
-//                childrenNodes.add(new CommandNode(new MarkdownAndSubstituteExecutor()));
-//                childrenNodes.add(new CommandNode(new MarkdownExecutor()));
-//                childrenNodes.add(new CommandNode(new SubstituteExecutor()));
-//                childrenNodes.add(new CommandNode(new XsltExecutor()));
+                CommandCreate.consumeAllCommands((executor)-> childrenNodes.add(new CommandNode(executor)));
         }
         return childrenNodes;
     }
