@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.execution.impl;
+package uk.theretiredprogrammer.extexp;
 
-import uk.theretiredprogrammer.extexp.execution.CommandSequenceStore;
-import uk.theretiredprogrammer.extexp.execution.CommandSequence;
-import uk.theretiredprogrammer.extexp.execution.IOPaths;
+import uk.theretiredprogrammer.extexp.support.CommandSequenceStore;
+import uk.theretiredprogrammer.extexp.support.CommandSequence;
+import uk.theretiredprogrammer.extexp.support.IOPaths;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -29,7 +29,9 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
-import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.support.CommandCreate;
+import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.support.IoUtil;
 
 /**
  *

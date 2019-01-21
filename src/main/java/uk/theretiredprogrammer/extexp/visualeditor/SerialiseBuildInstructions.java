@@ -15,14 +15,14 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
-import uk.theretiredprogrammer.extexp.execution.PScene;
 import java.io.IOException;
 import java.util.function.Function;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.execution.PNode;
-import uk.theretiredprogrammer.extexp.execution.CommandSequence;
-import uk.theretiredprogrammer.extexp.execution.impl.NamedCommandSequence;
+import uk.theretiredprogrammer.extexp.support.NamedCommandSequence;
+import uk.theretiredprogrammer.extexp.support.CommandSequence;
+import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.support.PNode;
+import uk.theretiredprogrammer.extexp.support.PScene;
 
 /**
  *

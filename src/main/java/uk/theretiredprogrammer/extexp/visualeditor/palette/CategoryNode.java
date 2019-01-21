@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.extexp.visualeditor.palette;
 
 import org.openide.nodes.AbstractNode;
 import org.openide.util.lookup.Lookups;
-import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /**
  *

@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
-import uk.theretiredprogrammer.extexp.execution.PScene;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.function.Function;
@@ -28,7 +27,8 @@ import org.openide.awt.ActionID;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
-import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
+import uk.theretiredprogrammer.extexp.support.PScene;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 
 @ConvertAsProperties(

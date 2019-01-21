@@ -43,9 +43,15 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <extexp-support.version>0.0.1-SNAPSHOT</extexp-support.version>
     </properties>
     
     <dependencies>
+        <dependency>
+            <groupId>uk.theretiredprogrammer.extexp</groupId>
+            <artifactId>support</artifactId>
+            <version>${extexp-support.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
@@ -88,11 +94,6 @@
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-dialogs</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-nodes</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
@@ -124,11 +125,6 @@
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-settings</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-visual</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
@@ -136,6 +132,12 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-spi-palette</artifactId>
             <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-settings</artifactId>
+            <version>${netbeans.version}</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     
@@ -169,6 +171,7 @@
                         <brandingToken>extexp</brandingToken>
                         <publicPackages>
                             <publicPackage>uk.theretiredprogrammer.extexp.execution</publicPackage>
+                            <publicPackage>uk.theretiredprogrammer.extexp.factoryapi</publicPackage>
                         </publicPackages>
                     </configuration>
                 </plugin>

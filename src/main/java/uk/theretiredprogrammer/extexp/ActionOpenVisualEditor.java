@@ -26,8 +26,7 @@ import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
-import uk.theretiredprogrammer.extexp.execution.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.execution.impl.BuildFile;
+import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.visualeditor.PTC;
 
 /**
