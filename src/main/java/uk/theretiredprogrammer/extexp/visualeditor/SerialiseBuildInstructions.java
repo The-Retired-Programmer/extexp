@@ -16,8 +16,6 @@
 package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.io.IOException;
-import java.util.function.Function;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.extexp.support.NamedCommandSequence;
 import uk.theretiredprogrammer.extexp.support.CommandSequence;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
@@ -30,11 +28,11 @@ import uk.theretiredprogrammer.extexp.support.PScene;
  */
 public class SerialiseBuildInstructions {
 
-    private Function<JsonObject, Boolean> outputfunction;
-
-    public void setOutputFunction(Function<JsonObject, Boolean> outputfunction) {
-        this.outputfunction = outputfunction;
-    }
+//    private Function<JsonObject, Boolean> outputfunction;
+//
+//    public void setOutputFunction(Function<JsonObject, Boolean> outputfunction) {
+//        this.outputfunction = outputfunction;
+//    }
 
     // call in AWT to serialize scene
     public void serialize(PScene scene) {

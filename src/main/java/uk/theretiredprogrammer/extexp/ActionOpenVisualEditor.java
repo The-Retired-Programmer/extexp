@@ -15,16 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp;
 
+import uk.theretiredprogrammer.extexp.support.BuildFile;
 import java.awt.event.ActionEvent;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import javax.json.JsonObject;
 import javax.swing.AbstractAction;
-import org.openide.filesystems.FileLock;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.visualeditor.PTC;
@@ -47,8 +41,7 @@ public class ActionOpenVisualEditor extends AbstractAction {
         PTC tc = new PTC();
         try {
             ExecutionEnvironment env = BuildFile.initAndParse(project.getProjectDirectory(), null, null);
-            //tc.deserialise(env);
-            tc.setSaveSource((jo) -> updateBuildFile(jo));
+            //tc.setSaveSource((jo) -> updateBuildFile(jo));
             tc.setDisplayName(project.getProjectDirectory().getName());
             tc.open();
             tc.requestActive();
@@ -58,28 +51,28 @@ public class ActionOpenVisualEditor extends AbstractAction {
         }
     }
 
-    private boolean updateBuildFile(JsonObject jobj) {
-        try {
-            FileObject out = project.getProjectDirectory().getFileObject("build.json");
-            if (out != null) {
-
-                FileObject bkup = project.getProjectDirectory().getFileObject("build.json.bkup");
-                if (bkup != null) {
-                    bkup.delete();
-                }
-                FileLock fl = out.lock();
-                out.rename(fl, "build.json", "bkup");
-                fl.releaseLock();
-            }
-            InputStream is;
-            try (OutputStream os = project.getProjectDirectory().createAndOpen("build.json")) {
-                is = new ByteArrayInputStream(jobj.toString().getBytes());
-                FileUtil.copy(is, os);
-            }
-            is.close();
-            return true;
-        } catch (IOException ex) {
-            return false;
-        }
-    }
+//    private boolean updateBuildFile(JsonObject jobj) {
+//        try {
+//            FileObject out = project.getProjectDirectory().getFileObject("build.json");
+//            if (out != null) {
+//
+//                FileObject bkup = project.getProjectDirectory().getFileObject("build.json.bkup");
+//                if (bkup != null) {
+//                    bkup.delete();
+//                }
+//                FileLock fl = out.lock();
+//                out.rename(fl, "build.json", "bkup");
+//                fl.releaseLock();
+//            }
+//            InputStream is;
+//            try (OutputStream os = project.getProjectDirectory().createAndOpen("build.json")) {
+//                is = new ByteArrayInputStream(jobj.toString().getBytes());
+//                FileUtil.copy(is, os);
+//            }
+//            is.close();
+//            return true;
+//        } catch (IOException ex) {
+//            return false;
+//        }
+//    }
 }

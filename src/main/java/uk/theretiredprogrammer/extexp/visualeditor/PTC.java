@@ -63,9 +63,9 @@ public final class PTC extends TopComponent {
         associateLookup(Lookups.singleton(PaletteSupport.createPalette()));
     }
     
-    public void setSaveSource(Function<JsonObject, Boolean> savesource) {
-        serialiser.setOutputFunction(savesource);
-    }
+//    public void setSaveSource(Function<JsonObject, Boolean> savesource) {
+//        serialiser.setOutputFunction(savesource);
+//    }
     
     public void deserialise(ExecutionEnvironment env) throws IOException {
         for (int i = 0; i < env.commandsequences.getNamedSequences().size(); i++) {

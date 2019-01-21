@@ -25,6 +25,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
+import uk.theretiredprogrammer.extexp.support.BuildFile;
 import uk.theretiredprogrammer.extexp.support.Command;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
@@ -80,14 +81,14 @@ public class ActionsWorker implements Runnable {
         FileObject cachefolder = projectfolder.getFileObject("cache");
         if (cachefolder != null) {
             msg.println("   ...cache folder");
-            for ( FileObject f : cachefolder.getChildren()){
+            for (FileObject f : cachefolder.getChildren()) {
                 f.delete();
             }
         }
         FileObject outputfolder = projectfolder.getFileObject("output");
         if (outputfolder != null) {
             msg.println("   ...output folder");
-            for ( FileObject f : outputfolder.getChildren()){
+            for (FileObject f : outputfolder.getChildren()) {
                 f.delete();
             }
         }
