@@ -17,8 +17,6 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
-import java.util.function.Function;
-import javax.json.JsonObject;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,7 +26,6 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.support.PScene;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 
 @ConvertAsProperties(

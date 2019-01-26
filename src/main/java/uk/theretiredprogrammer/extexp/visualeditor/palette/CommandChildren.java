@@ -37,10 +37,10 @@ public class CommandChildren  extends Index.ArrayChildren {
         List<CommandNode> childrenNodes = new ArrayList<>();
         switch (category.getType()) {
             case CONTROL:
-                CommandCreate.consumeAllCommands((control)-> childrenNodes.add(new CommandNode(control)));
+                CommandCreate.consumeAllControls((control)-> childrenNodes.add(new CommandNode(control)));
                 break;
             case EXECUTOR:
-                CommandCreate.consumeAllCommands((executor)-> childrenNodes.add(new CommandNode(executor)));
+                CommandCreate.consumeAllExecutors((executor)-> childrenNodes.add(new CommandNode(executor)));
         }
         return childrenNodes;
     }

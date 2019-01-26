@@ -26,7 +26,7 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 import org.openide.util.datatransfer.ExTransferable;
 import uk.theretiredprogrammer.extexp.support.Command;
-import static uk.theretiredprogrammer.extexp.support.PScene.DATA_FLAVOR_COMMAND;
+import static uk.theretiredprogrammer.extexp.visualeditor.PScene.DATA_FLAVOR_COMMAND;
 
 /**
  *

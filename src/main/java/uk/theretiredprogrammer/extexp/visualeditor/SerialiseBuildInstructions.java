@@ -19,8 +19,6 @@ import java.io.IOException;
 import uk.theretiredprogrammer.extexp.support.NamedCommandSequence;
 import uk.theretiredprogrammer.extexp.support.CommandSequence;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.support.PNode;
-import uk.theretiredprogrammer.extexp.support.PScene;
 
 /**
  *
