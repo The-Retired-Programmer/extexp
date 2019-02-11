@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
-import java.util.Map.Entry;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 
 /**
@@ -23,10 +22,6 @@ import org.netbeans.api.visual.vmd.VMDPinWidget;
  * @author richard
  */
 public class PPin extends VMDPinWidget {
-
-    public static final int REQUIRED = 0;
-    public static final int INHERITED = 1;
-    public static final int OPTIONAL = 2;
 
     public PPin(final PScene scene) {
         super(scene);
@@ -36,20 +31,8 @@ public class PPin extends VMDPinWidget {
         super(scene);
         setPinName(name);
     }
-    
+
     public PPin(final PScene scene, String name, String value) {
-        this(scene, name, value, 0);
-    }
-
-    public PPin(final PScene scene, Entry<String, String> param) {
-        this(scene, param.getKey(), param.getValue(), 0);
-    }
-
-    public PPin(final PScene scene, String name, String value, int valuetype) {
-        this(scene,
-                name + ": " + (value != null ? value
-                        : valuetype == INHERITED ? "\u00abinherited\u00bb"
-                                : valuetype == OPTIONAL ? "\u00aboptional\u00bb"
-                                        : "\u00abundefined\u00bb"));
+        this(scene, name + ": " + value);
     }
 }

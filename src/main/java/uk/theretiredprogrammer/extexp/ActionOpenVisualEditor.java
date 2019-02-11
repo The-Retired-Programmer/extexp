@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.extexp;
 
 import uk.theretiredprogrammer.extexp.support.BuildFile;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import javax.swing.AbstractAction;
 import org.openide.util.Exceptions;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
@@ -46,7 +45,7 @@ public class ActionOpenVisualEditor extends AbstractAction {
             tc.open();
             tc.requestActive();
             tc.deserialise(env);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
     }

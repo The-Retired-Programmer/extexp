@@ -175,10 +175,6 @@
                         <licenseFile>LICENSE</licenseFile>
                         <licenseName>The Apache License, Version 2.0</licenseName>
                         <brandingToken>extexp</brandingToken>
-                        <publicPackages>
-                            <publicPackage>uk.theretiredprogrammer.extexp.execution</publicPackage>
-                            <publicPackage>uk.theretiredprogrammer.extexp.factoryapi</publicPackage>
-                        </publicPackages>
                     </configuration>
                 </plugin>
                 <plugin>

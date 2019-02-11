@@ -78,7 +78,7 @@ public class PScene extends VMDGraphScene {
                     if (command instanceof Control) {
                         createControlNode((Control) command, NORMAL);
                     }
-                    if (command instanceof Executor){
+                    if (command instanceof Executor) {
                         createExecutorNode((Executor) command, NORMAL);
                     }
                 } catch (UnsupportedFlavorException | IOException ex) {
@@ -106,7 +106,7 @@ public class PScene extends VMDGraphScene {
             previous.forEach(p -> new PConnection(this, p, w));
             return getConnectionPoints((Control) command, w);
         }
-        if (command instanceof Executor){
+        if (command instanceof Executor) {
             w = createExecutorNode((Executor) command, position);
             if (w == null) {
                 return Arrays.asList();
@@ -114,62 +114,62 @@ public class PScene extends VMDGraphScene {
             previous.forEach(p -> new PConnection(this, p, w));
             return Arrays.asList(w);
         }
-        return Arrays.asList();   
+        return Arrays.asList();
     }
-    
-    private PNode createExecutorNode(Executor executor, Position position){
+
+    private PNode createExecutorNode(Executor executor, Position position) {
         String[] ppnames = executor.getPrimaryPinData();
         int l = ppnames.length;
         PNode pnode = new PNode(this, position, executor.getDisplayName(), executor.getWidgetImageName());
         for (String name : ppnames) {
-            pnode.attachPinWidget(new PPin(this, name, executor.getParam(name)));
+            executor.getParameterText(name).ifPresent(
+                    (p) -> pnode.attachPinWidget(new PPin(this, name, p))
+            );
         }
-        String[] filternames = Arrays.copyOf(ppnames, l+1);
+        String[] filternames = Arrays.copyOf(ppnames, l + 1);
         filternames[l] = "Do";
         List<Map.Entry<String, String>> extrapins = executor.getFilteredParameters(filternames);
         if (!extrapins.isEmpty()) {
             pnode.attachPinWidget(new PPin(this));
-            extrapins.forEach((e) -> pnode.attachPinWidget(new PPin(this, e)));
+            extrapins.forEach((e) -> pnode.attachPinWidget(new PPin(this, e.getKey(), e.getValue())));
         }
         this.getWidgetLayer().addChild(pnode);
         return pnode;
     }
-    
-    private PNode createControlNode(Control control, Position position){
+
+    private PNode createControlNode(Control control, Position position) {
         String[] ppnames = control.getPrimaryPinData();
         int l = ppnames.length;
         PNode pnode = new PNode(this, position, control.getDisplayName(), control.getWidgetImageName());
         for (String name : ppnames) {
-            pnode.attachPinWidget(new PPin(this, name, control.getParam(name)));
+            control.getParameterText(name).ifPresent(
+                    (p) -> pnode.attachPinWidget(new PPin(this, name, p))
+            );
         }
         List<Map.Entry<String, String>> extrapins = control.getFilteredParameters(ppnames);
         if (!extrapins.isEmpty()) {
             pnode.attachPinWidget(new PPin(this));
-            extrapins.forEach((e) -> pnode.attachPinWidget(new PPin(this, e)));
+            extrapins.forEach((e) -> pnode.attachPinWidget(new PPin(this, e.getValue())));
         }
         this.getWidgetLayer().addChild(pnode);
         return pnode;
     }
-    
+
     private List<Widget> getConnectionPoints(Control control, PNode n) {
         ConnectedData[] cdata = control.getConnectedPinData();
         if (cdata.length == 0) {
             return Arrays.asList(n);
         }
         List<Widget> connections = new ArrayList<>();
-        for(ConnectedData cd : cdata) {
-            connections.addAll(processCommand(this, control, n, cd.name, cd.position ));
+        for (ConnectedData cd : cdata) {
+            connections.addAll(processCommand(this, control, n, cd.name, cd.position));
         }
         return connections;
     }
 
     private List<Widget> processCommand(PScene scene, Control control, PNode n, String name, Position position) {
         List<Widget> connections = Arrays.asList(n.getPin(name));
-        Command command = control.getOptionalCommand(name);
-        if (command == null) {
-            return connections;
-        }
-        return scene.insert(command, connections, position);
+        return control.getCommand(name).map(cmd -> scene.insert(cmd, connections, position)).orElse(connections);
     }
 
     public final List<Widget> insertSequence(CommandSequence commandsequence, Widget previous) {

@@ -15,10 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.visualeditor;
 
-import java.io.IOException;
-import uk.theretiredprogrammer.extexp.support.NamedCommandSequence;
 import uk.theretiredprogrammer.extexp.support.CommandSequence;
-import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
  *
@@ -37,12 +34,7 @@ public class SerialiseBuildInstructions {
     }
 
     // call in AWT to deserialize scene
-    public void deserialize(PScene scene, ExecutionEnvironment env, int sequenceindex) throws IOException {
-        NamedCommandSequence nseq = env.commandsequences.getNamedSequences().get(sequenceindex);
-        putSequence(scene, nseq.name, nseq.commandsequence);
-    }
-
-    private void putSequence(PScene scene, String name, CommandSequence commandsequence) {
+    public void deserialize(PScene scene, String name, CommandSequence commandsequence) {
         PNode previous = scene.insertStart(name);
         scene.insertSequence(commandsequence, previous);
     }

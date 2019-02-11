@@ -65,12 +65,12 @@ public final class PTC extends TopComponent {
 //    }
     
     public void deserialise(ExecutionEnvironment env) throws IOException {
-        for (int i = 0; i < env.commandsequences.getNamedSequences().size(); i++) {
+        env.commandsequences.executeEach( me -> {
             PScene scene = new PScene();
             contentpanel.add(scene.createView());
-            serialiser.deserialize(scene, env, i);
+            serialiser.deserialize(scene, me.getKey(), me.getValue());
             scene.layout();
-        }
+        });
     }
 
     /**
