@@ -28,7 +28,6 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -63,7 +62,7 @@ public class OutputNodeFactory implements NodeFactory {
                     Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
                     result.add(new OutputNode(sitenode));
                 } catch (DataObjectNotFoundException ex) {
-                    Exceptions.printStackTrace(ex);
+                    // do nothing at the moment - just ignore node and squash the Exception
                 }
             }
             return result;

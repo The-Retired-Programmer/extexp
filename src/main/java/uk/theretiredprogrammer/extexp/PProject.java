@@ -34,7 +34,6 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -129,7 +128,6 @@ public class PProject implements Project {
                 //Decorate the project directory's node:
                 return new ProjectNode(nodeOfProjectFolder, project);
             } catch (DataObjectNotFoundException donfe) {
-                Exceptions.printStackTrace(donfe);
                 //Fallback-the directory couldn't be created -
                 //read-only filesystem or something evil happened
                 return new AbstractNode(Children.LEAF);

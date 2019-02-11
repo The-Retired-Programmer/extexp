@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.extexp;
 import java.io.IOException;
 import static java.lang.Math.round;
 import static java.lang.System.currentTimeMillis;
-import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.filesystems.FileObject;
@@ -26,7 +25,6 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.support.BuildFile;
-import uk.theretiredprogrammer.extexp.support.Command;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
@@ -53,52 +51,57 @@ public class ActionsWorker implements Runnable {
         InputOutput io = IOProvider.getDefault().getIO("Assembly Builder for " + projectinfo.getName(), false);
         io.select();
         try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
-            try {
-                msg.reset();
-                if (cleanrequired) {
-                    cleanWorker(project.getProjectDirectory(), msg, err);
-                }
-                if (buildrequired) {
-                    buildWorker(project.getProjectDirectory(), msg, err);
-                }
-            } catch (TransformerException | IOException ex) {
-                success = false;
-                String m = ex.getMessage();
-                if (m != null) {
-                    err.println(m);
-                } else {
-                    err.println("Failure: exception trapped - no explanation message available");
-                }
-                ex.printStackTrace(err);
+            reset(msg, err);
+            if (cleanrequired) {
+                cleanWorker(project.getProjectDirectory(), msg, err);
+            }
+            if (buildrequired) {
+                buildWorker(project.getProjectDirectory(), msg, err);
             }
             int elapsed = round((currentTimeMillis() - start) / 1000F);
             msg.println("BUILD " + (success ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
     }
 
-    private void cleanWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException {
+    private void reset(OutputWriter msg, OutputWriter err) {
+        try {
+            msg.reset();
+        } catch (IOException ex) {
+            err.println("Unable to reset output window: " + ex.getLocalizedMessage());
+        }
+    }
+
+    private void cleanWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
         msg.println("Cleaning...");
         FileObject cachefolder = projectfolder.getFileObject("cache");
         if (cachefolder != null) {
             msg.println("   ...cache folder");
             for (FileObject f : cachefolder.getChildren()) {
-                f.delete();
+                deleteFile(f, err);
             }
         }
         FileObject outputfolder = projectfolder.getFileObject("output");
         if (outputfolder != null) {
             msg.println("   ...output folder");
             for (FileObject f : outputfolder.getChildren()) {
-                f.delete();
+                deleteFile(f, err);
             }
         }
     }
 
-    private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) throws IOException, TransformerException {
+    private void deleteFile(FileObject fo, OutputWriter err) {
+        try {
+            fo.delete();
+        } catch (IOException ex) {
+            err.println("Unable to delete " + fo.getNameExt() + ": " + ex.getLocalizedMessage());
+        }
+    }
+
+    private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
         msg.println("Building...");
         ExecutionEnvironment env = BuildFile.initAndParse(projectfolder, msg, err);
-        for (Command command : env.commandsequences.getSequence("MAIN")) {
+        env.commandsequences.getSequence("MAIN").forEach((command) -> {
             command.execute(env);
-        }
+        });
     }
 }

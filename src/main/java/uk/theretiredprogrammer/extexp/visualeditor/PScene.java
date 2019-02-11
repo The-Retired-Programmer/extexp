@@ -38,7 +38,6 @@ import org.netbeans.api.visual.widget.EventProcessingType;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Exceptions;
 import uk.theretiredprogrammer.extexp.support.Command;
 import uk.theretiredprogrammer.extexp.support.Command.Position;
 import static uk.theretiredprogrammer.extexp.support.Command.Position.NORMAL;
@@ -82,6 +81,7 @@ public class PScene extends VMDGraphScene {
                         createExecutorNode((Executor) command, NORMAL);
                     }
                 } catch (UnsupportedFlavorException | IOException ex) {
+                    // TBD need an error message here
                 }
             }
         }));
@@ -225,7 +225,7 @@ public class PScene extends VMDGraphScene {
                         positionNodes(widgets, getMaxWidth(widgets));
                         layouthasoccurred = true;
                     } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
+                        // TBD - need an error message here
                     }
                 }
             }
