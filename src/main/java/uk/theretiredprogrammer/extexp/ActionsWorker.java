@@ -45,21 +45,21 @@ public class ActionsWorker implements Runnable {
 
     @Override
     public void run() {
-        boolean success = true;
         long start = currentTimeMillis();
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
         InputOutput io = IOProvider.getDefault().getIO("Assembly Builder for " + projectinfo.getName(), false);
         io.select();
         try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
             reset(msg, err);
+            int errorcount = 0;
             if (cleanrequired) {
-                cleanWorker(project.getProjectDirectory(), msg, err);
+                errorcount+=cleanWorker(project.getProjectDirectory(), msg, err);
             }
             if (buildrequired) {
-                buildWorker(project.getProjectDirectory(), msg, err);
+                errorcount+=buildWorker(project.getProjectDirectory(), msg, err);
             }
             int elapsed = round((currentTimeMillis() - start) / 1000F);
-            msg.println("BUILD " + (success ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
+            msg.println("BUILD " + (errorcount == 0 ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
     }
 
@@ -71,37 +71,49 @@ public class ActionsWorker implements Runnable {
         }
     }
 
-    private void cleanWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
+    private int cleanWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
         msg.println("Cleaning...");
+        int errorcount = 0;
         FileObject cachefolder = projectfolder.getFileObject("cache");
         if (cachefolder != null) {
             msg.println("   ...cache folder");
             for (FileObject f : cachefolder.getChildren()) {
-                deleteFile(f, err);
+                if (!deleteFile(f, err)) {
+                    errorcount++;
+                }
             }
         }
         FileObject outputfolder = projectfolder.getFileObject("output");
         if (outputfolder != null) {
             msg.println("   ...output folder");
             for (FileObject f : outputfolder.getChildren()) {
-                deleteFile(f, err);
+                if (!deleteFile(f, err)) {
+                    errorcount++;
+                }
             }
         }
+        return errorcount;
     }
 
-    private void deleteFile(FileObject fo, OutputWriter err) {
+    private boolean deleteFile(FileObject fo, OutputWriter err) {
         try {
             fo.delete();
+            return true;
         } catch (IOException ex) {
             err.println("Unable to delete " + fo.getNameExt() + ": " + ex.getLocalizedMessage());
+            return false;
         }
     }
 
-    private void buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
+    private int buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
         msg.println("Building...");
         ExecutionEnvironment env = BuildFile.initAndParse(projectfolder, msg, err);
+        if (env == null) {
+            return 1;
+        }
         env.commandsequences.getSequence("MAIN").forEach((command) -> {
             command.execute(env);
         });
+        return env.getErrorCount();
     }
 }
