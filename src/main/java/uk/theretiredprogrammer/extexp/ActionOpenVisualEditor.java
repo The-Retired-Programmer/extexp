@@ -15,12 +15,9 @@
  */
 package uk.theretiredprogrammer.extexp;
 
-import uk.theretiredprogrammer.extexp.support.BuildFile;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import org.openide.util.Exceptions;
-import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.visualeditor.PTC;
+import org.openide.util.RequestProcessor;
 
 /**
  *
@@ -37,41 +34,6 @@ public class ActionOpenVisualEditor extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PTC tc = new PTC();
-        try {
-            ExecutionEnvironment env = BuildFile.initAndParse(project.getProjectDirectory(), null, null);
-            //tc.setSaveSource((jo) -> updateBuildFile(jo));
-            tc.setDisplayName(project.getProjectDirectory().getName());
-            tc.open();
-            tc.requestActive();
-            tc.deserialise(env);
-        } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        new RequestProcessor(ActionOpenVisualEditor.class).post(new VisualEditorWorker(project));
     }
-
-//    private boolean updateBuildFile(JsonObject jobj) {
-//        try {
-//            FileObject out = project.getProjectDirectory().getFileObject("build.json");
-//            if (out != null) {
-//
-//                FileObject bkup = project.getProjectDirectory().getFileObject("build.json.bkup");
-//                if (bkup != null) {
-//                    bkup.delete();
-//                }
-//                FileLock fl = out.lock();
-//                out.rename(fl, "build.json", "bkup");
-//                fl.releaseLock();
-//            }
-//            InputStream is;
-//            try (OutputStream os = project.getProjectDirectory().createAndOpen("build.json")) {
-//                is = new ByteArrayInputStream(jobj.toString().getBytes());
-//                FileUtil.copy(is, os);
-//            }
-//            is.close();
-//            return true;
-//        } catch (IOException ex) {
-//            return false;
-//        }
-//    }
 }

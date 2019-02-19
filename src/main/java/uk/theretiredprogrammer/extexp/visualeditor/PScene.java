@@ -44,6 +44,7 @@ import static uk.theretiredprogrammer.extexp.support.Command.Position.NORMAL;
 import uk.theretiredprogrammer.extexp.support.CommandSequence;
 import uk.theretiredprogrammer.extexp.support.Control;
 import uk.theretiredprogrammer.extexp.support.Control.ConnectedData;
+import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.support.Executor;
 
 public class PScene extends VMDGraphScene {
@@ -54,8 +55,10 @@ public class PScene extends VMDGraphScene {
     private final LayerWidget connectionlayer;
     private final Router connectionRouter;
     private final Scene.SceneListener pslistener = new PSceneListener();
+    private final ExecutionEnvironment ee;
 
-    public PScene() {
+    public PScene(ExecutionEnvironment ee) {
+        this.ee = ee;
         this.addSceneListener(pslistener);
         widgetlayer = new LayerWidget(this);
         addChild(widgetlayer);
@@ -81,7 +84,7 @@ public class PScene extends VMDGraphScene {
                         createExecutorNode((Executor) command, NORMAL);
                     }
                 } catch (UnsupportedFlavorException | IOException ex) {
-                    // TBD need an error message here
+                    ee.errln("Error - failed transferrable accept: "+ ex.getLocalizedMessage());
                 }
             }
         }));
@@ -225,7 +228,7 @@ public class PScene extends VMDGraphScene {
                         positionNodes(widgets, getMaxWidth(widgets));
                         layouthasoccurred = true;
                     } catch (IOException ex) {
-                        // TBD - need an error message here
+                        ee.errln("Error detected during scene validation: "+ ex.getLocalizedMessage());
                     }
                 }
             }
