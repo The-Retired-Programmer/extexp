@@ -152,7 +152,7 @@ public class PScene extends VMDGraphScene {
         List<Map.Entry<String, String>> extrapins = control.getFilteredParameters(ppnames);
         if (!extrapins.isEmpty()) {
             pnode.attachPinWidget(new PPin(this));
-            extrapins.forEach((e) -> pnode.attachPinWidget(new PPin(this, e.getValue())));
+            extrapins.forEach((e) -> pnode.attachPinWidget(new PPin(this, e.getKey(), e.getValue())));
         }
         this.getWidgetLayer().addChild(pnode);
         return pnode;
