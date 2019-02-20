@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -34,6 +35,8 @@ import org.netbeans.api.visual.layout.SceneLayout;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.vmd.VMDGraphScene;
+import org.netbeans.api.visual.vmd.VMDNodeWidget;
+import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.EventProcessingType;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
@@ -84,7 +87,7 @@ public class PScene extends VMDGraphScene {
                         createExecutorNode((Executor) command, NORMAL);
                     }
                 } catch (UnsupportedFlavorException | IOException ex) {
-                    ee.errln("Error - failed transferrable accept: "+ ex.getLocalizedMessage());
+                    ee.errln("Error - failed transferrable accept: " + ex.getLocalizedMessage());
                 }
             }
         }));
@@ -106,7 +109,17 @@ public class PScene extends VMDGraphScene {
             if (w == null) {
                 return Arrays.asList();
             }
-            previous.forEach(p -> new PConnection(this, p, w));
+            previous.stream().forEach(p -> {
+                String name = "Unknown";
+                if ( p instanceof VMDNodeWidget) {
+                    name = "Node " +((VMDNodeWidget)p).getNodeName();
+                }
+                if ( p instanceof VMDPinWidget) {
+                    name = "Pin " +((VMDPinWidget)p).getPinName();
+                }
+                ee.paths.getMsg().println("Debug: inserting connection to " + command.getDisplayName()+" from " + name);
+                new PConnection(this, p, w);
+                    });
             return getConnectionPoints((Control) command, w);
         }
         if (command instanceof Executor) {
@@ -114,7 +127,17 @@ public class PScene extends VMDGraphScene {
             if (w == null) {
                 return Arrays.asList();
             }
-            previous.forEach(p -> new PConnection(this, p, w));
+            previous.stream().forEach(p -> {
+                String name = "Unknown";
+                if ( p instanceof VMDNodeWidget) {
+                    name = "Node " +((VMDNodeWidget)p).getNodeName();
+                }
+                if ( p instanceof VMDPinWidget) {
+                    name = "Pin " +((VMDPinWidget)p).getPinName();
+                }
+                ee.paths.getMsg().println("Debug: inserting connection to " + command.getDisplayName()+" from " + name);
+                new PConnection(this, p, w);
+                    });
             return Arrays.asList(w);
         }
         return Arrays.asList();
@@ -145,9 +168,12 @@ public class PScene extends VMDGraphScene {
         int l = ppnames.length;
         PNode pnode = new PNode(this, position, control.getDisplayName(), control.getWidgetImageName());
         for (String name : ppnames) {
-            control.getParameterText(name).ifPresent(
-                    (p) -> pnode.attachPinWidget(new PPin(this, name, p))
-            );
+            Optional<String> ptext = control.getParameterText(name);
+            if (ptext.isPresent()) {
+                pnode.attachPinWidget(new PPin(this, name, ptext.get()));
+            } else {
+                pnode.attachPinWidget(new PPin(this, name));
+            }
         }
         List<Map.Entry<String, String>> extrapins = control.getFilteredParameters(ppnames);
         if (!extrapins.isEmpty()) {
@@ -171,8 +197,9 @@ public class PScene extends VMDGraphScene {
     }
 
     private List<Widget> processCommand(PScene scene, Control control, PNode n, String name, Position position) {
-        List<Widget> connections = Arrays.asList(n.getPin(name));
-        return control.getCommand(name).map(cmd -> scene.insert(cmd, connections, position)).orElse(connections);
+        PPin pin = n.getPin(name);
+        Optional<Command> command = control.getCommand(name);
+        return command.isPresent()? scene.insert(command.get(), Arrays.asList(pin), position): Arrays.asList(pin);
     }
 
     public final List<Widget> insertSequence(CommandSequence commandsequence, Widget previous) {
@@ -228,7 +255,7 @@ public class PScene extends VMDGraphScene {
                         positionNodes(widgets, getMaxWidth(widgets));
                         layouthasoccurred = true;
                     } catch (IOException ex) {
-                        ee.errln("Error detected during scene validation: "+ ex.getLocalizedMessage());
+                        ee.errln("Error detected during scene validation: " + ex.getLocalizedMessage());
                     }
                 }
             }
