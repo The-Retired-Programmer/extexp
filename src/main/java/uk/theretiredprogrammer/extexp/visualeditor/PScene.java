@@ -288,14 +288,41 @@ public class PScene extends VMDGraphScene {
         return max;
     }
 
+//    private int vgap = 70;
+//    private int hgap = 50;
+//
+//    private void positionNodes(List<PNode> nodes, int[] maxwidth) throws IOException {
+//        int vpos = vgap;
+//        int leftcentre = maxwidth[0] / 2 + hgap;
+//        int hcentre = maxwidth[0] == 0 ? hgap + maxwidth[1] / 2 : leftcentre * 2 + maxwidth[1] / 2;
+//        int rightcentre = hcentre + maxwidth[1] / 2 + hgap + maxwidth[2] / 2;
+//        for (PNode node : nodes) {
+//            Rectangle b = node.getBounds();
+//            if (b == null) {
+//                throw new IOException("Bounds are null when positioning Node");
+//            }
+//            switch (node.getPosition()) {
+//                case LEFT:
+//                    node.setPreferredLocation(new Point(leftcentre - b.width / 2, vpos));
+//                    break;
+//                case RIGHT:
+//                    node.setPreferredLocation(new Point(rightcentre - b.width / 2, vpos));
+//                    break;
+//                default:
+//                    node.setPreferredLocation(new Point(hcentre - b.width / 2, vpos));
+//            }
+//            vpos += b.height + vgap;
+//        }
+//    }
+    
     private int vgap = 70;
-    private int hgap = 50;
+    private int hgap = 20;
 
     private void positionNodes(List<PNode> nodes, int[] maxwidth) throws IOException {
         int vpos = vgap;
         int leftcentre = maxwidth[0] / 2 + hgap;
         int hcentre = maxwidth[0] == 0 ? hgap + maxwidth[1] / 2 : leftcentre * 2 + maxwidth[1] / 2;
-        int rightcentre = hcentre + maxwidth[1] / 2 + hgap + maxwidth[2] / 2;
+//        int rightcentre = hcentre + maxwidth[1] / 2 + hgap + maxwidth[2] / 2;
         for (PNode node : nodes) {
             Rectangle b = node.getBounds();
             if (b == null) {
@@ -303,13 +330,13 @@ public class PScene extends VMDGraphScene {
             }
             switch (node.getPosition()) {
                 case LEFT:
-                    node.setPreferredLocation(new Point(leftcentre - b.width / 2, vpos));
+                    node.setPreferredLocation(new Point(hgap, vpos));
                     break;
                 case RIGHT:
-                    node.setPreferredLocation(new Point(rightcentre - b.width / 2, vpos));
+                    node.setPreferredLocation(new Point(maxwidth[1]+2*hgap, vpos));
                     break;
                 default:
-                    node.setPreferredLocation(new Point(hcentre - b.width / 2, vpos));
+                    node.setPreferredLocation(new Point(hgap, vpos));
             }
             vpos += b.height + vgap;
         }
