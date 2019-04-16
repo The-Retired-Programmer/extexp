@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
     <artifactId>extexp</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>nbm</packaging>
     
     <name>ExTexP NB Plugin</name>
@@ -43,7 +43,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <extexp-support.version>0.0.1</extexp-support.version>
+        <extexp-support.version>0.0.2</extexp-support.version>
     </properties>
     
     <dependencies>
