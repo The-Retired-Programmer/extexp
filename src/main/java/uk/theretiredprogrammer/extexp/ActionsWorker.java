@@ -59,7 +59,7 @@ public class ActionsWorker implements Runnable {
                 errorcount+=buildWorker(project.getProjectDirectory(), msg, err);
             }
             int elapsed = round((currentTimeMillis() - start) / 1000F);
-            msg.println("BUILD " + (errorcount == 0 ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
+            msg.println("BUILD COMPLETED " + (errorcount == 0 ? "" : "WITH ERRORS ") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
     }
 
