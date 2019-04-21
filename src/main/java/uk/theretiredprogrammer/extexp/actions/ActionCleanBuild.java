@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.openide.util.RequestProcessor;
+import uk.theretiredprogrammer.extexp.PProject;
 
 /**
  *
  * @author richard
  */
-public class ActionClean extends AbstractAction {
+public class ActionCleanBuild extends AbstractAction {
 
     private final PProject project;
 
-    public ActionClean(PProject project) {
-        super("Clean");
+    public ActionCleanBuild(PProject project) {
+        super("Clean and Build");
         this.project = project;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionClean.class).post(new ActionsWorker(project, true, false));
+        new RequestProcessor(ActionCleanBuild.class).post(new ActionsWorker(project, true, true));
     }
 }

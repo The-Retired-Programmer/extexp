@@ -15,6 +15,9 @@
  */
 package uk.theretiredprogrammer.extexp;
 
+import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
+import uk.theretiredprogrammer.extexp.actions.ActionClean;
+import uk.theretiredprogrammer.extexp.actions.ActionBuild;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import javax.swing.Action;

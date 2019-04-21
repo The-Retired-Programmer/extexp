@@ -15,6 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp;
 
+import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
+import uk.theretiredprogrammer.extexp.actions.ActionClean;
+import uk.theretiredprogrammer.extexp.actions.ActionBuild;
+import uk.theretiredprogrammer.extexp.visualeditor.ActionOpenVisualEditor;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;

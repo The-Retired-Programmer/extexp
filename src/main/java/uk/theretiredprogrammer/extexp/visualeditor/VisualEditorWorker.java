@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.io.IOException;
 import static java.lang.Math.round;
@@ -24,9 +24,9 @@ import org.openide.filesystems.FileObject;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
+import uk.theretiredprogrammer.extexp.PProject;
 import uk.theretiredprogrammer.extexp.support.BuildFile;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
-import uk.theretiredprogrammer.extexp.visualeditor.PTC;
 
 /**
  *

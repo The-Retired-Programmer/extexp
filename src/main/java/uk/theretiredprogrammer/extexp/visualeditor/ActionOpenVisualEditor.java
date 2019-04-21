@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp;
+package uk.theretiredprogrammer.extexp.visualeditor;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.openide.util.RequestProcessor;
+import uk.theretiredprogrammer.extexp.PProject;
 
 /**
  *
  * @author richard
  */
-public class ActionCleanBuild extends AbstractAction {
+public class ActionOpenVisualEditor extends AbstractAction {
 
     private final PProject project;
 
-    public ActionCleanBuild(PProject project) {
-        super("Clean and Build");
+    public ActionOpenVisualEditor(PProject project) {
+        super("Open Visual Editor");
         this.project = project;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionCleanBuild.class).post(new ActionsWorker(project, true, true));
+        new RequestProcessor(ActionOpenVisualEditor.class).post(new VisualEditorWorker(project));
     }
 }
