@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +34,36 @@ import uk.theretiredprogrammer.extexp.support.Command.Position;
 import static uk.theretiredprogrammer.extexp.support.Executor.EXECUTORIMAGENAME;
 
 /**
+ * The Widget class for the visual editor
  *
- * @author richard
+ * @author richard linsdale
  */
 public class PNode extends VMDNodeWidget {
 
     private final Position position;
-    
-    public PNode(final PScene scene, Position position, String displayname){
+
+    /**
+     * Constructor
+     *
+     * @param scene the visual editor scene
+     * @param position the relative horizontal position of the widget within the
+     * current column
+     * @param displayname the displayed name of this widget
+     */
+    public PNode(final PScene scene, Position position, String displayname) {
         this(scene, position, displayname, EXECUTORIMAGENAME);
     }
 
-    public PNode(final PScene scene, Position position, String displayname, String imagepath){
+    /**
+     * Constructor
+     *
+     * @param scene the visual editor scene
+     * @param position the relative horizontal position of the widget within the
+     * current column
+     * @param displayname the displayed name of this widget
+     * @param imagepath the displayed image name of this widget.
+     */
+    public PNode(final PScene scene, Position position, String displayname, String imagepath) {
         super(scene);
         this.position = position;
         setNodeName(displayname);
@@ -145,24 +163,43 @@ public class PNode extends VMDNodeWidget {
         @Override
         @SuppressWarnings("ResultOfObjectAllocationIgnored")
         public void createConnection(Widget source, Widget target) {
-            new PConnection((PScene) getScene(), (PNode)source, (PNode) target);
+            new PConnection((PScene) getScene(), (PNode) source, (PNode) target);
         }
     }
-    
+
+    /**
+     * Get the connection from this widget.
+     *
+     * can be overridden if the widget has multiple connections.
+     *
+     * @param scene the visual editor scene
+     */
     public List<Widget> getConnections(PScene scene) {
         return Arrays.asList(this);
     }
-    
-    public PPin getPin(String pinname) {
+
+    /**
+     * Get the pin, given a name. It matches pins where the pin name starts with
+     * the given name.
+     *
+     * @param name the name to match
+     * @return the matching Pin (or null if no match)
+     */
+    public PPin getPin(String name) {
         for (Widget child : getChildren()) {
-            if (child instanceof PPin && ((PPin) child).getPinName().startsWith(pinname)) {
+            if (child instanceof PPin && ((PPin) child).getPinName().startsWith(name)) {
                 return ((PPin) child);
             }
         }
         return null;
     }
-    
-    public Position getPosition(){
+
+    /**
+     * Get the relative position of this widget
+     *
+     * @return the relative position
+     */
+    public Position getPosition() {
         return position;
     }
 }

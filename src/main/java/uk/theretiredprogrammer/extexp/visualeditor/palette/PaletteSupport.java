@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,17 @@ import uk.theretiredprogrammer.extexp.support.Command;
 import static uk.theretiredprogrammer.extexp.visualeditor.PScene.DATA_FLAVOR_COMMAND;
 
 /**
- *
- * @author richard
+ * The visual editor palette support class
+ * 
+ * @author richard linsdale
  */
 public class PaletteSupport {
 
+    /**
+     * Create a palette controller
+     * 
+     * @return the palette controller 
+     */
     public static PaletteController createPalette() {
         AbstractNode paletteRoot = new AbstractNode(new CategoryChildren());
         paletteRoot.setName("Palette Root");

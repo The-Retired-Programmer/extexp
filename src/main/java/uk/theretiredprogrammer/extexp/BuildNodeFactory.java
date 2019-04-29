@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,9 @@ import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
+ * A Factory to create BuildNodes (the build,json file).
  *
- * @author richard
+ * @author richard linsdale
  */
 @NodeFactory.Registration(projectType = "uk-theretiredprogrammer-extexp", position = 40)
 public class BuildNodeFactory implements NodeFactory {
@@ -95,15 +96,14 @@ public class BuildNodeFactory implements NodeFactory {
             public Image getOpenedIcon(int type) {
                 return getIcon(type);
             }
-            
+
             @Override
             public Action[] getActions(boolean arg0) {
                 return new Action[]{
                     new ActionOpenVisualEditor(project),
                     new ActionBuild(project),
                     new ActionCleanBuild(project),
-                    new ActionClean(project),
-                };
+                    new ActionClean(project),};
             }
 
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,19 @@ import org.openide.util.lookup.Lookups;
 import uk.theretiredprogrammer.extexp.support.Command;
 
 /**
- *
- * @author richard
+ * The Command Node Palette Class
+ * 
+ * @author richard linsdale
  */
 public class CommandNode extends AbstractNode {
     
     private final Command command;
     
+    /**
+     * Constructor
+     * 
+     * @param command the command 
+     */
     public CommandNode(Command command) {
         super(Children.LEAF, Lookups.fixed( new Object[] {command} ) );
         this.command = command;
@@ -35,8 +41,12 @@ public class CommandNode extends AbstractNode {
         this.setDisplayName(command.getDisplayName());
     }
     
+    /**
+     * Get the command which this node represents
+     * 
+     * @return the command
+     */
     public Command getCommand() {
         return command;
     }
-    
 }

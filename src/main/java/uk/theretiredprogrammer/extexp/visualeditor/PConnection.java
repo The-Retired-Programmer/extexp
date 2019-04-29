@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,19 @@ import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
+ * The Connection class for the Visual Editor
  *
- * @author richard
+ * @author richard linsdale
  */
 public class PConnection extends VMDConnectionWidget {
 
+    /**
+     * Constructor
+     *
+     * @param scene the visual editor scene
+     * @param source the source widget for the connection
+     * @param target the target widget for the connection
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public PConnection(final PScene scene, Widget source, PNode target) {
         super(scene, scene.getRouter());

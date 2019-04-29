@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,17 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
- * @author richard
+ * The Category Node Class
+ * 
+ * @author richard linsdale
  */
 public class CategoryNode extends AbstractNode {
 
-    /** Creates a new instance of CategoryNode */
+    /**
+     * Constructor
+     * 
+     * @param category for this node
+     */
     public CategoryNode( Category category ) {
         super( new CommandChildren(category), Lookups.singleton(category) );
         setDisplayName(category.getName());

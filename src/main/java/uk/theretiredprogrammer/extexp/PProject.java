@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,9 @@ import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
- *
- * @author richard
+ * The Extexp Project Class
+ * 
+ * @author richard linsdale
  */
 public class PProject implements Project {
 
@@ -52,6 +53,12 @@ public class PProject implements Project {
     private final ProjectState state;
     private Lookup lkp;
 
+    /**
+     * Constructor
+     * 
+     * @param dir project root folder
+     * @param state the project state
+     */
     PProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;

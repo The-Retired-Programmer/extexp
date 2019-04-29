@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,17 +25,22 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.PProject;
-import uk.theretiredprogrammer.extexp.support.BuildFile;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
+ * The Worker class which implement the actions of Open visual editor.
  *
- * @author richard
+ * @author richard linsdale
  */
 public class VisualEditorWorker implements Runnable {
 
     private final PProject project;
 
+    /**
+     * Constructor
+     * 
+     * @param project the Extexp project 
+     */
     public VisualEditorWorker(PProject project) {
         this.project = project;
     }
@@ -63,9 +68,10 @@ public class VisualEditorWorker implements Runnable {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     private int veWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
         msg.println("Building...");
-        ExecutionEnvironment env = BuildFile.initAndParse(projectfolder, msg, err);
+        ExecutionEnvironment env = ExecutionEnvironment.create(projectfolder, msg, err);
         if (env == null) {
             return 1;
         }

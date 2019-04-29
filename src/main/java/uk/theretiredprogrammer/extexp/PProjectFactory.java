@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
+ * A Factory creating the Extexp Project Type. The key feature of such a project
+ * is that a file named build.json exists in the project's root folder.
  *
- * @author richard
+ * @author richard linsdale
  */
-
 @ServiceProvider(service = ProjectFactory.class)
 public class PProjectFactory implements ProjectFactory {
 
@@ -35,7 +36,6 @@ public class PProjectFactory implements ProjectFactory {
         return projectDirectory.getFileObject("build.json") != null;
     }
 
-    //Specifies when the project will be opened, i.e., if the project exists:
     @Override
     public Project loadProject(FileObject dir, ProjectState state) throws IOException {
         return isProject(dir) ? new PProject(dir, state) : null;

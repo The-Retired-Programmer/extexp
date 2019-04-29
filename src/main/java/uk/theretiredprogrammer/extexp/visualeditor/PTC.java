@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,11 @@ import org.openide.util.lookup.Lookups;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
 
+/**
+ * The Visual Editor Top Component
+ *
+ * @author richard linsdale
+ */
 @ConvertAsProperties(
         dtd = "-//uk.theretiredprogrammer.extexp.visualeditor//VE//EN",
         autostore = false
@@ -43,10 +48,13 @@ import uk.theretiredprogrammer.extexp.visualeditor.palette.PaletteSupport;
     "HINT_VETopComponent=This is a Build Editor window"
 })
 public final class PTC extends TopComponent {
-    
+
     private final SerialiseBuildInstructions serialiser = new SerialiseBuildInstructions();
     private final JPanel contentpanel = new JPanel();
-    
+
+    /**
+     * Constructor
+     */
     public PTC() {
         initComponents();
         setName(Bundle.CTL_VETopComponent());
@@ -59,13 +67,19 @@ public final class PTC extends TopComponent {
         //add(scene.createSatelliteView(), BorderLayout.WEST);
         associateLookup(Lookups.singleton(PaletteSupport.createPalette()));
     }
-    
+
 //    public void setSaveSource(Function<JsonObject, Boolean> savesource) {
 //        serialiser.setOutputFunction(savesource);
 //    }
-    
+    /**
+     * Create the visual editor display, extracting the command sequences from
+     * the ExecutionEnvironment.
+     *
+     * @param env The ExecutionEnvironment
+     * @throws IOException if problem
+     */
     public void deserialise(ExecutionEnvironment env) throws IOException {
-        env.commandsequences.executeEach( me -> {
+        env.commandsequences.executeEach(me -> {
             PScene scene = new PScene(env);
             serialiser.deserialize(scene, me.getKey(), me.getValue());
             scene.layout();
@@ -104,7 +118,7 @@ public final class PTC extends TopComponent {
     public void componentClosed() {
         // TODO add custom code on component closing
     }
-    
+
     @Override
     public void componentActivated() {
         contentpanel.requestFocusInWindow();

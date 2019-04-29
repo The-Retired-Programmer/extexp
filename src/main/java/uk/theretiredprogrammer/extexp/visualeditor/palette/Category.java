@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ package uk.theretiredprogrammer.extexp.visualeditor.palette;
 import uk.theretiredprogrammer.extexp.visualeditor.palette.CategoryChildren.CategoryType;
 
 /**
- *
- * @author richard
+ * The palette category class
+ * 
+ * @author richard linsdale
  */
 public class Category {
     

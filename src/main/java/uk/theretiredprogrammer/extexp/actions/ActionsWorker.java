@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.PProject;
-import uk.theretiredprogrammer.extexp.support.BuildFile;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
- *
- * @author richard
+ * The Worker class which implement the actions of Build, Clean and Clean/Build.
+ * 
+ * @author richard linsdale
  */
 public class ActionsWorker implements Runnable {
 
@@ -38,6 +38,13 @@ public class ActionsWorker implements Runnable {
     private final boolean buildrequired;
     private final PProject project;
 
+    /**
+     * Constructor
+     * 
+     * @param project the project
+     * @param cleanrequired true if clean required
+     * @param buildrequired true if build required
+     */
     public ActionsWorker(PProject project, boolean cleanrequired, boolean buildrequired) {
         this.cleanrequired = cleanrequired;
         this.buildrequired = buildrequired;
@@ -108,7 +115,7 @@ public class ActionsWorker implements Runnable {
 
     private int buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
         msg.println("Building...");
-        ExecutionEnvironment env = BuildFile.initAndParse(projectfolder, msg, err);
+        ExecutionEnvironment env = ExecutionEnvironment.create(projectfolder, msg, err);
         if (env == null) {
             return 1;
         }

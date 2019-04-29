@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,22 @@ package uk.theretiredprogrammer.extexp.visualeditor.palette;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.nodes.Index;
-import uk.theretiredprogrammer.extexp.support.CommandCreate;
+import uk.theretiredprogrammer.extexp.support.CommandFactory;
 
 /**
- *
- * @author richard
+ * The Command Children Palette Class
+ * 
+ * @author richard linsdale
  */
 public class CommandChildren  extends Index.ArrayChildren {
 
     private final Category category;
 
+    /**
+     * Constructor
+     * 
+     * @param category the Command palette category
+     */
     public CommandChildren(Category category) {
         this.category = category;
     }
@@ -37,10 +43,10 @@ public class CommandChildren  extends Index.ArrayChildren {
         List<CommandNode> childrenNodes = new ArrayList<>();
         switch (category.getType()) {
             case CONTROL:
-                CommandCreate.consumeAllControls((control)-> childrenNodes.add(new CommandNode(control)));
+                CommandFactory.consumeAllControls((control)-> childrenNodes.add(new CommandNode(control)));
                 break;
             case EXECUTOR:
-                CommandCreate.consumeAllExecutors((executor)-> childrenNodes.add(new CommandNode(executor)));
+                CommandFactory.consumeAllExecutors((executor)-> childrenNodes.add(new CommandNode(executor)));
         }
         return childrenNodes;
     }

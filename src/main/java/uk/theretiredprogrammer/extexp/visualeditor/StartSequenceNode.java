@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,21 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 import uk.theretiredprogrammer.extexp.support.Command.Position;
 
 /**
- *
- * @author richard
+ * A StartSequence Widget class
+ * 
+ * @author richard linsdale
  */
 public class StartSequenceNode extends PNode {
 
     private static final String CONTROLIMAGENAME = "uk/theretiredprogrammer/extexp/visualeditor/star.png";
 
+    /**
+     * Constructor
+     * 
+     * @param scene the visual editor scene
+     * @param name the name of the widget
+     * @param position the relative position of the widget
+     */
     @SuppressWarnings("LeakingThisInConstructor")
     public StartSequenceNode(PScene scene, String name, Position position) {
         super(scene,position,name,CONTROLIMAGENAME);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,16 @@ import uk.theretiredprogrammer.extexp.support.Control.ConnectedData;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 import uk.theretiredprogrammer.extexp.support.Executor;
 
+/**
+ *  the Scene class for the visual editor
+ * 
+ * @author richard linsdale
+ */
 public class PScene extends VMDGraphScene {
 
+    /**
+     * the data flavor for any command widget
+     */
     public static final DataFlavor DATA_FLAVOR_COMMAND = new DataFlavor(Command.class, "command");
 
     private final LayerWidget widgetlayer;
@@ -60,6 +68,11 @@ public class PScene extends VMDGraphScene {
     private final Scene.SceneListener pslistener = new PSceneListener();
     private final ExecutionEnvironment ee;
 
+    /**
+     * Constructor
+     * 
+     * @param ee the ExecutionEnvironment
+     */
     public PScene(ExecutionEnvironment ee) {
         this.ee = ee;
         this.addSceneListener(pslistener);
@@ -93,14 +106,35 @@ public class PScene extends VMDGraphScene {
         }));
     }
 
+    /**
+     * Insert the Start Command Sequence widget into the scene
+     * 
+     * @param name the name of the command sequence
+     * @return the start sequence widget
+     */
     public final PNode insertStart(String name) {
         return new StartSequenceNode(this, name, NORMAL);
     }
 
+    /**
+     * Insert a command widget into the scene
+     * 
+     * @param command the command to insert
+     * @param previous the previous widget(s) which must be connected to this new command widget
+     * @return a list of widgets
+     */
     public final List<Widget> insert(Command command, List<Widget> previous) {
         return insert(command, previous, NORMAL);
     }
 
+    /**
+     * Insert a command widget into the scene with a relative position
+     * 
+     * @param command the command to insert
+     * @param previous the previous widget(s) which must be connected to this new command widget
+     * @param position the relative position of the widget
+     * @return a list of widgets 
+     */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public final List<Widget> insert(Command command, List<Widget> previous, Position position) {
         PNode w;
@@ -202,10 +236,25 @@ public class PScene extends VMDGraphScene {
         return command.isPresent()? scene.insert(command.get(), Arrays.asList(pin), position): Arrays.asList(pin);
     }
 
+    /**
+     *  Insert a sequence of commands into the scene
+     * 
+     * @param commandsequence the command sequence to insert
+     * @param previous the previous widget(s) which must be connected to this new command widget
+     * @return a list of widgets 
+     */
     public final List<Widget> insertSequence(CommandSequence commandsequence, Widget previous) {
         return insertSequence(commandsequence, previous, NORMAL);
     }
 
+    /**
+     *  Insert a sequence of commands into the scene
+     * 
+     * @param commandsequence the command sequence to insert
+     * @param previous the previous widget(s) which must be connected to this new command widget
+     * @param position the relative position of the widget
+     * @return a list of widgets 
+     */
     public final List<Widget> insertSequence(CommandSequence commandsequence, Widget previous, Position position) {
         List<Widget> connections = Arrays.asList(previous);
         for (Command command : commandsequence) {
@@ -214,18 +263,36 @@ public class PScene extends VMDGraphScene {
         return connections;
     }
 
+    /**
+     * Get the current connection router
+     * 
+     * @return the router 
+     */
     public Router getRouter() {
         return connectionRouter;
     }
 
+    /**
+     * Get the connection layer
+     * 
+     * @return the connection layer
+     */
     public LayerWidget getConnectionLayer() {
         return connectionlayer;
     }
 
+    /**
+     * Get the widget layer
+     * 
+     * @return the widget layer 
+     */
     public LayerWidget getWidgetLayer() {
         return widgetlayer;
     }
 
+    /**
+     * Create the layout
+     */
     public void layout() {
         SceneLayout layout = LayoutFactory.createDevolveWidgetLayout(widgetlayer,
                 LayoutFactory.createAbsoluteLayout(), true);

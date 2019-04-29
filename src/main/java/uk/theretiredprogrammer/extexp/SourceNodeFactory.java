@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,9 @@ import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
- *
- * @author richard
+ * A Factory creating the Sources Node (the src folder in the project).
+ * 
+ * @author richard  linsdale
  */
 @NodeFactory.Registration(projectType = "uk-theretiredprogrammer-extexp", position = 10)
 public class SourceNodeFactory implements NodeFactory {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
+ * A Factory to create the Output Node (the output folder in the project).
  *
  * @author richard
  */

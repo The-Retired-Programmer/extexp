@@ -1,0 +1,52 @@
+<!DOCTYPE HTML">
+<!--
+Copyright 2019 richard linsdale.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+    <head>
+        <title>Extexp Overview</title>
+    </head>
+    <body>
+        <p>A plugin for Netbeans to define a project type to create file(s) using a
+            series of text merges, transformations and substitutions.</p>
+        <p>It runs a user definable pipeline of actions, controlled by parameters,
+            communicating between actions with files in the standard filesystem, or a
+            memory based file system.</p>
+        <p>Currently actions include:</p>
+        <ul>
+            <li>Markdown processing (markdown to html fragments)</li>
+        
+            <li>Substitute/Merge (insertion of file content or parameter strings into a
+                template file)</li>
+        
+            <li>Freemarker template language processing</li>
+        
+            <li>XSLT processing (xml to xml as directed by an xslt stylesheet)</li>
+        
+            <li>FOP processing (fo-xsl to pdf)</li>
+        
+            <li>Creation of an html img tag suitable for use in a reactive modelled html page
+                (using a srcset attribute)</li>
+        
+            <li>Ability to run any OS utility program</li>
+        </ul>
+        <p>Typical use cases are:</p>
+        <ul>
+            <li>Creation of pdf documents (books/reports etc) from markdown sources</li>
+            <li>Creation of web sites, consisting of a set of static web pages, built from
+                various sources (markdown , html templates, html fragments, parameters)</li>
+        </ul>
+    </body>
+</html>

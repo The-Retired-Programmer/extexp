@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,15 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
- *
- * @author richard
+ * The Category Children class
+ * 
+ * @author richard linsdale
  */
 public class CategoryChildren extends Children.Keys {
 
+    /**
+     * The CategoryType enum - Controls and Executors
+     */
     public static enum CategoryType {
         CONTROL("Controls"),
         EXECUTOR("Executors");
@@ -35,6 +39,9 @@ public class CategoryChildren extends Children.Keys {
         }
     }
 
+    /**
+     * Constructor
+     */
     public CategoryChildren() {
     }
 

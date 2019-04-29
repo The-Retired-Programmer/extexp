@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 richard.
+ * Copyright 2018-2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,39 @@ package uk.theretiredprogrammer.extexp.visualeditor;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 
 /**
- *
- * @author richard
+ * The Pin class for the visual editor
+ * 
+ * @author richard linsdale
  */
 public class PPin extends VMDPinWidget {
 
+    /**
+     * Constructor
+     * 
+     * @param scene the visual editor scene 
+     */
     public PPin(final PScene scene) {
         super(scene);
     }
 
+    /**
+     * Constructor
+     * 
+     * @param scene the visual editor scene
+     * @param name the pin name
+     */
     public PPin(final PScene scene, String name) {
         super(scene);
         setPinName(name);
     }
 
+    /**
+     * Constructor
+     * 
+     * @param scene the visual editor scene
+     * @param name the pin name
+     * @param value the value associated with this pin
+     */
     public PPin(final PScene scene, String name, String value) {
         this(scene, name + ": " + value);
     }
