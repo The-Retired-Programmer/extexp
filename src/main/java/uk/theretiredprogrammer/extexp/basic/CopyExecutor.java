@@ -22,15 +22,15 @@ import uk.theretiredprogrammer.extexp.support.IOWriter;
 
 /**
  * The COPY executor class.
- * 
+ *
  * Copy a file from the IOInputString name to IOWriter name.
- * 
+ *
  * Requires two parameters:
- * 
+ *
  * 'from' - the name of the input
- * 
+ *
  * 'to' - the name of the output
- * 
+ *
  * @author richard linsdale
  */
 public class CopyExecutor extends Executor {
@@ -39,26 +39,18 @@ public class CopyExecutor extends Executor {
     public String getDisplayName() {
         return "COPY";
     }
-    
+
     @Override
-    public String[] getPrimaryPinData(){
-        return new String[] {"from", "to"};
+    public String[] getPrimaryPinData() {
+        return new String[]{"from", "to"};
     }
 
     @Override
-    protected void executecommand() {
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen())return;
-        IOInputString input = new IOInputString(ee, this.getParameter("from"));
-        if (!input.isOpen())return;
-        try {
-            //
+    protected void executecommand() throws IOException {
+        try (
+                IOWriter output = new IOWriter(ee, getParameter("to"));
+                IOInputString input = new IOInputString(ee, this.getParameter("from"))) {
             output.get().write(input.get());
-        } catch (IOException ex) {
-            ee.errln("Error while copying: " + ex.getLocalizedMessage());
         }
-        //
-        output.close();
-        input.close();
     }
 }

@@ -85,11 +85,11 @@ public abstract class Command {
      * @return the display name
      */
     public abstract String getDisplayName();
-    
+
     /**
      * Parse the provided JsonObject to build this command.
-     * 
-     * @param jobj the json object representing this executor (the parameters) 
+     *
+     * @param jobj the json object representing this executor (the parameters)
      */
     public abstract void parse(JsonObject jobj);
 
@@ -100,13 +100,19 @@ public abstract class Command {
      */
     public final void execute(ExecutionEnvironment ee) {
         this.ee = ee;
-        executecommand();
+        try {
+            executecommand();
+        } catch (IOException ex) {
+            ee.errln("Error: processing " + this.getDisplayName() + " - " + ex.getLocalizedMessage());
+        }
     }
 
     /**
      * Execute the command
+     *
+     * @throws IOException if a problem
      */
-    protected abstract void executecommand();
+    protected abstract void executecommand() throws IOException;
 
     /**
      * Insert a parameter value into this command parameter store
@@ -291,23 +297,25 @@ public abstract class Command {
      * be substituted. see
      * {@link uk.theretiredprogrammer.extexp.support.local.IDGenerator} for more
      * details of this.
-     * 
-     * Substitution can be from various sources, the associated priority order is:
-     * 
-     * 1) localfilestore - replacement of substitution indicator with the textual content of the
-     * named file in localfilestore
-     * 
-     * 2) parameter - replacement of the substitution indicator with the parameter
-     * value, seaching first the local parameters and then in turn through parent
-     * command parameters
-     * 
-     * 3) File store - two directories within the filestore are then searched.  The
-     * first is the current source folder, the second is the shared source folder (see {@link IOPaths} for more details of these folders}).
-     * If a file exists with the substitutionkey as its name then its content will replace the
-     * substitution indicator.
-     * 
-     * 4) Otherwise - the default if no previous cases are matched, then the raw parameter value
-     * will replace the substitution indicator.
+     *
+     * Substitution can be from various sources, the associated priority order
+     * is:
+     *
+     * 1) localfilestore - replacement of substitution indicator with the
+     * textual content of the named file in localfilestore
+     *
+     * 2) parameter - replacement of the substitution indicator with the
+     * parameter value, seaching first the local parameters and then in turn
+     * through parent command parameters
+     *
+     * 3) File store - two directories within the filestore are then searched.
+     * The first is the current source folder, the second is the shared source
+     * folder (see {@link IOPaths} for more details of these folders}). If a
+     * file exists with the substitutionkey as its name then its content will
+     * replace the substitution indicator.
+     *
+     * 4) Otherwise - the default if no previous cases are matched, then the raw
+     * parameter value will replace the substitution indicator.
      *
      * Note that the processing of substitution is fully recursive so any
      * further substitution indicators found during the stages of the process
@@ -340,27 +348,29 @@ public abstract class Command {
      * be substituted. see
      * {@link uk.theretiredprogrammer.extexp.support.local.IDGenerator} for more
      * details of this.
-     * 
-     * Substitution can be from various sources, the associated priority order is:
-     * 
-     * 1) localfilestore - replacement of substitution indicator with the textual content of the
-     * named file in localfilestore
-     * 
-     * 2) parameter - replacement of the substitution indicator with the parameter
-     * value, seaching first the local parameters and then in turn through parent
-     * command parameters
-     * 
-     * 3) File store - two directories within the filestore are then searched.  The
-     * first is the current source folder, the second is the shared source folder (see {@link IOPaths} for more details of these folders}).
-     * If a file exists with the substitutionkey as its name then its content will replace the
-     * substitution indicator.
-     * 
-     * 4) Otherwise - the default if no previous cases are matched, then the raw parameter value
-     * will replace the substitution indicator.
      *
-     * Note that the processing of substitution is fully
-     * recursive so any further substitution indicators found during the stages
-     * of the process will themselves be substituted.
+     * Substitution can be from various sources, the associated priority order
+     * is:
+     *
+     * 1) localfilestore - replacement of substitution indicator with the
+     * textual content of the named file in localfilestore
+     *
+     * 2) parameter - replacement of the substitution indicator with the
+     * parameter value, seaching first the local parameters and then in turn
+     * through parent command parameters
+     *
+     * 3) File store - two directories within the filestore are then searched.
+     * The first is the current source folder, the second is the shared source
+     * folder (see {@link IOPaths} for more details of these folders}). If a
+     * file exists with the substitutionkey as its name then its content will
+     * replace the substitution indicator.
+     *
+     * 4) Otherwise - the default if no previous cases are matched, then the raw
+     * parameter value will replace the substitution indicator.
+     *
+     * Note that the processing of substitution is fully recursive so any
+     * further substitution indicators found during the stages of the process
+     * will themselves be substituted.
      *
      * @param in the input string
      * @param getparam the function to provide a substitution value given the

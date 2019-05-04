@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.extexp.support.IOWriter;
  * Execute a OS process from the named IOReader to the named IOWriter.
  *
  * Requires four parameters:
- * 
+ *
  * 'command' - the OS command
  *
  * 'parameters' - the parameters which are added to the command line
@@ -53,37 +53,23 @@ public class ExternalExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOInputString command = new IOInputString(ee, getParameter("command"));
-        IOInputString parameters = new IOInputString(ee, getParameter("parameters"));
-        IOReader input = new IOReader(ee, getParameter("from"));
-        if (!input.isOpen()) {
-            return;
-        }
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen()) {
-            return;
-        }
-        //
-        try {
-            try (BufferedReader breader = new BufferedReader(input.get()); PrintWriter bwriter = new PrintWriter(output.get())) {
-                ProcessExecutor pexec = new ProcessExecutor(command.get(), parameters.get());
-                pexec.setDisplayName(command.get());
-                pexec.setErrorLineFunction(s->ee.errln(s));
-                pexec.setInputLineFunction(() -> readLine(breader));
-                pexec.setOutputLineFunction(s -> bwriter.println(s));
-                pexec.execute();
-                bwriter.flush();
-                input.close();
-                output.close();
-            }
-        } catch (IOException ex) {
-            ee.errln("Error during " + command + " processing: " + ex.getLocalizedMessage());
-            input.close();
-            output.close();
+    protected void executecommand() throws IOException {
+        try (
+                IOInputString command = new IOInputString(ee, getParameter("command"));
+                IOInputString parameters = new IOInputString(ee, getParameter("parameters"));
+                IOReader reader = new IOReader(ee, getParameter("from"));
+                BufferedReader breader = new BufferedReader(reader.get());
+                IOWriter writer = new IOWriter(ee, getParameter("to"));
+                PrintWriter bwriter = new PrintWriter(writer.get())) {
+            ProcessExecutor pexec = new ProcessExecutor(command.get(), parameters.get());
+            pexec.setDisplayName(command.get());
+            pexec.setErrorLineFunction(s -> ee.errln(s));
+            pexec.setInputLineFunction(() -> readLine(breader));
+            pexec.setOutputLineFunction(s -> bwriter.println(s));
+            pexec.execute();
         }
     }
-    
+
     private String readLine(BufferedReader breader) {
         try {
             return breader.readLine();

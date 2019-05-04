@@ -90,18 +90,12 @@ public class FreeMarkerExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen()) {
-            return;
+    protected void executecommand() throws IOException {
+        try (
+                IOWriter output = new IOWriter(ee, getParameter("to"));
+                IOInputPath input = new IOInputPath(ee, getParameter("template"))) {
+            freemarkerrun((s) -> ee.errln(s), input.get(), output.get(), getFreemarkerMap());
         }
-        IOInputPath input = new IOInputPath(ee, getParameter("template"));
-        if (!input.isOpen()) {
-            return;
-        }
-        freemarkerrun((s) -> ee.errln(s), input.get(), output.get(), getFreemarkerMap());
-        output.close();
-        input.close();
     }
 
     public void freemarkerrun(Consumer<String> reporter, String templatename, Writer writer, Map<String, String> model) {

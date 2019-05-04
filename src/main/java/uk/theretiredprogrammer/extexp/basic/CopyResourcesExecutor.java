@@ -56,7 +56,7 @@ public class CopyResourcesExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
+    protected void executecommand() throws IOException {
         String target = getParameter("to").orElse("");
         FileObject toFO;
         switch (target) {
@@ -73,17 +73,12 @@ public class CopyResourcesExecutor extends Executor {
         copyresources(fromFO, toFO);
     }
 
-    private void copyresources(FileObject fromFO, FileObject toFO) {
+    private void copyresources(FileObject fromFO, FileObject toFO) throws IOException {
         for (FileObject fo : fromFO.getChildren()) {
             if (fo.isFolder()) {
                 copyresources(fo, toFO);
             } else {
-                try {
-                    // assume isData()
-                    FileUtil.copyFile(fo, toFO, fo.getName());
-                } catch (IOException ex) {
-                    ee.errln("Error while copying resources: " + ex.getLocalizedMessage());
-                }
+                FileUtil.copyFile(fo, toFO, fo.getName()); // assume isData()
             }
         }
     }

@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.support.local;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Optional;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
@@ -24,33 +26,35 @@ import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
  * @author richard linsdale
  * @param T the Class of the Input/Output Object
  */
-public abstract class IO<T> {
+public abstract class IO<T> implements Closeable {
 
-    private final Optional<String> parametervalue;
+    private final String parametervalue;
     private final ExecutionEnvironment ee;
-    private final Optional<T> ioobj;
+    private T ioobj;
 
     /**
      * Constructor
      *
-     * @param ee the execution environemnt
+     * @param ee the execution environment
      * @param parametervalue the parameter value defining the IO parameter
+     * @throws IOException if problem
      */
     @SuppressWarnings("OverridableMethodCallInConstructor")
-    public IO(ExecutionEnvironment ee, Optional<String> parametervalue) {
-        this.parametervalue = parametervalue;
+    public IO(ExecutionEnvironment ee, Optional<String> parametervalue)  throws IOException {
+        
+        this.parametervalue = parametervalue.orElseThrow(()->new IOException("Missing Parameter Value"));
         this.ee = ee;
-        ioobj = parametervalue.isPresent() ? setup(parametervalue.get(), ee) : Optional.empty();
+        ioobj = setup(this.parametervalue, ee);
     }
-
-    /**
-     * Test if IO instance is open (available for input output operations)
-     *
-     * @return true if open
-     */
-    public final boolean isOpen() {
-        return ioobj.isPresent();
-    }
+    
+//    /**
+//     * Test if IO instance is open (available for input output operations)
+//     *
+//     * @return true if open
+//     */
+//    public final boolean isOpen() {
+//        return ioobj.isPresent();
+//    }
 
     /**
      * Get the IO value
@@ -58,17 +62,17 @@ public abstract class IO<T> {
      * @return the IO value or null if not open
      */
     public final T get() {
-        return ioobj.orElse(null);
-    }
-
-    /**
-     * Get the IO value
-     *
-     * @return the IO value
-     */
-    protected final Optional<T> getOptional() {
         return ioobj;
     }
+
+//    /**
+//     * Get the IO value
+//     *
+//     * @return the IO value
+//     */
+//    protected final Optional<T> getOptional() {
+//        return ioobj;
+//    }
 
     /**
      * Setup the IO for the specfic data direction / type
@@ -76,15 +80,17 @@ public abstract class IO<T> {
      * @param pvalue the parameter value
      * @param ee the executionEnvironment
      * @return the IO value
+     * @throws IOException if problems
      */
-    protected abstract Optional<T> setup(String pvalue, ExecutionEnvironment ee);
+    protected abstract T setup(String pvalue, ExecutionEnvironment ee) throws IOException;
 
-    /**
-     * Close this IO
-     *
-     */
-    public final void close() {
-        ioobj.ifPresent((p -> drop(p, ee)));
+    @Override
+    public final void close() throws IOException {
+        if (ioobj  != null) {
+            T io = ioobj;
+            ioobj = null;
+            drop(io, ee);
+        }
     }
 
     /**
@@ -95,10 +101,8 @@ public abstract class IO<T> {
      *
      * @param io the IO instance
      * @param ee the ExecutionEnvironment
-     * @return true if drop completed without problem
+     * @throws IOException if close problems
      */
-    protected boolean drop(T io, ExecutionEnvironment ee) {
-        return true;
-    }
+    protected abstract void drop(T io, ExecutionEnvironment ee) throws IOException;
 
 }

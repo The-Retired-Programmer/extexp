@@ -119,9 +119,7 @@ public class ActionsWorker implements Runnable {
         if (env == null) {
             return 1;
         }
-        env.commandsequences.getSequence("MAIN").forEach((command) -> {
-            command.execute(env);
-        });
+        env.commandsequences.getSequence("MAIN").forEach((command) -> command.execute(env));
         return env.getErrorCount();
     }
 }

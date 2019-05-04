@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.extexp.support;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -46,64 +45,35 @@ public class IOReader extends IO<Reader> {
      * @param ee the ExecutionEnvironment
      * @param name the name of the input source
      */
-    public IOReader(ExecutionEnvironment ee, Optional<String> name) {
+    public IOReader(ExecutionEnvironment ee, Optional<String> name) throws IOException {
         super(ee, name);
     }
 
-    /**
-     * Create the Reader.
-     * 
-     * @param name the nameof the input source
-     * @param ee the ExecutionEnvironment
-     * @return the Reader
-     */
     @Override
-    protected Optional<Reader> setup(String name, ExecutionEnvironment ee) {
+    protected Reader setup(String name, ExecutionEnvironment ee) throws IOException {
         Optional<String> fs = ee.tempfs.get(name);
-        return fs.isPresent() ? Optional.of(new StringReader(fs.get())) : getfilereader(name, ee);
+        return fs.isPresent() ? new StringReader(fs.get()) : getfilereader(name, ee);
     }
 
-    private Optional<Reader> getfilereader(String name, ExecutionEnvironment ee) {
-        Optional<FileObject> fo = findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
-        return fo.isPresent() ? createReader(fo.get(), ee) : Optional.empty();
+    private Reader getfilereader(String name, ExecutionEnvironment ee) throws IOException {
+        FileObject fo = findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
+        return new BufferedReader(new InputStreamReader(fo.getInputStream()));
     }
 
-    private Optional<Reader> createReader(FileObject fo, ExecutionEnvironment ee) {
-        try {
-            return Optional.ofNullable(new BufferedReader(new InputStreamReader(fo.getInputStream())));
-        } catch (FileNotFoundException ex) {
-            ee.errln("Error creating a file reader: " + ex.getLocalizedMessage());
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Closing actions for a reader IO object.
-     * 
-     * @param reader the Reader
-     * @param ee the ExecutionEnvironment
-     * @return true if closing action completed
-     */
     @Override
-    protected boolean drop(Reader reader, ExecutionEnvironment ee) {
-        try {
-            reader.close();
-        } catch (IOException ex) {
-            ee.errln("Error closing a reader: " + ex.getLocalizedMessage());
-            return false;
-        }
-        return true;
+    protected void drop(Reader reader, ExecutionEnvironment ee) throws IOException {
+        reader.close();
     }
 
-    private Optional<FileObject> findFile(ExecutionEnvironment ee, String filename, FileObject... fos) {
+    private FileObject findFile(ExecutionEnvironment ee, String filename, FileObject... fos) throws IOException {
         for (FileObject fo : fos) {
             if (fo != null) {
                 FileObject file = fo.getFileObject(filename);
                 if (file != null && file.isData()) {
-                    return Optional.ofNullable(file);
+                    return file;
                 }
             }
         }
-        return Optional.empty();
+        throw new IOException("Error - can't find file: " + filename);
     }
 }

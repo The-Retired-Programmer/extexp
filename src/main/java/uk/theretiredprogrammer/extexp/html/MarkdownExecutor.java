@@ -59,27 +59,23 @@ public class MarkdownExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen()) {
-            return;
-        }
-        IOInputPath input = new IOInputPath(ee, getParameter("from"));
-        if (!input.isOpen()) {
-            return;
-        }
-        IOInputPath template = new IOInputPath(ee, getParameter("template"));
-        String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
-        //
-        ProcessBuilder pb;
-        if (template.isOpen()) {
-            pb = new ProcessBuilder(kramdownpath, "--no-auto-ids", "--template", template.get());
-        } else {
-            pb = new ProcessBuilder(kramdownpath, "--no-auto-ids");
-        }
-        pb.redirectInput(new File(input.get()));
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-        try {
+    protected void executecommand() throws IOException {
+        try (
+                IOWriter output = new IOWriter(ee, getParameter("to"));
+                IOInputPath input = new IOInputPath(ee, getParameter("from"))) {
+            String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
+            //
+            ProcessBuilder pb;
+            try {
+                try (IOInputPath template = new IOInputPath(ee, getParameter("template"))) {
+                    pb = new ProcessBuilder(kramdownpath, "--no-auto-ids", "--template", template.get());
+                }
+            } catch (IOException ex) {
+                pb = new ProcessBuilder(kramdownpath, "--no-auto-ids");
+            }
+            pb.redirectInput(new File(input.get()));
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+
             Process process = pb.start();
             Writer out = output.get();
             try (BufferedReader from = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -89,12 +85,11 @@ public class MarkdownExecutor extends Executor {
                     out.append('\n');
                 }
             }
-            process.waitFor();
-        } catch (InterruptedException | IOException ex) {
-            ee.errln("Error Markdown: " + ex.getLocalizedMessage());
+            try {
+                process.waitFor();
+            } catch (InterruptedException ex) {
+                throw new IOException(ex);
+            }
         }
-        output.close();
-        input.close();
-        template.close();
     }
 }

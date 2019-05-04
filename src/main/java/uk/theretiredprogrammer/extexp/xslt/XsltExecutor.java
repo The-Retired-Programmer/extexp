@@ -15,13 +15,16 @@
  */
 package uk.theretiredprogrammer.extexp.xslt;
 
+import java.io.IOException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOReader;
@@ -56,34 +59,22 @@ public class XsltExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen()) {
-            return;
+    protected void executecommand() throws IOException {
+        try (
+                IOWriter output = new IOWriter(ee, getParameter("to"));
+                IOReader input = new IOReader(ee, getParameter("from"));
+                IOReader stylesheet = new IOReader(ee, getParameter("stylesheet"))) {
+            try {
+                Transformer tr;
+                tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet.get()));
+                DOMResult dr = new DOMResult();
+                tr.transform(new StreamSource(input.get()), dr);
+                //
+                tr = TransformerFactory.newInstance().newTransformer();
+                tr.transform(new DOMSource((Document) dr.getNode()), new StreamResult(output.get()));
+            } catch (TransformerException ex) {
+                throw new IOException(ex);
+            }
         }
-        IOReader input = new IOReader(ee, getParameter("from"));
-        if (!input.isOpen()) {
-            return;
-        }
-        IOReader stylesheet = new IOReader(ee, getParameter("stylesheet"));
-        if (!stylesheet.isOpen()) {
-            return;
-        }
-        //
-        try {
-            Transformer tr;
-            tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet.get()));
-            DOMResult dr = new DOMResult();
-            tr.transform(new StreamSource(input.get()), dr);
-            //
-            tr = TransformerFactory.newInstance().newTransformer();
-            tr.transform(new DOMSource((Document) dr.getNode()), new StreamResult(output.get()));
-        } catch (TransformerException ex) {
-            ee.errln("Error when Processing XSLT transform: " + ex.getLocalizedMessage());
-            return;
-        }
-        output.close();
-        input.close();
-        stylesheet.close();
     }
 }

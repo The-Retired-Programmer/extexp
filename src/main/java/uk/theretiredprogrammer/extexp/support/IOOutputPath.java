@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.support;
 
+import java.io.IOException;
 import java.util.Optional;
 import uk.theretiredprogrammer.extexp.support.local.IO;
 
@@ -29,30 +30,24 @@ public class IOOutputPath extends IO<String> {
 
     /**
      * Constructor
-     * 
+     *
      * @param ee the ExecutionEnvironment
      * @param filename the filename
+     * @throws IOException if problem
      */
-    public IOOutputPath(ExecutionEnvironment ee, Optional<String> filename) {
+    public IOOutputPath(ExecutionEnvironment ee, Optional<String> filename) throws IOException {
         super(ee, filename);
     }
 
-    /**
-     * Create the output filepath.
-     * 
-     * @param filename the filename
-     * @param ee the ExecutionEnvironment
-     * @return the output filepath
-     */
     @Override
-    protected Optional<String> setup(String filename, ExecutionEnvironment ee) {
-        return filename.startsWith("!")
-                ? errmessage("Error - Cannot use temporary filestore  for output path , please use a real filestore object", ee)
-                : Optional.ofNullable(ee.paths.getOutPath() + "/" + filename);
+    protected String setup(String filename, ExecutionEnvironment ee) throws IOException {
+        if (filename.startsWith("!")) {
+            throw new IOException("Cannot use temporary filestore  for output path , please use a real filestore object");
+        }
+        return ee.paths.getOutPath() + "/" + filename;
     }
 
-    private Optional<String> errmessage(String message, ExecutionEnvironment ee) {
-        ee.errln(message);
-        return Optional.empty();
+    @Override
+    protected void drop(String path, ExecutionEnvironment ee) throws IOException {
     }
 }

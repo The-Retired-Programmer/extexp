@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.basic;
 
+import java.io.IOException;
 import java.util.Optional;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOInputString;
@@ -51,19 +52,11 @@ public class SubstituteExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen()) {
-            return;
+    protected void executecommand() throws IOException {
+        try (
+                IOWriter output = new IOWriter(ee, getParameter("to"));
+                IOInputString input = new IOInputString(ee, getParameter("from"))) {
+            substitute(Optional.of(input.get()), (name) -> getParameter(name), output.get());
         }
-        IOInputString input = new IOInputString(ee, getParameter("from"));
-        if (!input.isOpen()) {
-            return;
-        }
-        //
-        substitute(Optional.of(input.get()), (name) -> getParameter(name), output.get());
-        //
-        output.close();
-        input.close();
     }
 }

@@ -15,20 +15,21 @@
  */
 package uk.theretiredprogrammer.extexp.basic;
 
+import java.io.IOException;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOInputString;
 
 /**
  * The LIST executor class.
- * 
- * Lists a file to the output window. 
- * 
+ *
+ * Lists a file to the output window.
+ *
  * Requires two parameters:
- * 
+ *
  * 'title' - the title which is prepended to the output.
- * 
+ *
  * 'from' - the name of the IOInputString.
- * 
+ *
  * @author richard linsdale
  */
 public class ListExecutor extends Executor {
@@ -44,21 +45,15 @@ public class ListExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOInputString input = new IOInputString(ee, this.getParameter("from"));
-        if (!input.isOpen()) {
-            return;
+    protected void executecommand() throws IOException {
+        try (
+                IOInputString input = new IOInputString(ee, this.getParameter("from"));
+                IOInputString title = new IOInputString(ee, this.getParameter("title"))) {
+            ee.println("======================================");
+            ee.println(title.get());
+            ee.println("======================================");
+            ee.println(input.get());
+            ee.println("======================================");
         }
-        IOInputString title = new IOInputString(ee, this.getParameter("title"));
-        if (!title.isOpen()) {
-            return;
-        }
-        ee.println("======================================");
-        ee.println(title.get());
-        ee.println("======================================");
-        ee.println(input.get());
-        ee.println("======================================");
-        input.close();
-        title.close();
     }
 }

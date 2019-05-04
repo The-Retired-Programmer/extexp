@@ -51,20 +51,14 @@ public class IOWriter extends IO<Writer> {
      *
      * @param ee the ExecutorEnvironment
      * @param name the filename (optionally prefixed by '!' or '+')
+     * @throws IOException if problems
      */
-    public IOWriter(ExecutionEnvironment ee, Optional<String> name) {
+    public IOWriter(ExecutionEnvironment ee, Optional<String> name) throws IOException {
         super(ee, name);
     }
 
-    /**
-     * Create the writer for use with this IO Writer.
-     *
-     * @param name the filename (optionally prefixed by '!' or '+')
-     * @param ee the ExecutorEnvironment
-     * @return the Writer
-     */
     @Override
-    protected Optional<Writer> setup(String name, ExecutionEnvironment ee) {
+    protected Writer setup(String name, ExecutionEnvironment ee) throws IOException {
         Writer writer;
         if (name.startsWith("!")) {
             writer = new StringWriter();
@@ -75,42 +69,22 @@ public class IOWriter extends IO<Writer> {
             tempfilename = name.substring(1);
             append = true;
         } else {
-            try {
-                writer = new BufferedWriter(new OutputStreamWriter(
-                        getOutputStream(ee.paths.getOutfolder(), name))
-                );
-            } catch (IOException ex) {
-                ee.errln("Error while opening a file writer: " + ex.getLocalizedMessage());
-                return Optional.empty();
-            }
+            writer = new BufferedWriter(new OutputStreamWriter(getOutputStream(ee.paths.getOutfolder(), name)));
         }
-        return Optional.ofNullable(writer);
+        return writer;
     }
 
-    /**
-     * Closing actions for this IO Writer.
-     *
-     * @param writer the IO writer
-     * @param ee the ExecutorEnvironment
-     * @return true if closing actions completed without errors
-     */
     @Override
-    protected boolean drop(Writer writer, ExecutionEnvironment ee) {
-        try {
-            writer.close();
-        } catch (IOException ex) {
-            ee.errln("Error closing a writer: " + ex.getLocalizedMessage());
-            return false;
-        }
+    protected void drop(Writer writer, ExecutionEnvironment ee) throws IOException {
+        writer.close();
         if (writer instanceof StringWriter) {
             Optional<String> previous = ee.tempfs.get(tempfilename);
             if (append && previous.isPresent()) {
                 ee.tempfs.put(tempfilename, previous.get() + ((StringWriter) writer).toString());
-                return true;
+            } else {
+                ee.tempfs.put(tempfilename, ((StringWriter) writer).toString());
             }
-            ee.tempfs.put(tempfilename, ((StringWriter) writer).toString());
         }
-        return true;
     }
 
     private OutputStream getOutputStream(FileObject todirectory, String name) throws IOException {

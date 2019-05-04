@@ -29,9 +29,10 @@ import uk.theretiredprogrammer.extexp.support.IOWriter;
  * The MARKDOWNANDSUBSTITUTE executor class.
  *
  * Process a markdown file (a named IOInputPath) creating an equivalent html
- * segment.  This segment is processed using the standard Extexp substitution process before being 
- * output to the file (a named IOWriter). Optionally the generated html segment may be
- * inserted into a defined template file (a named IOInputPath), prior to substitution.
+ * segment. This segment is processed using the standard Extexp substitution
+ * process before being output to the file (a named IOWriter). Optionally the
+ * generated html segment may be inserted into a defined template file (a named
+ * IOInputPath), prior to substitution.
  *
  * Requires two/three parameters:
  *
@@ -60,27 +61,22 @@ public class MarkdownAndSubstituteExecutor extends Executor {
     }
 
     @Override
-    protected void executecommand() {
-        IOWriter output = new IOWriter(ee, getParameter("to"));
-        if (!output.isOpen()) {
-            return;
-        }
-        IOInputPath input = new IOInputPath(ee, getParameter("from"));
-        if (!input.isOpen()) {
-            return;
-        }
-        IOInputPath template = new IOInputPath(ee, getParameter("template"));
-        String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
-        //
-        ProcessBuilder pb;
-        if (template.isOpen()) {
-            pb = new ProcessBuilder(kramdownpath, "--no-auto-ids", "--template", template.get());
-        } else {
-            pb = new ProcessBuilder(kramdownpath, "--no-auto-ids");
-        }
-        pb.redirectInput(new File(input.get()));
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-        try {
+    protected void executecommand() throws IOException {
+        try (
+                IOWriter output = new IOWriter(ee, getParameter("to"));
+                IOInputPath input = new IOInputPath(ee, getParameter("from"))) {
+            String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
+            //
+            ProcessBuilder pb;
+            try {
+                try (IOInputPath template = new IOInputPath(ee, getParameter("template"))) {
+                    pb = new ProcessBuilder(kramdownpath, "--no-auto-ids", "--template", template.get());
+                }
+            } catch (IOException ex) {
+                pb = new ProcessBuilder(kramdownpath, "--no-auto-ids");
+            }
+            pb.redirectInput(new File(input.get()));
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process process = pb.start();
             StringBuilder sb = new StringBuilder();
             try (BufferedReader from = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -90,14 +86,12 @@ public class MarkdownAndSubstituteExecutor extends Executor {
                     sb.append('\n');
                 }
             }
-            process.waitFor();
+            try {
+                process.waitFor();
+            } catch (InterruptedException ex) {
+                throw new IOException(ex);
+            }
             substitute(Optional.of(sb.toString()), (name) -> getParameter(name), output.get());
-        } catch (InterruptedException | IOException ex) {
-            ee.errln("Error - MarkdownAndSubstitute: "+ex.getLocalizedMessage());
         }
-        //
-        output.close();
-        input.close();
-        template.close();
     }
 }

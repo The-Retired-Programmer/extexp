@@ -44,22 +44,26 @@ public class IOInputPath extends IO<String> {
      *
      * @param ee the ExecutionEnvironment
      * @param parametervalue the required filename
+     * @throws java.io.IOException if problems
      */
-    public IOInputPath(ExecutionEnvironment ee, Optional<String> parametervalue) {
+    public IOInputPath(ExecutionEnvironment ee, Optional<String> parametervalue) throws IOException {
         super(ee, parametervalue);
     }
 
     @Override
-    protected Optional<String> setup(String parametervalue, ExecutionEnvironment ee) {
+    protected String setup(String parametervalue, ExecutionEnvironment ee) throws IOException{
         Optional<String> fs = ee.tempfs.get(parametervalue);
-        Optional<FileObject> fo = fs.isPresent()
+        FileObject fo = fs.isPresent()
                 ? stringToFile(ee.paths.getCachefolder(), parametervalue, fs.get(), ee)
                 : findFile(ee, parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
-        return Optional.ofNullable(fo.isPresent() ? FileUtil.getFileDisplayName(fo.get()) : null);
+        return FileUtil.getFileDisplayName(fo);
+    }
+    
+    @Override
+    protected void drop(String path, ExecutionEnvironment ee) throws IOException {
     }
 
-    private Optional<FileObject> stringToFile(FileObject todirectory, String name, String content, ExecutionEnvironment ee) {
-        try {
+    private FileObject stringToFile(FileObject todirectory, String name, String content, ExecutionEnvironment ee) throws IOException {
             FileObject outfo = todirectory.getFileObject(name);
             if (outfo != null) {
                 outfo.delete();
@@ -68,24 +72,19 @@ public class IOInputPath extends IO<String> {
             try (PrintWriter out = new PrintWriter(new OutputStreamWriter(outfo.getOutputStream()))) {
                 out.write(content);
             }
-            return Optional.ofNullable(outfo);
-        } catch (IOException ex) {
-            ee.errln("Error - can't cache a string object (path creation): " + ex.getLocalizedMessage());
-            return Optional.empty();
-        }
+            return outfo;
     }
 
-    private Optional<FileObject> findFile(ExecutionEnvironment ee, String filename, FileObject... fos) {
+    private FileObject findFile(ExecutionEnvironment ee, String filename, FileObject... fos) throws IOException {
         for (FileObject fo : fos) {
             if (fo != null) {
                 FileObject file = fo.getFileObject(filename);
                 if (file != null && file.isData()) {
-                    return Optional.ofNullable(file);
+                    return file;
                 }
             }
         }
-        ee.errln("Error - can't find file: " + filename);
-        return Optional.empty();
+        throw new IOException("Error - can't find file: " + filename);
     }
 
     /**
@@ -93,12 +92,8 @@ public class IOInputPath extends IO<String> {
      *
      * @return the filename
      */
-    public Optional<String> getFileExt() {
-        return getOptional().isPresent() ? Optional.ofNullable(extractFileExt(get())) : Optional.empty();
-    }
-
-    private String extractFileExt(String path) {
-        File f = new File(path);
+    public String getFileExt() {
+        File f = new File(get());
         return f.getName();
     }
 
@@ -107,12 +102,8 @@ public class IOInputPath extends IO<String> {
      *
      * @return the folder path
      */
-    public Optional<File> getFolder() {
-        return getOptional().isPresent() ? Optional.ofNullable(extractFolder(get())) : Optional.empty();
-    }
-
-    private File extractFolder(String path) {
-        File f = new File(path);
+    public File getFolder() {
+        File f = new File(get());
         return f.getParentFile();
     }
 }

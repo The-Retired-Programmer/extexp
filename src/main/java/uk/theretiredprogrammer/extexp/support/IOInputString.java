@@ -40,47 +40,36 @@ public class IOInputString extends IO<String> {
      *
      * @param ee the ExecutionEnvironment
      * @param name the name referring to the input object
+     * @throws IOException if problem
      */
-    public IOInputString(ExecutionEnvironment ee, Optional<String> name) {
+    public IOInputString(ExecutionEnvironment ee, Optional<String> name) throws IOException {
         super(ee, name);
     }
 
-    /**
-     * Obtain the content String for this IO instance
-     *
-     * @param name the name referring to the input object
-     * @param ee the ExecutionEnvironment
-     * @return the resolved content string
-     */
     @Override
-    protected Optional<String> setup(String name, ExecutionEnvironment ee) {
-        return ee.tempfs.get(name)
-                .or(() -> getFileOrParameterValue(name, ee));
+    protected String setup(String name, ExecutionEnvironment ee) throws IOException {
+        Optional<String> tempfs = ee.tempfs.get(name);
+        return tempfs.isPresent() ? tempfs.get():getFileOrParameterValue(name, ee);
+    }
+    
+    @Override
+    protected void drop(String name, ExecutionEnvironment ee) throws IOException {
+    }
+    
+    private String getFileOrParameterValue(String name, ExecutionEnvironment ee)  throws IOException {
+        FileObject fo = findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
+        return fo != null ? fo.asText() : name;
     }
 
-    private Optional<String> getFileOrParameterValue(String name, ExecutionEnvironment ee) {
-        Optional<FileObject> fo = findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
-        return Optional.ofNullable(fo.isPresent() ? getFileContent(fo.get(), ee) : name);
-    }
-
-    private String getFileContent(FileObject fo, ExecutionEnvironment ee) {
-        try {
-            return fo.asText();
-        } catch (IOException ex) {
-            ee.errln("Error when extracting text from file: " + ex.getLocalizedMessage());
-            return null;
-        }
-    }
-
-    private Optional<FileObject> findFile(ExecutionEnvironment ee, String filename, FileObject... fos) {
+    private FileObject findFile(ExecutionEnvironment ee, String filename, FileObject... fos)  {
         for (FileObject fo : fos) {
             if (fo != null) {
                 FileObject file = fo.getFileObject(filename);
                 if (file != null && file.isData()) {
-                    return Optional.ofNullable(file);
+                    return file;
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
 }
