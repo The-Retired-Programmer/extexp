@@ -15,20 +15,28 @@
  */
 /**
  * <p>
- * Implementation of a set of external program executors (FOP, External)</p>
+ * Implementation of a set of external program executors (FOP, External,
+ * Markdown, MarkdownAndSubstitute)</p>
  * <p>
- * This executor provides FOP document builder from a fo-xsl document to a pdf
- * document</p>
+ * These executors run external programs to convert source files</p>
  *
-    <h1>FOP</h1>
+ * <h1>FOP</h1>
  * <p>
  * ... more soon ..</p>
  * <h1>EXTERNAL</h1>
  * <p>
  * ... more soon ..</p>
+ * <h1>Markdown</h1>
+ * <p>
+ * ... more soon ..</p>
+ * <h1>MarkdownAndSubstitute</h1>
+ * <p>
+ * A convenient executor which performs the markdown processing (see Markdown
+ * above, followed by Substitute processing (see Substitute in the basic
+ * package).</p>
  * <p>
  * The content of the package include a factory class which is registered as a
  * <code>@ServiceProvider(service = ExecutorFactory.class)</code> and a FOP
  * executor implementation</p>
  */
-package uk.theretiredprogrammer.extexp.fop;
+package uk.theretiredprogrammer.extexp.external;

@@ -15,16 +15,19 @@
  */
 
 /**
- <p>Implementation of the Html Executors (ImageSet, Markdown, MarkdownAndSubstitute)</p>
+ <p>Implementation of the Html Executors (ImageSet)</p>
  <p>These executors are a set of executors create hmtl output (or html fragments).</p>
  
     <h1>ImageSet</h1>
     <p>... more soon ..</p>
     <h1>Markdown</h1>
-    <p>... more soon ..</p>
-    <h1>MarkdownAndSubstitute</h1>
-    <p>A convenient executor which performs the markdown processing (see Markdown above, 
-    followed by Substitute processing (see Substitute in the basic package).</p>
+ * <p>
+ * ... more soon ..</p>
+ * <h1>MarkdownAndSubstitute</h1>
+ * <p>
+ * A convenient executor which performs the markdown processing (see Markdown
+ * above, followed by Substitute processing (see Substitute in the basic
+ * package).</p>
     
     <p>The content of the package include a factory class which is registered as a
     <code>@ServiceProvider(service = ExecutorFactory.class)</code> and a set of classes

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.html;
+package uk.theretiredprogrammer.extexp.external;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

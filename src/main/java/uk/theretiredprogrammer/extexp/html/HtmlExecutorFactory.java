@@ -21,9 +21,9 @@ import uk.theretiredprogrammer.extexp.api.ExecutorFactory;
 import uk.theretiredprogrammer.extexp.support.Executor;
 
 /**
- * The Factory creating a set of html orientated Executors.  These include:
+ * The Factory creating a set of html orientated Executors. These include:
  * Markdown, MarkdownAndSubstitute and CreateImageSet.
- * 
+ *
  * @author richard linsdale
  */
 @ServiceProvider(service = ExecutorFactory.class)
@@ -32,20 +32,14 @@ public class HtmlExecutorFactory implements ExecutorFactory {
     @Override
     public Executor create(String name) {
         switch (name) {
-            case "markdown":
-                return new MarkdownExecutor();
-            case "markdown-substitute":
-                return new MarkdownAndSubstituteExecutor();
             case "create-imageset":
                 return new ImagesetExecutor();
         }
         return null;
     }
-   
+
     @Override
     public void consumeAllExecutors(Consumer<Executor> consumer) {
-        consumer.accept(new MarkdownExecutor());
-        consumer.accept(new MarkdownAndSubstituteExecutor());
         consumer.accept(new ImagesetExecutor());
     }
 }

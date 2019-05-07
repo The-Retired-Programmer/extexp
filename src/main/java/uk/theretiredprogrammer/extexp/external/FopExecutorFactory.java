@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.fop;
+package uk.theretiredprogrammer.extexp.external;
 
 import java.util.function.Consumer;
 import org.openide.util.lookup.ServiceProvider;
@@ -32,6 +32,10 @@ public class FopExecutorFactory implements ExecutorFactory {
     @Override
     public Executor create(String name) {
         switch (name) {
+            case "markdown":
+                return new MarkdownExecutor();
+            case "markdown-substitute":
+                return new MarkdownAndSubstituteExecutor();
             case "fop":
                 return new FopExecutor();
             case "external":
@@ -42,6 +46,8 @@ public class FopExecutorFactory implements ExecutorFactory {
 
     @Override
     public void consumeAllExecutors(Consumer<Executor> consumer) {
+        consumer.accept(new MarkdownExecutor());
+        consumer.accept(new MarkdownAndSubstituteExecutor());
         consumer.accept(new FopExecutor());
         consumer.accept(new ExternalExecutor());
     }

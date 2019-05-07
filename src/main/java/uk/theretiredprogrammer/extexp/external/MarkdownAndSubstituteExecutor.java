@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.html;
+package uk.theretiredprogrammer.extexp.external;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Writer;
+import java.util.Optional;
 import org.openide.util.NbPreferences;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOInputPath;
+import uk.theretiredprogrammer.extexp.support.IOReader;
 import uk.theretiredprogrammer.extexp.support.IOWriter;
 
 /**
- * The MARKDOWN executor class.
+ * The MARKDOWNANDSUBSTITUTE executor class.
  *
  * Process a markdown file (a named IOInputPath) creating an equivalent html
- * segment file (a named IOWriter). Optionally the generated html segment may be
- * inserted into a defined template file (a named IOInputPath).
+ * segment. This segment is processed using the standard Extexp substitution
+ * process before being output to the file (a named IOWriter). Optionally the
+ * generated html segment may be inserted into a defined template file (a named
+ * IOInputPath), prior to substitution.
  *
  * Requires two/three parameters:
  *
@@ -46,11 +47,11 @@ import uk.theretiredprogrammer.extexp.support.IOWriter;
  *
  * @author richard linsdale
  */
-public class MarkdownExecutor extends Executor {
+public class MarkdownAndSubstituteExecutor extends Executor {
 
     @Override
     public String getDisplayName() {
-        return "MARKDOWN";
+        return "MARKDOWN and SUBSTITUTE";
     }
 
     @Override
@@ -62,34 +63,39 @@ public class MarkdownExecutor extends Executor {
     protected void executecommand() throws IOException {
         try (
                 IOWriter output = new IOWriter(ee, getParameter("to"));
-                IOInputPath input = new IOInputPath(ee, getParameter("from"))) {
+                IOReader input = new IOReader(ee, getParameter("from"));
+                BufferedReader breader = new BufferedReader(input.get())) {
             String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
-            //
-            ProcessBuilder pb;
+            ProcessExecutor pexec;
             try {
                 try (IOInputPath template = new IOInputPath(ee, getParameter("template"))) {
-                    pb = new ProcessBuilder(kramdownpath, "--no-auto-ids", "--template", template.get());
+                    pexec = new ProcessExecutor(kramdownpath, "--no-auto-ids", "--template", template.get());
                 }
             } catch (IOException ex) {
-                pb = new ProcessBuilder(kramdownpath, "--no-auto-ids");
+                pexec = new ProcessExecutor(kramdownpath, "--no-auto-ids");
             }
-            pb.redirectInput(new File(input.get()));
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            StringBuilder sb = new StringBuilder();
+            pexec.setDisplayName("MARKDOWN");
+            pexec.setErrorLineFunction(s -> ee.errln(s));
+            pexec.setInputLineFunction(() -> readLine(breader));
+            pexec.setOutputLineFunction(s -> writeLine(sb, s));
+            pexec.execute();
+            substitute(Optional.of(sb.toString()), (name) -> getParameter(name), output.get());
+        }
+    }
 
-            Process process = pb.start();
-            Writer out = output.get();
-            try (BufferedReader from = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line;
-                while ((line = from.readLine()) != null) {
-                    out.append(line);
-                    out.append('\n');
-                }
-            }
-            try {
-                process.waitFor();
-            } catch (InterruptedException ex) {
-                throw new IOException(ex);
-            }
+    private void writeLine(StringBuilder sb, String line) {
+        sb.append(line);
+        sb.append('\n');
+    }
+
+    private String readLine(BufferedReader breader) {
+        try {
+            return breader.readLine();
+        } catch (IOException ex) {
+            ee.errln("Error when reading data: " + ex.getLocalizedMessage());
+            ee.errln("Input terminated");
+            return null;
         }
     }
 }

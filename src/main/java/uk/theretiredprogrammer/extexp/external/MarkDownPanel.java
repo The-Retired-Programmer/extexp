@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.html;
+package uk.theretiredprogrammer.extexp.external;
 
+import uk.theretiredprogrammer.extexp.external.MarkDownOptionsPanelController;
 import java.io.File;
 import javax.swing.JFileChooser;
 import org.openide.util.NbPreferences;
