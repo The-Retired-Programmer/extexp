@@ -124,7 +124,10 @@ public class FreeMarkerExecutor extends Executor {
         names.forEach((name) -> {
             Optional<String> p = this.getParameter(name);
             if (p.isPresent()) {
-                res.put(name, p.get());
+                p = this.getSubText(p.get());
+                if (p.isPresent()) {
+                    res.put(name, p.get());
+                }
             }
         });
         return res;

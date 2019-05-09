@@ -56,7 +56,7 @@ public class SubstituteExecutor extends Executor {
         try (
                 IOWriter output = new IOWriter(ee, getParameter("to"));
                 IOInputString input = new IOInputString(ee, getParameter("from"))) {
-            substitute(Optional.of(input.get()), (name) -> getParameter(name), output.get());
+            substitute(Optional.of(input.get()), (name) -> this.getSubText(name), output.get());
         }
     }
 }

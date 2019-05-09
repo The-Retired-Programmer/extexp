@@ -186,7 +186,7 @@ public abstract class Command {
      * @return the expanded parameter value
      */
     public Optional<String> getParameter(String name) {
-        return substitute(getSubText(name), (s) -> getSubText(s));
+        return substitute(getParameterValue(name), (s) -> getSubText(s));
     }
 
     private Optional<String> getParameterValue(String name) {
@@ -241,11 +241,12 @@ public abstract class Command {
         return Optional.empty();
     }
 
-    private Optional<String> getSubText(String name) {
-        // precedence; TEMPORARY FILES, PARAMETERS (WITH FULL PARENT DESCENT); FILES
+    protected Optional<String> getSubText(String name) {
+        // precedence; TEMPORARY FILES / FileValue / Parameter value
         return ee.tempfs.get(name)
                 .or(() -> getParameterValue(name))
-                .or(() -> getFileValue(name));
+                .or(() -> getFileValue(name))
+                .or(() -> Optional.ofNullable(name));
     }
 
     /**

@@ -80,7 +80,7 @@ public class MarkdownAndSubstituteExecutor extends Executor {
             pexec.setInputLineFunction(() -> readLine(breader));
             pexec.setOutputLineFunction(s -> writeLine(sb, s));
             pexec.execute();
-            substitute(Optional.of(sb.toString()), (name) -> getParameter(name), output.get());
+            substitute(Optional.of(sb.toString()), (name) -> getSubText(name), output.get());
         }
     }
 
