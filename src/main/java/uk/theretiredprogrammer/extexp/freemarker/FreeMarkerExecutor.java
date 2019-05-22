@@ -118,9 +118,15 @@ public class FreeMarkerExecutor extends Executor {
     }
 
     private Map<String, String> getFreemarkerMap() {
-        Set<String> names = new HashSet<>(ee.tempfs.getAllNames());
-        names.addAll(getAllNames());
         Map<String, String> res = new HashMap<>();
+        Set<String> names = new HashSet<>(ee.tempfs.getAllNames());
+        names.forEach((name) -> {
+            Optional<String> p = ee.tempfs.get(name);
+            if (p.isPresent()) {
+                    res.put(name, p.get());
+                }
+        });
+        names = new HashSet<>(getAllNames());
         names.forEach((name) -> {
             Optional<String> p = this.getParameter(name);
             if (p.isPresent()) {
