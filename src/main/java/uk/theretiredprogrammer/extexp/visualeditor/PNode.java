@@ -173,6 +173,7 @@ public class PNode extends VMDNodeWidget {
      * can be overridden if the widget has multiple connections.
      *
      * @param scene the visual editor scene
+     * @return the list of connections from this widget
      */
     public List<Widget> getConnections(PScene scene) {
         return Arrays.asList(this);

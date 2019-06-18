@@ -44,6 +44,7 @@ public class IOReader extends IO<Reader> {
      * 
      * @param ee the ExecutionEnvironment
      * @param name the name of the input source
+     * @throws java.io.IOException if problem
      */
     public IOReader(ExecutionEnvironment ee, Optional<String> name) throws IOException {
         super(ee, name);

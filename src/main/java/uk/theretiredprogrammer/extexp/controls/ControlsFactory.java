@@ -22,7 +22,7 @@ import uk.theretiredprogrammer.extexp.api.ControlFactory;
 import uk.theretiredprogrammer.extexp.support.Control;
 
 /**
- * The Factory creating Controls. These include: IfDefined, Run and Use.
+ * The Factory creating Controls. These include: IfDefined, Run, Use and For.
  *
  * @author richard linsdale
  */
@@ -40,6 +40,9 @@ public class ControlsFactory implements ControlFactory {
         if (keys.contains("If-defined")) {
             return new IfDefinedControl();
         }
+        if (keys.contains("For")) {
+            return new ForControl();
+        }
         return null;
     }
 
@@ -48,5 +51,6 @@ public class ControlsFactory implements ControlFactory {
         consumer.accept(new RunControl());
         consumer.accept(new UseControl());
         consumer.accept(new IfDefinedControl());
+        consumer.accept(new ForControl());
     }
 }
