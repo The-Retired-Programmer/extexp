@@ -26,7 +26,7 @@ import org.openide.filesystems.FileObject;
 import uk.theretiredprogrammer.extexp.support.local.IO;
 
 /**
- * * An IO Descriptor which will return a writer, which can be used to save
+ * An IO Descriptor which will return a writer, which can be used to save
  * content
  *
  * The content is stored in one of:

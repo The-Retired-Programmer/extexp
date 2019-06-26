@@ -40,6 +40,8 @@ public class ExecutorsFactory implements ExecutorFactory {
                 return new CopyResourcesExecutor();
             case "list":
                 return new ListExecutor();
+            case "message":
+                return new MessageExecutor();
         }
         return null;
     }

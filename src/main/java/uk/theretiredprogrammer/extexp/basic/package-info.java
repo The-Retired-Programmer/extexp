@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- <p>Implementation of the basic Executors (Copy, CopyResources, List and Substitute)</p>
- <p>These executors are a set of executors which provide a set of basic functions which
- is generally used in the majority of extexp implementations.</p>
- 
+ * <p>
+ * Implementation of the basic Executors (Copy, CopyResources, List, Message and
+ * Substitute)</p>
+ * <p>
+ * These executors are a set of executors which provide a set of basic functions
+ * which is generally used in the majority of extexp implementations.</p>
+ *
     <h1>Copy</h1>
-    <p>... more soon ..</p>
-    <h1>CopyResources</h1>
-    <p>... more soon ..</p>
-    <h1>List</h1>
-    <p>... more soon ..</p>
-    <h1>Substitute</h1>
-    <p>... more soon ..</p>
-    
-    <p>The content of the package include a factory class which is registered as a
-    <code>@ServiceProvider(service = ExecutorFactory.class)</code> and a set of classes
-    each of which implement a particular Executor</p>
- 
+ * <p>
+ * ... more soon ..</p>
+ * <h1>CopyResources</h1>
+ * <p>
+ * ... more soon ..</p>
+ * <h1>List</h1>
+ * <p>
+ * ... more soon ..</p>
+ * h1>Message</h1>
+ * <p>
+ * ... more soon ..</p>
+ * <h1>Substitute</h1>
+ * <p>
+ * ... more soon ..</p>
+ *
+    <p>
+ * The content of the package include a factory class which is registered as a
+ * <code>@ServiceProvider(service = ExecutorFactory.class)</code> and a set of
+ * classes each of which implement a particular Executor</p>
+ *
  */
 package uk.theretiredprogrammer.extexp.basic;
