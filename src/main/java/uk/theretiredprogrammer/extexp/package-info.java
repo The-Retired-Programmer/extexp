@@ -16,7 +16,7 @@
 
 /**
  <p>Defines the Extexp project type</p>
- <p>The project type is recognised by the presence of a build.json file in
+ <p>The project type is recognised by the presence of a build instructions folder in
  the root level of the project directory.</p>
  <p>Other root level objects include folders for:<br>
  &nbsp;&nbsp;&nbsp;&nbsp;source files ( src/)<br>

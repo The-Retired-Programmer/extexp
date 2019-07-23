@@ -17,14 +17,12 @@ package uk.theretiredprogrammer.extexp.xslt;
 
 import java.io.IOException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOReader;

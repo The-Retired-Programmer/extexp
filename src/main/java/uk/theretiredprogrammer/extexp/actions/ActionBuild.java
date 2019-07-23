@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.extexp.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import org.openide.filesystems.FileObject;
 import org.openide.util.RequestProcessor;
 import uk.theretiredprogrammer.extexp.PProject;
 
@@ -28,19 +29,22 @@ import uk.theretiredprogrammer.extexp.PProject;
 public class ActionBuild extends AbstractAction {
 
     private final PProject project;
+    private final FileObject buildfile;
 
     /**
      * Constructor
      * 
      * @param project the Extexp project
+     * @param buildfile the build file
      */
-    public ActionBuild(PProject project) {
+    public ActionBuild(PProject project, FileObject buildfile) {
         super("Build");
         this.project = project;
+        this.buildfile = buildfile;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionBuild.class).post(new ActionsWorker(project, false, true));
+        new RequestProcessor(ActionBuild.class).post(new ActionsWorker(project, buildfile, false, true));
     }
 }

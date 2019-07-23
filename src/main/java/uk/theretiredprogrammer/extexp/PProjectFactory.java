@@ -24,7 +24,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * A Factory creating the Extexp Project Type. The key feature of such a project
- * is that a file named build.json exists in the project's root folder.
+ * is that a folder named extexp-builds exists in the project's root folder.
  *
  * @author richard linsdale
  */
@@ -33,7 +33,8 @@ public class PProjectFactory implements ProjectFactory {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
-        return projectDirectory.getFileObject("build.json") != null;
+        FileObject buildDirectory = projectDirectory.getFileObject("extexp-builds");
+        return buildDirectory != null && buildDirectory.isFolder();
     }
 
     @Override

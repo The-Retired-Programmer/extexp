@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.extexp;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Action;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
@@ -55,12 +56,12 @@ public class OutputNodeFactory implements NodeFactory {
 
         @Override
         public List<Node> keys() {
-            FileObject srcFolder
+            FileObject outFolder
                     = project.getProjectDirectory().getFileObject("output");
             List<Node> result = new ArrayList<>();
-            if (srcFolder != null) {
+            if (outFolder != null) {
                 try {
-                    Node sitenode = DataObject.find(srcFolder).getNodeDelegate();
+                    Node sitenode = DataObject.find(outFolder).getNodeDelegate();
                     result.add(new OutputNode(sitenode));
                 } catch (DataObjectNotFoundException ex) {
                     // do nothing at the moment - just ignore node and squash the Exception
@@ -93,6 +94,11 @@ public class OutputNodeFactory implements NodeFactory {
                 return getIcon(type);
             }
 
+            @Override
+            public Action[] getActions(boolean arg0) {
+                return new Action[]{
+                };
+            }
         }
 
         @Override

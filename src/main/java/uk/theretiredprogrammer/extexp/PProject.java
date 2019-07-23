@@ -15,9 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp;
 
-import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
-import uk.theretiredprogrammer.extexp.actions.ActionClean;
-import uk.theretiredprogrammer.extexp.actions.ActionBuild;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import javax.swing.Action;
@@ -166,10 +163,9 @@ public class PProject implements Project {
             @Override
             public Action[] getActions(boolean arg0) {
                 return new Action[]{
-                    CommonProjectActions.closeProjectAction(),
-                    new ActionBuild(project),
-                    new ActionCleanBuild(project),
-                    new ActionClean(project)
+                    CommonProjectActions.renameProjectAction(),
+                    CommonProjectActions.copyProjectAction(),
+                    CommonProjectActions.closeProjectAction()
                 };
             }
 

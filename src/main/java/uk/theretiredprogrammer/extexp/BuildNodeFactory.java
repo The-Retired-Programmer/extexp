@@ -15,10 +15,6 @@
  */
 package uk.theretiredprogrammer.extexp;
 
-import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
-import uk.theretiredprogrammer.extexp.actions.ActionClean;
-import uk.theretiredprogrammer.extexp.actions.ActionBuild;
-import uk.theretiredprogrammer.extexp.visualeditor.ActionOpenVisualEditor;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +27,13 @@ import org.netbeans.spi.project.ui.support.NodeList;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
- * A Factory to create BuildNodes (the build,json file).
+ * A Factory to create BuildNode - the Build Instructions Node
  *
  * @author richard linsdale
  */
@@ -53,19 +50,20 @@ public class BuildNodeFactory implements NodeFactory {
     private class BuildNodeList implements NodeList<Node> {
 
         PProject project;
+        private final FileObject buildFolder;
 
         public BuildNodeList(PProject project) {
             this.project = project;
+            buildFolder = project.getProjectDirectory().getFileObject("extexp-builds");
         }
 
         @Override
         public List<Node> keys() {
             List<Node> result = new ArrayList<>();
-            FileObject buildinstructions = project.getProjectDirectory().getFileObject("build.json");
-            if (buildinstructions != null) {
+            if (buildFolder != null) {
                 try {
-                    Node node = DataObject.find(buildinstructions).getNodeDelegate();
-                    result.add(new BuildNode(node));
+                    Node sitenode = DataObject.find(buildFolder).getNodeDelegate();
+                    result.add(new BuildNodeFactory.BuildNodeList.BuildNode(sitenode));
                 } catch (DataObjectNotFoundException ex) {
                     // do nothing at the moment - just ignore node and squash the Exception
                 }
@@ -74,9 +72,9 @@ public class BuildNodeFactory implements NodeFactory {
         }
 
         public class BuildNode extends FilterNode {
-
+            
             @StaticResource()
-            public static final String EXTEXPBUILD_ICON = "uk/theretiredprogrammer/extexp/wrench.png";
+            public static final String EXTEXPBUILD_ICON = "uk/theretiredprogrammer/extexp/folder.png";
 
             public BuildNode(Node onode) {
                 super(onode);
@@ -100,17 +98,13 @@ public class BuildNodeFactory implements NodeFactory {
             @Override
             public Action[] getActions(boolean arg0) {
                 return new Action[]{
-                    new ActionOpenVisualEditor(project),
-                    new ActionBuild(project),
-                    new ActionCleanBuild(project),
-                    new ActionClean(project),};
+                };
             }
-
         }
 
         @Override
         public Node node(Node node) {
-            return new FilterNode(node);
+            return new FilterNode(node, Children.create(new BuildElementChildFactory(project, buildFolder),false));
         }
 
         @Override

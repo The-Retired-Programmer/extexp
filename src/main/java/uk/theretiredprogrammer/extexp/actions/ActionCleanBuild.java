@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.extexp.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import org.openide.filesystems.FileObject;
 import org.openide.util.RequestProcessor;
 import uk.theretiredprogrammer.extexp.PProject;
 
@@ -28,19 +29,22 @@ import uk.theretiredprogrammer.extexp.PProject;
 public class ActionCleanBuild extends AbstractAction {
 
     private final PProject project;
+    private final FileObject buildfile;
 
     /**
      * Constructor
      * 
      * @param project the Extexp project
+     * @param buildfile the build file
      */
-    public ActionCleanBuild(PProject project) {
+    public ActionCleanBuild(PProject project, FileObject buildfile) {
         super("Clean and Build");
         this.project = project;
+        this.buildfile = buildfile;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionCleanBuild.class).post(new ActionsWorker(project, true, true));
+        new RequestProcessor(ActionCleanBuild.class).post(new ActionsWorker(project, buildfile, true, true));
     }
 }

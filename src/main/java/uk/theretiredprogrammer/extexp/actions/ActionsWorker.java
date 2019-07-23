@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
  * The Worker class which implement the actions of Build, Clean and Clean/Build.
- * 
+ *
  * @author richard linsdale
  */
 public class ActionsWorker implements Runnable {
@@ -37,34 +37,42 @@ public class ActionsWorker implements Runnable {
     private final boolean cleanrequired;
     private final boolean buildrequired;
     private final PProject project;
+    private final FileObject buildfile;
 
     /**
      * Constructor
-     * 
+     *
      * @param project the project
+     * @param buildfile the build file
      * @param cleanrequired true if clean required
      * @param buildrequired true if build required
      */
-    public ActionsWorker(PProject project, boolean cleanrequired, boolean buildrequired) {
+    public ActionsWorker(PProject project, FileObject buildfile, boolean cleanrequired, boolean buildrequired) {
         this.cleanrequired = cleanrequired;
         this.buildrequired = buildrequired;
         this.project = project;
+        this.buildfile = buildfile;
     }
 
     @Override
     public void run() {
         long start = currentTimeMillis();
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
-        InputOutput io = IOProvider.getDefault().getIO("Assembly Builder for " + projectinfo.getName(), false);
+        InputOutput io = IOProvider.getDefault().getIO("Extexp - " + projectinfo.getName() + " - " + buildfile.getName(), false);
         io.select();
         try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
             reset(msg, err);
             int errorcount = 0;
-            if (cleanrequired) {
-                errorcount+=cleanWorker(project.getProjectDirectory(), msg, err);
-            }
-            if (buildrequired) {
-                errorcount+=buildWorker(project.getProjectDirectory(), msg, err);
+            ExecutionEnvironment env = ExecutionEnvironment.create(project.getProjectDirectory(), buildfile, msg, err);
+            if (env == null) {
+                errorcount++;
+            } else {
+                if (cleanrequired) {
+                    errorcount += cleanWorker(env);
+                }
+                if (buildrequired) {
+                    errorcount += buildWorker(env);
+                }
             }
             int elapsed = round((currentTimeMillis() - start) / 1000F);
             msg.println("BUILD COMPLETED " + (errorcount == 0 ? "" : "WITH ERRORS ") + " (total time: " + Integer.toString(elapsed) + " seconds)");
@@ -79,23 +87,23 @@ public class ActionsWorker implements Runnable {
         }
     }
 
-    private int cleanWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
-        msg.println("Cleaning...");
+    private int cleanWorker(ExecutionEnvironment env) {
+        env.println("Cleaning...");
         int errorcount = 0;
-        FileObject cachefolder = projectfolder.getFileObject("cache");
+        FileObject cachefolder = env.paths.getCachefolder();
         if (cachefolder != null) {
-            msg.println("   ...cache folder");
+            env.println("   ...cache folder");
             for (FileObject f : cachefolder.getChildren()) {
-                if (!deleteFile(f, err)) {
+                if (!deleteFile(f, env)) {
                     errorcount++;
                 }
             }
         }
-        FileObject outputfolder = projectfolder.getFileObject("output");
+        FileObject outputfolder = env.paths.getOutfolder();
         if (outputfolder != null) {
-            msg.println("   ...output folder");
+            env.println("   ...output folder");
             for (FileObject f : outputfolder.getChildren()) {
-                if (!deleteFile(f, err)) {
+                if (!deleteFile(f, env)) {
                     errorcount++;
                 }
             }
@@ -103,22 +111,18 @@ public class ActionsWorker implements Runnable {
         return errorcount;
     }
 
-    private boolean deleteFile(FileObject fo, OutputWriter err) {
+    private boolean deleteFile(FileObject fo, ExecutionEnvironment env) {
         try {
             fo.delete();
             return true;
         } catch (IOException ex) {
-            err.println("Unable to delete " + fo.getNameExt() + ": " + ex.getLocalizedMessage());
+            env.errln("Unable to delete " + fo.getNameExt() + ": " + ex.getLocalizedMessage());
             return false;
         }
     }
 
-    private int buildWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
-        msg.println("Building...");
-        ExecutionEnvironment env = ExecutionEnvironment.create(projectfolder, msg, err);
-        if (env == null) {
-            return 1;
-        }
+    private int buildWorker(ExecutionEnvironment env) {
+        env.println("Building...");
         env.commandsequences.getSequence("MAIN").forEach((command) -> command.execute(env));
         return env.getErrorCount();
     }

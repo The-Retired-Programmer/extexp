@@ -55,31 +55,31 @@ public class ExecutionEnvironment {
      * Create a initial Execution Environment for the project Build Instructions
      * 
      * @param projectfolder the project's root folder
+     * @param buildfile the build file
      * @param msg the reporting output stream 
      * @param err the error reporting output stream
      * @return the new ExecutionEnvironment created 
      */
-    public static ExecutionEnvironment create(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
+    public static ExecutionEnvironment create(FileObject projectfolder, FileObject buildfile, OutputWriter msg, OutputWriter err) {
         CommandFactory.init();
         IOPaths paths = new IOPaths(
                 projectfolder,
                 projectfolder.getFileObject("src"),
-                useOrCreateFolder(err, projectfolder, "cache"),
-                useOrCreateFolder(err, projectfolder, "output"),
+                useOrCreateFolder(err, projectfolder, "cache", buildfile.getName()),
+                useOrCreateFolder(err, projectfolder, "output", buildfile.getName()),
                 msg,
                 err
         );
-        FileObject buildinstructions = paths.getProjectfolder().getFileObject("build.json");
-        if (buildinstructions == null) {
-            paths.getErr().println("Build Instructions (build.json) is missing");
+        if (buildfile == null) {
+            paths.getErr().println("Build File missing");
             return null;
         }
         JsonObject jobj;
-        try (InputStream is = buildinstructions.getInputStream();
+        try (InputStream is = buildfile.getInputStream();
                 JsonReader rdr = Json.createReader(is)) {
             jobj = rdr.readObject();
         } catch (IOException ex) {
-            paths.getErr().println("Error in reading Build Instructions: " + ex.getLocalizedMessage());
+            paths.getErr().println("Error while reading Build Instructions ("+ buildfile.getName() +"): " + ex.getLocalizedMessage());
             return null;
         }
         CommandSequenceStore commandsequencestore = new CommandSequenceStore();

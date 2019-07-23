@@ -1,0 +1,106 @@
+/*
+ * Copyright 2019 richard linsdale.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package uk.theretiredprogrammer.extexp;
+
+import java.awt.Image;
+import java.util.List;
+import javax.swing.Action;
+import org.netbeans.api.annotations.common.StaticResource;
+import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.ChildFactory;
+import org.openide.nodes.FilterNode;
+import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
+import uk.theretiredprogrammer.extexp.actions.ActionBuild;
+import uk.theretiredprogrammer.extexp.actions.ActionClean;
+import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
+import uk.theretiredprogrammer.extexp.visualeditor.ActionOpenVisualEditor;
+
+/**
+ * A Children Factory to provide BuildElementNodes (the xxx,json files).
+ *
+ * @author richard linsdale
+ */
+public class BuildElementChildFactory extends ChildFactory<FileObject> {
+
+    private final FileObject buildfolder;
+    private final PProject project;
+
+    public BuildElementChildFactory(PProject project, FileObject buildfolder) {
+        this.buildfolder = buildfolder;
+        this.project = project;
+    }
+
+    @Override
+    protected boolean createKeys(List<FileObject> toPopulate) {
+        for (FileObject fo : buildfolder.getChildren()) {
+            if (fo.isData() && fo.hasExt("json")) {
+                toPopulate.add(fo);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected Node createNodeForKey(FileObject fo) {
+        Node node;
+        try {
+            node = DataObject.find(fo).getNodeDelegate();
+            return new BuildElementNode(node, fo);
+        } catch (DataObjectNotFoundException ex) {
+            return null;
+        }
+    }
+
+    public class BuildElementNode extends FilterNode {
+
+        private final FileObject fo;
+
+        @StaticResource()
+        public static final String EXTEXPBUILDELEMENT_ICON = "uk/theretiredprogrammer/extexp/script_edit.png";
+
+        public BuildElementNode(Node onode, FileObject fo) {
+            super(onode);
+            this.fo = fo;
+        }
+
+        @Override
+        public String getHtmlDisplayName() {
+            return fo.getName();
+        }
+
+        @Override
+        public Image getIcon(int type) {
+            return ImageUtilities.loadImage(EXTEXPBUILDELEMENT_ICON);
+        }
+
+        @Override
+        public Image getOpenedIcon(int type) {
+            return getIcon(type);
+        }
+
+        @Override
+        public Action[] getActions(boolean arg0) {
+            return new Action[]{
+                new ActionOpenVisualEditor(project, fo),
+                new ActionBuild(project, fo),
+                new ActionCleanBuild(project, fo),
+                new ActionClean(project, fo),};
+        }
+    }
+}

@@ -35,26 +35,29 @@ import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 public class VisualEditorWorker implements Runnable {
 
     private final PProject project;
+    private final FileObject buildfile;
 
     /**
      * Constructor
      * 
      * @param project the Extexp project 
+     * @param buildfile the build file
      */
-    public VisualEditorWorker(PProject project) {
+    public VisualEditorWorker(PProject project, FileObject buildfile) {
         this.project = project;
+        this.buildfile = buildfile;
     }
 
     @Override
     public void run() {
         long start = currentTimeMillis();
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
-        InputOutput io = IOProvider.getDefault().getIO("Visual Editor Builder for " + projectinfo.getName(), false);
+        InputOutput io = IOProvider.getDefault().getIO("Extexp Visual Editor - " + projectinfo.getName()+ " - "+ buildfile.getName(), false);
         io.select();
         try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
             reset(msg, err);
             int errorcount = 0;
-            errorcount+=veWorker(project.getProjectDirectory(), msg, err);
+            errorcount+=veWorker(project.getProjectDirectory(), buildfile, msg, err);
             int elapsed = round((currentTimeMillis() - start) / 1000F);
             msg.println("BUILD " + (errorcount == 0 ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
@@ -69,16 +72,16 @@ public class VisualEditorWorker implements Runnable {
     }
 
     @SuppressWarnings("UseSpecificCatch")
-    private int veWorker(FileObject projectfolder, OutputWriter msg, OutputWriter err) {
+    private int veWorker(FileObject projectfolder, FileObject buildfile, OutputWriter msg, OutputWriter err) {
         msg.println("Building...");
-        ExecutionEnvironment env = ExecutionEnvironment.create(projectfolder, msg, err);
+        ExecutionEnvironment env = ExecutionEnvironment.create(projectfolder, buildfile, msg, err);
         if (env == null) {
             return 1;
         }
         PTC tc = new PTC();
         try {
             //tc.setSaveSource((jo) -> updateBuildFile(jo));
-            tc.setDisplayName(project.getProjectDirectory().getName());
+            tc.setDisplayName(project.getProjectDirectory().getName()+ " - "+ buildfile.getName());
             tc.open();
             tc.requestActive();
             tc.deserialise(env);
