@@ -23,42 +23,43 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonString;
 import javax.json.JsonValue;
 import static javax.json.JsonValue.ValueType.ARRAY;
+import static javax.json.JsonValue.ValueType.STRING;
 import org.openide.filesystems.FileObject;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.support.local.ErrorCount;
 import uk.theretiredprogrammer.extexp.support.local.IDGenerator;
 
-
 /**
  * The Execution Environment is a description of the current environment for
  * Extexp Command Execution.
- * 
+ *
  * As such it contains items such as:
- * 
+ *
  * IOPaths {@link IOPaths}
- * 
+ *
  * Temporary FileStore
- * 
+ *
  * CommandSequences Store
- * 
+ *
  * IDGenerator
- * 
+ *
  * ErrorTracker
  *
  * @author richard linsdale
  */
 public class ExecutionEnvironment {
-    
+
     /**
      * Create a initial Execution Environment for the project Build Instructions
-     * 
+     *
      * @param projectfolder the project's root folder
      * @param buildfile the build file
-     * @param msg the reporting output stream 
+     * @param msg the reporting output stream
      * @param err the error reporting output stream
-     * @return the new ExecutionEnvironment created 
+     * @return the new ExecutionEnvironment created
      */
     public static ExecutionEnvironment create(FileObject projectfolder, FileObject buildfile, OutputWriter msg, OutputWriter err) {
         CommandFactory.init();
@@ -70,20 +71,8 @@ public class ExecutionEnvironment {
                 msg,
                 err
         );
-        if (buildfile == null) {
-            paths.getErr().println("Build File missing");
-            return null;
-        }
-        JsonObject jobj;
-        try (InputStream is = buildfile.getInputStream();
-                JsonReader rdr = Json.createReader(is)) {
-            jobj = rdr.readObject();
-        } catch (IOException ex) {
-            paths.getErr().println("Error while reading Build Instructions ("+ buildfile.getName() +"): " + ex.getLocalizedMessage());
-            return null;
-        }
         CommandSequenceStore commandsequencestore = new CommandSequenceStore();
-        if (parse(jobj, (name, sequence) -> commandsequencestore.addSequence(name, sequence, paths)) > 0) {
+        if (!loadbuildfile(buildfile, paths, commandsequencestore)) {
             return null;
         }
         CommandSequence commandsequence = commandsequencestore.getSequence("MAIN");
@@ -114,20 +103,53 @@ public class ExecutionEnvironment {
         return folder;
     }
 
-    private static int parse(JsonObject jobj, BiFunction<String, JsonArray, Integer> sequencehandler) {
+    private static boolean loadbuildfile(FileObject buildfile, IOPaths paths, CommandSequenceStore commandsequencestore) {
+        if (buildfile == null) {
+            paths.getErr().println("Build File missing");
+            return false;
+        }
+        JsonObject jobj;
+        try (InputStream is = buildfile.getInputStream();
+                JsonReader rdr = Json.createReader(is)) {
+            jobj = rdr.readObject();
+        } catch (IOException ex) {
+            paths.getErr().println("Error while reading Build Instructions (" + buildfile.getName() + "): " + ex.getLocalizedMessage());
+            return false;
+        }
+        return parse(buildfile.getParent(), paths, commandsequencestore, jobj, (name, sequence) -> commandsequencestore.addSequence(name, sequence, paths)) == 0;
+    }
+
+    private static int parse(FileObject buildfolder, IOPaths paths, CommandSequenceStore commandsequencestore, JsonObject jobj, BiFunction<String, JsonArray, Integer> sequencehandler) {
         int errorcount = 0;
-        for (Map.Entry<String,JsonValue> es : jobj.entrySet()){
-           String name = es.getKey();
+        for (Map.Entry<String, JsonValue> es : jobj.entrySet()) {
+            String name = es.getKey();
             JsonValue content = es.getValue();
-            if (content.getValueType() == ARRAY) {
-                errorcount+=sequencehandler.apply(name, (JsonArray) content);
-            } 
+            switch (content.getValueType()) {
+                case ARRAY:
+                    errorcount += sequencehandler.apply(name, (JsonArray) content);
+                    break;
+                case STRING:
+                    if ("Include".equals(name)) {
+                        String fn = "_" + ((JsonString) content).getString() + ".json";
+                        if (!loadbuildfile(buildfolder.getFileObject(fn),
+                                paths, commandsequencestore)) {
+                            errorcount++;
+                        }
+                    } else {
+                        paths.getErr().println("Bad Statement:" + name + ": " + content.toString());
+                        errorcount++;
+                    }
+                    break;
+                default:
+                    paths.getErr().println("Bad Statement:" + name + ": " + content.toString());
+                    errorcount++;
+            }
         }
         return errorcount;
     }
-    
+
     /**
-     *  the {@link IOPaths} object
+     * the {@link IOPaths} object
      */
     public final IOPaths paths;
 
@@ -150,27 +172,30 @@ public class ExecutionEnvironment {
      * the {@link ErrorCount} object
      */
     public final ErrorCount errorflag;
-    
+
     /**
      * Clone a copy of this Environment, with revised IoPaths
-     * 
-     * @param paths the new IOPaths object to be inserted into the new ExecutionEnvironment
+     *
+     * @param paths the new IOPaths object to be inserted into the new
+     * ExecutionEnvironment
      * @return the new ExecutionEnvironment
      */
     public final ExecutionEnvironment clone(IOPaths paths) {
         return new ExecutionEnvironment(paths, this.tempfs, this.commandsequences, this.idgenerator, this.errorflag);
     }
-    
+
     /**
-     * Clone a copy of this Environment, with revised IoPaths and new empty TemporaryFileStore
-     * 
-     * @param paths the new IOPaths object to be inserted into the new ExecutionEnvironment
+     * Clone a copy of this Environment, with revised IoPaths and new empty
+     * TemporaryFileStore
+     *
+     * @param paths the new IOPaths object to be inserted into the new
+     * ExecutionEnvironment
      * @return the new ExecutionEnvironment
      */
     public final ExecutionEnvironment cloneWithNewTFS(IOPaths paths) {
         return new ExecutionEnvironment(paths, new TemporaryFileStore(), this.commandsequences, this.idgenerator, this.errorflag);
     }
-    
+
     private ExecutionEnvironment(IOPaths paths, CommandSequenceStore commandsequences) {
         this(paths, new TemporaryFileStore(), commandsequences, new IDGenerator(), new ErrorCount());
     }
@@ -183,37 +208,37 @@ public class ExecutionEnvironment {
         this.idgenerator = idgenerator;
         this.errorflag = errorflag;
     }
-    
-    // utility methods
 
+    // utility methods
     /**
      * Print a line to the reporting writer
+     *
      * @param s the line to output
      */
-    
     public void println(String s) {
         paths.getMsg().println(s);
     }
-    
+
     /**
      * Print a line to the error reporting writer
+     *
      * @param s the line to output
      */
     public void errln(String s) {
         paths.getErr().println(s);
         errorflag.addError();
     }
-    
+
     /**
      * Increment the error count
      */
     public void addError() {
         errorflag.addError();
     }
-    
+
     /**
      * Get the error count
-     * 
+     *
      * @return the error count
      */
     public int getErrorCount() {

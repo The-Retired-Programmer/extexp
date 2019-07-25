@@ -81,7 +81,10 @@ public class BuildElementChildFactory extends ChildFactory<FileObject> {
 
         @Override
         public String getHtmlDisplayName() {
-            return fo.getName();
+            String fn = fo.getName();
+            return fn.startsWith("_")
+                    ? fn.substring(1)
+                    : fn;
         }
 
         @Override
@@ -96,11 +99,13 @@ public class BuildElementChildFactory extends ChildFactory<FileObject> {
 
         @Override
         public Action[] getActions(boolean arg0) {
-            return new Action[]{
-                new ActionOpenVisualEditor(project, fo),
-                new ActionBuild(project, fo),
-                new ActionCleanBuild(project, fo),
-                new ActionClean(project, fo),};
+            return fo.getName().startsWith("_")
+                    ? new Action[]{}
+                    : new Action[]{
+                        new ActionOpenVisualEditor(project, fo),
+                        new ActionBuild(project, fo),
+                        new ActionCleanBuild(project, fo),
+                        new ActionClean(project, fo),};
         }
     }
 }
