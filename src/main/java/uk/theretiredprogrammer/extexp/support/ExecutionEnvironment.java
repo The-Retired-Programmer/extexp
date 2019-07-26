@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.extexp.support;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -63,6 +63,15 @@ public class ExecutionEnvironment {
      */
     public static ExecutionEnvironment create(FileObject projectfolder, FileObject buildfile, OutputWriter msg, OutputWriter err) {
         CommandFactory.init();
+        CommandSequenceStore commandsequencestore = new CommandSequenceStore();
+        if (!loadbuildfile(buildfile, err::println, commandsequencestore)) {
+            return null;
+        }
+        CommandSequence commandsequence = commandsequencestore.getSequence("MAIN");
+        if (commandsequence == null) {
+            err.println("Command sequence \"MAIN\" missing");
+            return null;
+        }
         IOPaths paths = new IOPaths(
                 projectfolder,
                 projectfolder.getFileObject("src"),
@@ -71,15 +80,6 @@ public class ExecutionEnvironment {
                 msg,
                 err
         );
-        CommandSequenceStore commandsequencestore = new CommandSequenceStore();
-        if (!loadbuildfile(buildfile, paths, commandsequencestore)) {
-            return null;
-        }
-        CommandSequence commandsequence = commandsequencestore.getSequence("MAIN");
-        if (commandsequence == null) {
-            paths.getErr().println("Command sequence \"MAIN\" missing");
-            return null;
-        }
         return new ExecutionEnvironment(paths, commandsequencestore);
     }
 
@@ -103,9 +103,9 @@ public class ExecutionEnvironment {
         return folder;
     }
 
-    private static boolean loadbuildfile(FileObject buildfile, IOPaths paths, CommandSequenceStore commandsequencestore) {
+    private static boolean loadbuildfile(FileObject buildfile, Consumer<String> errout, CommandSequenceStore commandsequencestore) {
         if (buildfile == null) {
-            paths.getErr().println("Build File missing");
+            errout.accept("Build File missing");
             return false;
         }
         JsonObject jobj;
@@ -113,39 +113,36 @@ public class ExecutionEnvironment {
                 JsonReader rdr = Json.createReader(is)) {
             jobj = rdr.readObject();
         } catch (IOException ex) {
-            paths.getErr().println("Error while reading Build Instructions (" + buildfile.getName() + "): " + ex.getLocalizedMessage());
+            errout.accept("Error while reading Build Instructions (" + buildfile.getName() + "): " + ex.getLocalizedMessage());
             return false;
         }
-        return parse(buildfile.getParent(), paths, commandsequencestore, jobj, (name, sequence) -> commandsequencestore.addSequence(name, sequence, paths)) == 0;
-    }
-
-    private static int parse(FileObject buildfolder, IOPaths paths, CommandSequenceStore commandsequencestore, JsonObject jobj, BiFunction<String, JsonArray, Integer> sequencehandler) {
+        FileObject buildfolder = buildfile.getParent();
         int errorcount = 0;
         for (Map.Entry<String, JsonValue> es : jobj.entrySet()) {
             String name = es.getKey();
             JsonValue content = es.getValue();
             switch (content.getValueType()) {
                 case ARRAY:
-                    errorcount += sequencehandler.apply(name, (JsonArray) content);
+                    errorcount += commandsequencestore.addSequence(name, (JsonArray) content, errout);
                     break;
                 case STRING:
                     if ("Include".equals(name)) {
                         String fn = "_" + ((JsonString) content).getString() + ".json";
                         if (!loadbuildfile(buildfolder.getFileObject(fn),
-                                paths, commandsequencestore)) {
+                                errout, commandsequencestore)) {
                             errorcount++;
                         }
                     } else {
-                        paths.getErr().println("Bad Statement:" + name + ": " + content.toString());
+                        errout.accept("Bad Statement:" + name + ": " + content.toString());
                         errorcount++;
                     }
                     break;
                 default:
-                    paths.getErr().println("Bad Statement:" + name + ": " + content.toString());
+                    errout.accept("Bad Statement:" + name + ": " + content.toString());
                     errorcount++;
             }
         }
-        return errorcount;
+        return errorcount == 0;
     }
 
     /**

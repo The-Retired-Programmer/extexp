@@ -41,14 +41,14 @@ public class CommandSequenceStore {
      * 
      * @param name the name for this command sequence
      * @param sequence a JsonArray representation of the command sequence
-     * @param paths The current {@link IOPaths} object 
+     * @param errout A Consumer to process any error message
      * @return the number of errors recognised during command parsing
      */
-    public int addSequence(String name, JsonArray sequence, IOPaths paths) {
+    public int addSequence(String name, JsonArray sequence, Consumer<String> errout) {
         int errorcount = 0;
         CommandSequence res = new CommandSequence();
         for (JsonObject jobj : sequence.getValuesAs(JsonObject.class)){
-            if (!insertCommand(CommandFactory.create(jobj), res, paths, jobj)) {
+            if (!insertCommand(CommandFactory.create(jobj), res, errout, jobj)) {
                 errorcount++;
             }
         }
@@ -57,12 +57,12 @@ public class CommandSequenceStore {
     }
     
     private boolean insertCommand(Optional<? extends Command> command, CommandSequence seq,
-            IOPaths paths, JsonObject jobj){
+            Consumer<String> errout, JsonObject jobj){
         if (command.isPresent()) {
             seq.add(command.get());
             return true;
         } else {
-            paths.getErr().println("Bad Command: "+jobj.toString());
+            errout.accept("Bad Command: "+jobj.toString());
             return false;
         }
     }
