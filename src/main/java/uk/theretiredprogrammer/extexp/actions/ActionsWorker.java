@@ -25,6 +25,7 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.PProject;
+import uk.theretiredprogrammer.extexp.support.CommandFactory;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
@@ -56,26 +57,31 @@ public class ActionsWorker implements Runnable {
 
     @Override
     public void run() {
+        boolean errflag = false;
         long start = currentTimeMillis();
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
         InputOutput io = IOProvider.getDefault().getIO("Extexp - " + projectinfo.getName() + " - " + buildfile.getName(), false);
         io.select();
         try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
-            reset(msg, err);
-            int errorcount = 0;
-            ExecutionEnvironment env = ExecutionEnvironment.create(project.getProjectDirectory(), buildfile, msg, err);
-            if (env == null) {
-                errorcount++;
-            } else {
+            try {
+                reset(msg, err);
+                int errorcount = 0;
+                CommandFactory.init();
+                ExecutionEnvironment env = new ExecutionEnvironment(project.getProjectDirectory(), buildfile, msg, err);
                 if (cleanrequired) {
                     errorcount += cleanWorker(env);
                 }
                 if (buildrequired) {
                     errorcount += buildWorker(env);
                 }
+                if (errorcount > 0){
+                    errflag = true;
+                }
+            } catch (IOException ex) {
+                errflag = true;
             }
             int elapsed = round((currentTimeMillis() - start) / 1000F);
-            msg.println("BUILD COMPLETED " + (errorcount == 0 ? "" : "WITH ERRORS ") + " (total time: " + Integer.toString(elapsed) + " seconds)");
+            msg.println("BUILD COMPLETED" + (errflag ? " WITH ERRORS" : "") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
     }
 

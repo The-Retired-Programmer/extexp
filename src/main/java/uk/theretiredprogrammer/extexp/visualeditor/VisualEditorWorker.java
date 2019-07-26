@@ -25,6 +25,7 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.PProject;
+import uk.theretiredprogrammer.extexp.support.CommandFactory;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
@@ -39,8 +40,8 @@ public class VisualEditorWorker implements Runnable {
 
     /**
      * Constructor
-     * 
-     * @param project the Extexp project 
+     *
+     * @param project the Extexp project
      * @param buildfile the build file
      */
     public VisualEditorWorker(PProject project, FileObject buildfile) {
@@ -51,15 +52,24 @@ public class VisualEditorWorker implements Runnable {
     @Override
     public void run() {
         long start = currentTimeMillis();
+        boolean errflag = false;
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
-        InputOutput io = IOProvider.getDefault().getIO("Extexp Visual Editor - " + projectinfo.getName()+ " - "+ buildfile.getName(), false);
+        InputOutput io = IOProvider.getDefault().getIO("Extexp Visual Editor - " + projectinfo.getName() + " - " + buildfile.getName(), false);
         io.select();
         try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
-            reset(msg, err);
-            int errorcount = 0;
-            errorcount+=veWorker(project.getProjectDirectory(), buildfile, msg, err);
+            try {
+                reset(msg, err);
+                int errorcount = 0;
+                CommandFactory.init();
+                errorcount += veWorker(project.getProjectDirectory(), buildfile, msg, err);
+                if (errorcount > 0) {
+                    errflag = true;
+                }
+            } catch (IOException ex) {
+                errflag = true;
+            }
             int elapsed = round((currentTimeMillis() - start) / 1000F);
-            msg.println("BUILD " + (errorcount == 0 ? "SUCCESSFUL" : "FAILED") + " (total time: " + Integer.toString(elapsed) + " seconds)");
+            msg.println("BUILD" + (errflag ? " WITH ERRORS" : "") + " (total time: " + Integer.toString(elapsed) + " seconds)");
         }
     }
 
@@ -72,21 +82,18 @@ public class VisualEditorWorker implements Runnable {
     }
 
     @SuppressWarnings("UseSpecificCatch")
-    private int veWorker(FileObject projectfolder, FileObject buildfile, OutputWriter msg, OutputWriter err) {
+    private int veWorker(FileObject projectfolder, FileObject buildfile,
+            OutputWriter msg, OutputWriter err) throws IOException {
         msg.println("Building...");
-        ExecutionEnvironment env = ExecutionEnvironment.create(projectfolder, buildfile, msg, err);
-        if (env == null) {
-            return 1;
-        }
+        ExecutionEnvironment env = new ExecutionEnvironment(projectfolder, buildfile, msg, err);
         PTC tc = new PTC();
         try {
-            //tc.setSaveSource((jo) -> updateBuildFile(jo));
-            tc.setDisplayName(project.getProjectDirectory().getName()+ " - "+ buildfile.getName());
+            tc.setDisplayName(project.getProjectDirectory().getName() + " - " + buildfile.getName());
             tc.open();
             tc.requestActive();
             tc.deserialise(env);
         } catch (Exception ex) {
-            env.errln("Error: "+ ex.getLocalizedMessage());
+            env.errln("Error: " + ex.getLocalizedMessage());
         }
         return env.getErrorCount();
     }
