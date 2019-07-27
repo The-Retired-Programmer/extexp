@@ -52,5 +52,6 @@ public class ExecutorsFactory implements ExecutorFactory {
         consumer.accept(new SubstituteExecutor());
         consumer.accept(new CopyResourcesExecutor());
         consumer.accept(new ListExecutor());
+        consumer.accept(new MessageExecutor());
     }
 }
