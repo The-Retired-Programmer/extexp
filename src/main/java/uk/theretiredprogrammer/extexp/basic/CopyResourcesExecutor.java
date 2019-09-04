@@ -74,11 +74,13 @@ public class CopyResourcesExecutor extends Executor {
     }
 
     private void copyresources(FileObject fromFO, FileObject toFO) throws IOException {
-        for (FileObject fo : fromFO.getChildren()) {
-            if (fo.isFolder()) {
-                copyresources(fo, toFO);
-            } else {
-                FileUtil.copyFile(fo, toFO, fo.getName()); // assume isData()
+        if (fromFO != null) {
+            for (FileObject fo : fromFO.getChildren()) {
+                if (fo.isFolder()) {
+                    copyresources(fo, toFO);
+                } else {
+                    FileUtil.copyFile(fo, toFO, fo.getName()); // assume isData()
+                }
             }
         }
     }

@@ -49,7 +49,7 @@ public class CopyExecutor extends Executor {
     protected void executecommand() throws IOException {
         try (
                 IOWriter output = new IOWriter(ee, getParameter("to"));
-                IOInputString input = new IOInputString(ee, this.getParameter("from"))) {
+                IOInputString input = new IOInputString(ee, getParameter("from"))) {
             output.get().write(input.get());
         }
     }
