@@ -17,7 +17,10 @@ package uk.theretiredprogrammer.extexp.support.local;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Optional;
+import org.openide.filesystems.FileObject;
 import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
 
 /**
@@ -40,13 +43,13 @@ public abstract class IO<T> implements Closeable {
      * @throws IOException if problem
      */
     @SuppressWarnings("OverridableMethodCallInConstructor")
-    public IO(ExecutionEnvironment ee, Optional<String> parametervalue)  throws IOException {
-        
-        this.parametervalue = parametervalue.orElseThrow(()->new IOException("Missing Parameter Value"));
+    public IO(ExecutionEnvironment ee, Optional<String> parametervalue) throws IOException {
+
+        this.parametervalue = parametervalue.orElseThrow(() -> new IOException("Missing Parameter Value"));
         this.ee = ee;
         ioobj = setup(this.parametervalue, ee);
     }
-    
+
 //    /**
 //     * Test if IO instance is open (available for input output operations)
 //     *
@@ -55,7 +58,6 @@ public abstract class IO<T> implements Closeable {
 //    public final boolean isOpen() {
 //        return ioobj.isPresent();
 //    }
-
     /**
      * Get the IO value
      *
@@ -73,7 +75,6 @@ public abstract class IO<T> implements Closeable {
 //    protected final Optional<T> getOptional() {
 //        return ioobj;
 //    }
-
     /**
      * Setup the IO for the specfic data direction / type
      *
@@ -86,7 +87,7 @@ public abstract class IO<T> implements Closeable {
 
     @Override
     public final void close() throws IOException {
-        if (ioobj  != null) {
+        if (ioobj != null) {
             T io = ioobj;
             ioobj = null;
             drop(io, ee);
@@ -105,4 +106,47 @@ public abstract class IO<T> implements Closeable {
      */
     protected abstract void drop(T io, ExecutionEnvironment ee) throws IOException;
 
+    /**
+     * action to transfer a string into filestore to be read by a file stream
+     *
+     * @param todirectory the target directory
+     * @param name the target filename
+     * @param content the content to be inserted into the file
+     * @param ee the execution environment
+     * @return the FileObejct representing the created file
+     * @throws IOException if problems
+     */
+    protected FileObject stringToFile(FileObject todirectory, String name, String content, ExecutionEnvironment ee) throws IOException {
+        FileObject outfo = todirectory.getFileObject(name);
+        if (outfo != null) {
+            outfo.delete();
+        }
+        outfo = todirectory.createData(name);
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(outfo.getOutputStream()))) {
+            out.write(content);
+        }
+        return outfo;
+    }
+
+    /**
+     * find a file from a folder (or a set of folders) which are searched
+     * serially for the file presence.
+     *
+     * @param ee the execution environment
+     * @param filename the filename
+     * @param fos the search path
+     * @return the FileObject representing the file
+     * @throws IOException if a problem
+     */
+    protected FileObject findFile(ExecutionEnvironment ee, String filename, FileObject... fos) throws IOException {
+        for (FileObject fo : fos) {
+            if (fo != null) {
+                FileObject file = fo.getFileObject(filename);
+                if (file != null && file.isData()) {
+                    return file;
+                }
+            }
+        }
+        throw new IOException("Error - can't find file: " + filename);
+    }
 }

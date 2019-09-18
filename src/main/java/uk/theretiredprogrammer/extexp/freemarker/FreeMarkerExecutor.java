@@ -15,8 +15,8 @@
  */
 package uk.theretiredprogrammer.extexp.freemarker;
 
-import freemarker.template.Configuration;
-import freemarker.template.TemplateException;
+//import freemarker.template.Configuration;
+//import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -50,34 +50,34 @@ import uk.theretiredprogrammer.extexp.support.IOWriter;
  */
 public class FreeMarkerExecutor extends Executor {
 
-    private static Configuration cfg = null;
+//    private static Configuration cfg = null;
     private final String templateroot;
 
     public FreeMarkerExecutor(String templateroot) {
         super();
         this.templateroot = templateroot;
-        if (cfg == null) {
-            buildConfig();
-        }
+//        if (cfg == null) {
+//            buildConfig();
+//        }
     }
 
     // for test purposes
     public FreeMarkerExecutor(String test, String templateroot) {
         this.templateroot = templateroot;
-        if (cfg == null) {
-            buildConfig();
-        }
+//        if (cfg == null) {
+//            buildConfig();
+//        }
     }
 
-    private void buildConfig() {
-        try {
-            cfg = new Configuration();
-            cfg.setDirectoryForTemplateLoading(new File(templateroot));
-            cfg.setDefaultEncoding("UTF-8");
-        } catch (IOException ex) {
-            cfg = null;
-        }
-    }
+//    private void buildConfig() {
+//        try {
+//            cfg = new Configuration();
+//            cfg.setDirectoryForTemplateLoading(new File(templateroot));
+//            cfg.setDefaultEncoding("UTF-8");
+//        } catch (IOException ex) {
+//            cfg = null;
+//        }
+//    }
 
     @Override
     public String getDisplayName() {
@@ -99,11 +99,11 @@ public class FreeMarkerExecutor extends Executor {
     }
 
     public void freemarkerrun(Consumer<String> reporter, String templatename, Writer writer, Map<String, String> model) {
-        if (cfg == null) {
-            reporter.accept("Error FreeMarker: configuration not created");
-            return;
-        }
-        try {
+//        if (cfg == null) {
+//            reporter.accept("Error FreeMarker: configuration not created");
+//            return;
+//        }
+//        try {
             if (!templatename.startsWith(templateroot)) {
                 reporter.accept("Error FreeMarker: requested template does not exist "
                         + "in current template root\n"
@@ -111,10 +111,10 @@ public class FreeMarkerExecutor extends Executor {
                         + "template=" + templatename);
                 return;
             }
-            cfg.getTemplate(templatename.substring(templateroot.length())).process(model, writer);
-        } catch (TemplateException | IOException ex) {
-            reporter.accept("Error FreeMarker: " + ex.getLocalizedMessage());
-        }
+//            cfg.getTemplate(templatename.substring(templateroot.length())).process(model, writer);
+//        } catch (TemplateException | IOException ex) {
+//            reporter.accept("Error FreeMarker: " + ex.getLocalizedMessage());
+//        }
     }
 
     private Map<String, String> getFreemarkerMap() {

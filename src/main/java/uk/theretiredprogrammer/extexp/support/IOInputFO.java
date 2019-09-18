@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 richard linsdale.
+ * Copyright 2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,14 @@
  */
 package uk.theretiredprogrammer.extexp.support;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
 import uk.theretiredprogrammer.extexp.support.local.IO;
 
 /**
- * An IO Descriptor which will return a reader, which can be used to obtain the
- * content
+ * An IO Descriptor which will return a FileObject, which can be used to obtain
+ * the content
  *
  * The name can reference content in any of:
  *
@@ -39,7 +35,7 @@ import uk.theretiredprogrammer.extexp.support.local.IO;
  *
  * @author richard linsdale
  */
-public class IOReader extends IO<Reader> {
+public class IOInputFO extends IO<FileObject> {
 
     /**
      * Constructor
@@ -48,23 +44,18 @@ public class IOReader extends IO<Reader> {
      * @param name the name of the input source
      * @throws java.io.IOException if problem
      */
-    public IOReader(ExecutionEnvironment ee, Optional<String> name) throws IOException {
+    public IOInputFO(ExecutionEnvironment ee, Optional<String> name) throws IOException {
         super(ee, name);
     }
 
     @Override
-    protected Reader setup(String name, ExecutionEnvironment ee) throws IOException {
+    protected FileObject setup(String name, ExecutionEnvironment ee) throws IOException {
         Optional<String> fs = ee.tempfs.get(name);
-        return fs.isPresent() ? new StringReader(fs.get()) : getfilereader(name, ee);
-    }
-
-    private Reader getfilereader(String name, ExecutionEnvironment ee) throws IOException {
-        FileObject fo = findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
-        return new BufferedReader(new InputStreamReader(fo.getInputStream()));
+        return fs.isPresent() ? stringToFile(ee.paths.getCachefolder(), name, fs.get(), ee)
+                : findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
     }
 
     @Override
-    protected void drop(Reader reader, ExecutionEnvironment ee) throws IOException {
-        reader.close();
+    protected void drop(FileObject fo, ExecutionEnvironment ee) throws IOException {
     }
 }

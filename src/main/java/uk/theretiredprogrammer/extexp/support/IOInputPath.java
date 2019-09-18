@@ -17,8 +17,6 @@ package uk.theretiredprogrammer.extexp.support;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -51,40 +49,16 @@ public class IOInputPath extends IO<String> {
     }
 
     @Override
-    protected String setup(String parametervalue, ExecutionEnvironment ee) throws IOException{
+    protected String setup(String parametervalue, ExecutionEnvironment ee) throws IOException {
         Optional<String> fs = ee.tempfs.get(parametervalue);
         FileObject fo = fs.isPresent()
                 ? stringToFile(ee.paths.getCachefolder(), parametervalue, fs.get(), ee)
                 : findFile(ee, parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
         return FileUtil.getFileDisplayName(fo);
     }
-    
+
     @Override
     protected void drop(String path, ExecutionEnvironment ee) throws IOException {
-    }
-
-    private FileObject stringToFile(FileObject todirectory, String name, String content, ExecutionEnvironment ee) throws IOException {
-            FileObject outfo = todirectory.getFileObject(name);
-            if (outfo != null) {
-                outfo.delete();
-            }
-            outfo = todirectory.createData(name);
-            try (PrintWriter out = new PrintWriter(new OutputStreamWriter(outfo.getOutputStream()))) {
-                out.write(content);
-            }
-            return outfo;
-    }
-
-    private FileObject findFile(ExecutionEnvironment ee, String filename, FileObject... fos) throws IOException {
-        for (FileObject fo : fos) {
-            if (fo != null) {
-                FileObject file = fo.getFileObject(filename);
-                if (file != null && file.isData()) {
-                    return file;
-                }
-            }
-        }
-        throw new IOException("Error - can't find file: " + filename);
     }
 
     /**

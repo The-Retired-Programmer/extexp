@@ -24,7 +24,7 @@ import uk.theretiredprogrammer.extexp.support.Executor;
 
 /**
  * The Factory creating FreeMarker Executors.
- * 
+ *
  * @author richard linsdale
  */
 @ServiceProvider(service = ExecutorFactory.class)
@@ -32,8 +32,14 @@ public class FreeMarkerExecutorFactory implements ExecutorFactory {
 
     @Override
     public Executor create(String name) {
-        String templateroot = NbPreferences.forModule(FreeMarkerPanel.class).get("FreeMarkerRootPath", Utilities.isWindows() ? "c:/" : "/");
-        return name.equals("freemarker") ? new FreeMarkerExecutor(templateroot) : null;
+        switch (name) {
+            case "freemarker":
+                String templateroot = NbPreferences.forModule(FreeMarkerPanel.class).get("FreeMarkerRootPath", Utilities.isWindows() ? "c:/" : "/");
+                return new FreeMarkerExecutor(templateroot);
+            case "freemarker2":
+                return new FreeMarker2Executor();
+        }
+        return null;
     }
 
     @Override

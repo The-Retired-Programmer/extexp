@@ -44,8 +44,7 @@ public class MessageExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOInputString message = new IOInputString(ee, this.getParameter("text"))) {
+        try (IOInputString message = new IOInputString(ee, this.getParameter("text"))) {
             ee.println(message.get());
         }
     }

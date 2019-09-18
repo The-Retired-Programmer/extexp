@@ -49,19 +49,19 @@ public class IOInputString extends IO<String> {
     @Override
     protected String setup(String name, ExecutionEnvironment ee) throws IOException {
         Optional<String> tempfs = ee.tempfs.get(name);
-        return tempfs.isPresent() ? tempfs.get():getFileOrParameterValue(name, ee);
+        return tempfs.isPresent() ? tempfs.get() : getFileOrParameterValue(name, ee);
     }
-    
+
     @Override
     protected void drop(String name, ExecutionEnvironment ee) throws IOException {
     }
-    
-    private String getFileOrParameterValue(String name, ExecutionEnvironment ee)  throws IOException {
-        FileObject fo = findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
+
+    private String getFileOrParameterValue(String name, ExecutionEnvironment ee) throws IOException {
+        FileObject fo = findFile2(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
         return fo != null ? fo.asText() : name;
     }
 
-    private FileObject findFile(ExecutionEnvironment ee, String filename, FileObject... fos)  {
+    private FileObject findFile2(ExecutionEnvironment ee, String filename, FileObject... fos) {
         for (FileObject fo : fos) {
             if (fo != null) {
                 FileObject file = fo.getFileObject(filename);
