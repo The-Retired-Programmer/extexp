@@ -242,25 +242,30 @@ public abstract class Command {
     }
 
     protected Optional<String> getSubText(String name) {
-        // precedence; TEMPORARY FILES / FileValue / Parameter value
-        return ee.tempfs.get(name)
-                .or(() -> getParameterValue(name))
-                .or(() -> getFileValue(name))
-                .or(() -> Optional.ofNullable(name));
+        try {
+            // precedence; TEMPORARY FILES / FileValue / Parameter value
+            return ee.tempfs.read(name)
+                    .or(() -> getParameterValue(name))
+                    .or(() -> getFileValue(name))
+                    .or(() -> Optional.ofNullable(name));
+        } catch (IOException ex) {
+            ee.errln("Error during parameter evaluation - " + ex.getLocalizedMessage());
+            return Optional.empty();
+        }
     }
 
     /**
-     * Test is a given name can be resolved with a value.
+     * Test if a given name can be resolved with a value.
      *
      * This can be either a temporaryfilestore file or a command parameter
      *
      * @param name the name to be tested for resolution
      * @return true if the name can be resolved
      */
-    public boolean isParamDefined(Optional<String> name) {
+    public boolean isParamDefined(String name) {
         // precedence; TEMPORARY FILES, PARAMETERS (WITH FULL PARENT DESCENT);
-        return (ee.tempfs.get(name)
-                .or(() -> getParameterValue(name))).isPresent();
+        return (ee.tempfs.exists(name)
+                || getParameterValue(name).isPresent());
     }
 
     /**

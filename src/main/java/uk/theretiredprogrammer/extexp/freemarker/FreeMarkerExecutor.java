@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.extexp.freemarker;
 
 //import freemarker.template.Configuration;
 //import freemarker.template.TemplateException;
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -109,7 +108,7 @@ public class FreeMarkerExecutor extends Executor {
                         + "in current template root\n"
                         + "root=" + templateroot
                         + "template=" + templatename);
-                return;
+                //return;
             }
 //            cfg.getTemplate(templatename.substring(templateroot.length())).process(model, writer);
 //        } catch (TemplateException | IOException ex) {
@@ -119,12 +118,16 @@ public class FreeMarkerExecutor extends Executor {
 
     private Map<String, String> getFreemarkerMap() {
         Map<String, String> res = new HashMap<>();
-        Set<String> names = new HashSet<>(ee.tempfs.getAllNames());
+        Set<String> names = new HashSet<>(ee.tempfs.allnames());
         names.forEach((name) -> {
-            Optional<String> p = ee.tempfs.get(name);
-            if (p.isPresent()) {
+            try {
+                Optional<String> p = ee.tempfs.read(name);
+                if (p.isPresent()) {
                     res.put(name, p.get());
                 }
+            } catch (IOException ex) {
+                ee.errln("Error when creating the Freemarker map - "+ ex.getLocalizedMessage());
+            }
         });
         names = new HashSet<>(getAllNames());
         names.forEach((name) -> {

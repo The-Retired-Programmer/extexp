@@ -48,7 +48,7 @@ public class IOInputString extends IO<String> {
 
     @Override
     protected String setup(String name, ExecutionEnvironment ee) throws IOException {
-        Optional<String> tempfs = ee.tempfs.get(name);
+        Optional<String> tempfs = ee.tempfs.read(name);
         return tempfs.isPresent() ? tempfs.get() : getFileOrParameterValue(name, ee);
     }
 

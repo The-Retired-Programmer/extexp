@@ -78,11 +78,15 @@ public class FreeMarker2Executor extends Executor {
     }
 
     private void addAttributes(Map<String,Object> attributes) {
-        Set<String> names = new HashSet<>(ee.tempfs.getAllNames());
+        Set<String> names = new HashSet<>(ee.tempfs.allnames());
         names.forEach((name) -> {
-            Optional<String> p = ee.tempfs.get(name);
-            if (p.isPresent()) {
-                attributes.put(name, p.get());
+            try {
+                Optional<String> p = ee.tempfs.read(name);
+                if (p.isPresent()) {
+                    attributes.put(name, p.get());
+                }
+            } catch (IOException ex) {
+                ee.errln("Error when creating the Freemarker map - "+ ex.getLocalizedMessage());
             }
         });
         names = new HashSet<>(getAllNames());

@@ -54,7 +54,7 @@ public class IOReader extends IO<Reader> {
 
     @Override
     protected Reader setup(String name, ExecutionEnvironment ee) throws IOException {
-        Optional<String> fs = ee.tempfs.get(name);
+        Optional<String> fs = ee.tempfs.read(name);
         return fs.isPresent() ? new StringReader(fs.get()) : getfilereader(name, ee);
     }
 

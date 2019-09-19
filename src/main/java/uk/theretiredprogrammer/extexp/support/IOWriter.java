@@ -78,11 +78,10 @@ public class IOWriter extends IO<Writer> {
     protected void drop(Writer writer, ExecutionEnvironment ee) throws IOException {
         writer.close();
         if (writer instanceof StringWriter) {
-            Optional<String> previous = ee.tempfs.get(tempfilename);
-            if (append && previous.isPresent()) {
-                ee.tempfs.put(tempfilename, previous.get() + ((StringWriter) writer).toString());
+            if (append) {
+                ee.tempfs.append(tempfilename, ((StringWriter) writer).toString());
             } else {
-                ee.tempfs.put(tempfilename, ((StringWriter) writer).toString());
+                ee.tempfs.write(tempfilename, ((StringWriter) writer).toString());
             }
         }
     }

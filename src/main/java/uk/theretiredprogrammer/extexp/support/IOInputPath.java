@@ -50,7 +50,7 @@ public class IOInputPath extends IO<String> {
 
     @Override
     protected String setup(String parametervalue, ExecutionEnvironment ee) throws IOException {
-        Optional<String> fs = ee.tempfs.get(parametervalue);
+        Optional<String> fs = ee.tempfs.read(parametervalue);
         FileObject fo = fs.isPresent()
                 ? stringToFile(ee.paths.getCachefolder(), parametervalue, fs.get(), ee)
                 : findFile(ee, parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());

@@ -16,7 +16,11 @@
 package uk.theretiredprogrammer.extexp.support;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Optional;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.support.local.ErrorCount;
 import uk.theretiredprogrammer.extexp.support.local.IDGenerator;
@@ -47,9 +51,9 @@ public class ExecutionEnvironment {
     public final IOPaths paths;
 
     /**
-     * the {@link TemporaryFileStore} object
+     *  the Memory FS
      */
-    public final TemporaryFileStore tempfs;
+    public final MemoryFS tempfs;
 
     /**
      * the {@link CommandSequenceStore} object
@@ -66,6 +70,8 @@ public class ExecutionEnvironment {
      */
     public final ErrorCount errorflag;
     
+    
+
     /**
      * Constructor
      *
@@ -77,21 +83,20 @@ public class ExecutionEnvironment {
      */
     public ExecutionEnvironment(FileObject projectfolder, FileObject buildfile,
             OutputWriter msg, OutputWriter err) throws IOException {
-                this.commandsequences = new CommandSequenceStore(buildfile, err::println);
-                this.paths = new IOPaths(
-                        projectfolder,
-                        projectfolder.getFileObject("src"),
-                        useOrCreateFolder(err, projectfolder, "cache", buildfile.getName()),
-                        useOrCreateFolder(err, projectfolder, "output", buildfile.getName()),
-                        msg,
-                        err);
-                this.tempfs = new TemporaryFileStore();
-                this.idgenerator = new IDGenerator();
-                this.errorflag = new ErrorCount();
+        this.commandsequences = new CommandSequenceStore(buildfile, err::println);
+        this.paths = new IOPaths(
+                projectfolder,
+                projectfolder.getFileObject("src"),
+                useOrCreateFolder(err, projectfolder, "cache", buildfile.getName()),
+                useOrCreateFolder(err, projectfolder, "output", buildfile.getName()),
+                msg,
+                err);
+        this.tempfs = new MemoryFS();
+        this.idgenerator = new IDGenerator();
+        this.errorflag = new ErrorCount();
     }
-    
 
-    private ExecutionEnvironment(IOPaths paths, TemporaryFileStore tempfs, CommandSequenceStore commandsequences,
+    private ExecutionEnvironment(IOPaths paths, MemoryFS tempfs, CommandSequenceStore commandsequences,
             IDGenerator idgenerator, ErrorCount errorflag) {
         this.paths = paths;
         this.tempfs = tempfs;
@@ -99,7 +104,6 @@ public class ExecutionEnvironment {
         this.idgenerator = idgenerator;
         this.errorflag = errorflag;
     }
-
 
     /**
      * Clone a copy of this Environment, with revised IoPaths
@@ -121,10 +125,11 @@ public class ExecutionEnvironment {
      * @return the new ExecutionEnvironment
      */
     public final ExecutionEnvironment cloneWithNewTFS(IOPaths paths) {
-        return new ExecutionEnvironment(paths, new TemporaryFileStore(), this.commandsequences, this.idgenerator, this.errorflag);
+        return new ExecutionEnvironment(paths, new MemoryFS(),
+                this.commandsequences, this.idgenerator, this.errorflag);
     }
-    
-    private final FileObject useOrCreateFolder(OutputWriter err, FileObject parent, String... foldernames) {
+
+    private FileObject useOrCreateFolder(OutputWriter err, FileObject parent, String... foldernames) {
         FileObject folder = parent;
         for (String foldername : foldernames) {
             FileObject parentfolder = folder;
@@ -143,7 +148,6 @@ public class ExecutionEnvironment {
         }
         return folder;
     }
-
 
     // utility methods
     /**

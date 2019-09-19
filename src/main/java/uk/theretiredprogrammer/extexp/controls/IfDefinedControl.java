@@ -63,7 +63,7 @@ public class IfDefinedControl extends Control {
     @Override
     protected void executecommand() {
         Optional<String> ifparam = getParameter("If-defined");
-        if (isParamDefined(ifparam)) {
+        if (isParamDefined(ifparam.get())) {
             getCommand("then").ifPresent(cmd -> exec(cmd));
         } else {
             getCommand("else").ifPresent(cmd -> exec(cmd));

@@ -50,7 +50,7 @@ public class IOInputFO extends IO<FileObject> {
 
     @Override
     protected FileObject setup(String name, ExecutionEnvironment ee) throws IOException {
-        Optional<String> fs = ee.tempfs.get(name);
+        Optional<String> fs = ee.tempfs.read(name);
         return fs.isPresent() ? stringToFile(ee.paths.getCachefolder(), name, fs.get(), ee)
                 : findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
     }
