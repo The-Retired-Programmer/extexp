@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.extexp.support;
 
+import java.util.HashMap;
 import java.util.Map;
+import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -50,16 +52,35 @@ public abstract class Executor extends Command {
      * @return the array of pindata texts
      */
     public abstract String[] getPrimaryPinData();
-
+    
     @Override
     public final void parse(JsonObject jobj) {
         for (Map.Entry<String, JsonValue> paramdef : jobj.entrySet()) {
             JsonValue val = paramdef.getValue();
+            String name = paramdef.getKey();
             switch (val.getValueType()) {
                 case OBJECT:
+                        ee.errln("Error - JsonObject not allowed at this point\n" + jobj.toString());
+                        return;
                 case ARRAY:
-                    ee.errln("Error - illegal parameter type in object\n" + jobj.toString());
-                    return;
+                    Map<String, String> group = new HashMap<>();
+                    ((JsonArray) val).forEach(item -> {
+                        if (item.getValueType() != JsonValue.ValueType.STRING) {
+                            ee.errln("Error - illegal value in Array\n" + item.toString());
+                            return;
+                        }
+                        String itemstr = ((JsonString) item).getString();
+                        int pos = itemstr.indexOf("->");
+                        if (pos == -1) {
+                            ee.errln("Error - badly formated value (-> missing) in Array\n" + item.toString());
+                            return;
+                        }
+                        String filename = itemstr.substring(0, pos);
+                        String key = itemstr.substring(pos + 2);
+                        group.put(key, filename);
+                    });
+                    setFileGroup(name, group);
+                    break;
                 case STRING:
                     putParameter(paramdef.getKey(), ((JsonString) val).getString());
                     break;

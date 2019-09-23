@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -84,28 +85,45 @@ public abstract class Control extends Command {
     public void parse(JsonObject jobj) {
         for (Entry<String, JsonValue> paramdef : jobj.entrySet()) {
             JsonValue val = paramdef.getValue();
+            String name = paramdef.getKey();
             switch (val.getValueType()) {
                 case OBJECT:
                     Optional<? extends Command> cmd = CommandFactory.create((JsonObject) val);
                     cmd.ifPresent(c -> commands.put(paramdef.getKey(), c));
                     break;
                 case ARRAY:
-                    return;
-                //throw new IOException("illegal parameter type in Control");
+                    Map<String, String> group = new HashMap<>();
+                    ((JsonArray) val).forEach(item -> {
+                        if (item.getValueType() != JsonValue.ValueType.STRING) {
+                            ee.errln("Error - illegal value in Array\n" + item.toString());
+                            return;
+                        }
+                        String itemstr = ((JsonString) item).getString();
+                        int pos = itemstr.indexOf("->");
+                        if (pos == -1) {
+                            ee.errln("Error - badly formated value (-> missing) in Array\n" + item.toString());
+                            return;
+                        }
+                        String filename = itemstr.substring(0, pos);
+                        String key = itemstr.substring(pos + 2);
+                        group.put(key, filename);
+                    });
+                    setFileGroup(name, group);
+                    break;
                 case STRING:
-                    putParameter(paramdef.getKey(), ((JsonString) val).getString());
+                    putParameter(name, ((JsonString) val).getString());
                     break;
                 case NUMBER:
                     JsonNumber num = (JsonNumber) val;
                     try {
                         long l = num.longValueExact();
-                        putParameter(paramdef.getKey(), Long.toString(l));
+                        putParameter(name, Long.toString(l));
                     } catch (ArithmeticException ex) {
-                        putParameter(paramdef.getKey(), num.toString());
+                        putParameter(name, num.toString());
                     }
                     break;
                 default:
-                    putParameter(paramdef.getKey(), val.toString());
+                    putParameter(name, val.toString());
             }
         }
     }
@@ -145,7 +163,7 @@ public abstract class Control extends Command {
      * Execute a command sequence in a new ExecutionEnvironment.
      *
      * @param seq the command sequence
-     * @param newee  the ExecutionEnvironment to be used
+     * @param newee the ExecutionEnvironment to be used
      */
     public void execseq(CommandSequence seq, ExecutionEnvironment newee) {
         seq.stream().forEach(command -> {

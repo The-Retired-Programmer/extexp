@@ -16,11 +16,7 @@
 package uk.theretiredprogrammer.extexp.support;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Optional;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.windows.OutputWriter;
 import uk.theretiredprogrammer.extexp.support.local.ErrorCount;
 import uk.theretiredprogrammer.extexp.support.local.IDGenerator;

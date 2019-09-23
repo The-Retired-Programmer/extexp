@@ -16,14 +16,15 @@
 package uk.theretiredprogrammer.extexp.basic;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputString;
-import uk.theretiredprogrammer.extexp.support.IOWriter;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The COPY executor class.
  *
- * Copy a file from the IOInputString name to IOWriter name.
+ * Copy a file.
  *
  * Requires two parameters:
  *
@@ -47,10 +48,9 @@ public class CopyExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOWriter output = new IOWriter(ee, getParameter("to"));
-                IOInputString input = new IOInputString(ee, getParameter("from"))) {
-            output.get().write(input.get());
+        try (Writer output = IOFactory.createWriter(ee, getParameter("to"));
+                Reader input = IOFactory.createReader(ee, getParameter("from"))) {
+            input.transferTo(output);
         }
     }
 }

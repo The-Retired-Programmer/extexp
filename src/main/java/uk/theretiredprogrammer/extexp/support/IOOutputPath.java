@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.extexp.support;
 
 import java.io.IOException;
 import java.util.Optional;
-import uk.theretiredprogrammer.extexp.support.local.IO;
 
 /**
  * An IO Descriptor which will return an output path for given filename.

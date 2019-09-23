@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.extexp.xslt;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -25,8 +27,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOReader;
-import uk.theretiredprogrammer.extexp.support.IOWriter;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The XSLT executor class.
@@ -59,17 +60,17 @@ public class XsltExecutor extends Executor {
     @Override
     protected void executecommand() throws IOException {
         try (
-                IOWriter output = new IOWriter(ee, getParameter("to"));
-                IOReader input = new IOReader(ee, getParameter("from"));
-                IOReader stylesheet = new IOReader(ee, getParameter("stylesheet"))) {
+                Writer output = IOFactory.createWriter(ee, getParameter("to"));
+                Reader input = IOFactory.createReader(ee, getParameter("from"));
+                Reader stylesheet = IOFactory.createReader(ee, getParameter("stylesheet"))) {
             try {
                 Transformer tr;
-                tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet.get()));
+                tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet));
                 DOMResult dr = new DOMResult();
-                tr.transform(new StreamSource(input.get()), dr);
+                tr.transform(new StreamSource(input), dr);
                 //
                 tr = TransformerFactory.newInstance().newTransformer();
-                tr.transform(new DOMSource((Document) dr.getNode()), new StreamResult(output.get()));
+                tr.transform(new DOMSource((Document) dr.getNode()), new StreamResult(output));
             } catch (TransformerException ex) {
                 throw new IOException(ex);
             }

@@ -16,8 +16,6 @@
 package uk.theretiredprogrammer.extexp.freemarker;
 
 import java.util.function.Consumer;
-import org.openide.util.NbPreferences;
-import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 import uk.theretiredprogrammer.extexp.api.ExecutorFactory;
 import uk.theretiredprogrammer.extexp.support.Executor;
@@ -34,17 +32,13 @@ public class FreeMarkerExecutorFactory implements ExecutorFactory {
     public Executor create(String name) {
         switch (name) {
             case "freemarker":
-                String templateroot = NbPreferences.forModule(FreeMarkerPanel.class).get("FreeMarkerRootPath", Utilities.isWindows() ? "c:/" : "/");
-                return new FreeMarkerExecutor(templateroot);
-            case "freemarker2":
-                return new FreeMarker2Executor();
+                return new FreeMarkerExecutor();
         }
         return null;
     }
 
     @Override
     public void consumeAllExecutors(Consumer<Executor> consumer) {
-        String templateroot = NbPreferences.forModule(FreeMarkerPanel.class).get("FreeMarkerRootPath", Utilities.isWindows() ? "c:/" : "/");
-        consumer.accept(new FreeMarkerExecutor(templateroot));
+        consumer.accept(new FreeMarkerExecutor());
     }
 }

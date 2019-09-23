@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.support.local;
+package uk.theretiredprogrammer.extexp.support;
 
 import java.io.Closeable;
 import java.io.IOException;

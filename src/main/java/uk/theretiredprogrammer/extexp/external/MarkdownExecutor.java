@@ -18,10 +18,12 @@ package uk.theretiredprogrammer.extexp.external;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
 import org.openide.util.NbPreferences;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOInputPath;
-import uk.theretiredprogrammer.extexp.support.IOReader;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 import uk.theretiredprogrammer.extexp.support.IOWriter;
 
 /**
@@ -60,10 +62,9 @@ public class MarkdownExecutor extends Executor {
     @Override
     protected void executecommand() throws IOException {
         try (
-                IOWriter output = new IOWriter(ee, getParameter("to"));
-                IOReader input = new IOReader(ee, getParameter("from"));
-                BufferedReader breader = new BufferedReader(input.get());
-                PrintWriter bwriter = new PrintWriter(output.get())) {
+                Writer output = IOFactory.createWriter(ee, getParameter("to"));
+                BufferedReader input = IOFactory.createReader(ee, getParameter("from"));
+                PrintWriter bwriter = new PrintWriter(output)) {
             String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
             ProcessExecutor pexec;
             try {
@@ -75,7 +76,7 @@ public class MarkdownExecutor extends Executor {
             }
             pexec.setDisplayName("MARKDOWN");
             pexec.setErrorLineFunction(s -> ee.errln(s));
-            pexec.setInputLineFunction(() -> readLine(breader));
+            pexec.setInputLineFunction(() -> readLine(input));
             pexec.setOutputLineFunction(s -> bwriter.println(s));
             pexec.execute();
         }

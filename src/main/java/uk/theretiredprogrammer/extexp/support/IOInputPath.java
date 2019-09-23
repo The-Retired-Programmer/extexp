@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import uk.theretiredprogrammer.extexp.support.local.IO;
 
 /**
  * An IO Descriptor which will return an input path for given filename.

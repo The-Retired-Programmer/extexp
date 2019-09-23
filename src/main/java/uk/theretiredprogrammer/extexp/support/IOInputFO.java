@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.extexp.support;
 import java.io.IOException;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
-import uk.theretiredprogrammer.extexp.support.local.IO;
 
 /**
  * An IO Descriptor which will return a FileObject, which can be used to obtain
@@ -26,12 +25,9 @@ import uk.theretiredprogrammer.extexp.support.local.IO;
  *
  * The name can reference content in any of:
  *
- * a "file" in the memory based temporary filestore (a StringReader)
+ * a "file" in the memory based temporary filestore
  *
- * a file located in the content folder or the shared content folder (a
- * FileReader)
- *
- * a parameter (a StringReader)
+ * a file located in the content folder or the shared content folder
  *
  * @author richard linsdale
  */
@@ -50,8 +46,8 @@ public class IOInputFO extends IO<FileObject> {
 
     @Override
     protected FileObject setup(String name, ExecutionEnvironment ee) throws IOException {
-        Optional<String> fs = ee.tempfs.read(name);
-        return fs.isPresent() ? stringToFile(ee.paths.getCachefolder(), name, fs.get(), ee)
+        FileObject fo = ee.tempfs.getFileObject(name);
+        return fo != null ? fo 
                 : findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
     }
 

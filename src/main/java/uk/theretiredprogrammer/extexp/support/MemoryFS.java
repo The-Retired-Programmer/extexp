@@ -15,10 +15,11 @@
  */
 package uk.theretiredprogrammer.extexp.support;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -41,13 +42,22 @@ public class MemoryFS {
     }
     
     /**
-     * Get a list of all filenames in the temporary filestore.
+     *  get the root folder for this filesystem
      * 
+     * @return the root folder
+     */
+    public FileObject getRoot() {
+        return tempfsroot;
+    }
+
+    /**
+     * Get a list of all filenames in the temporary filestore.
+     *
      * @return the list of filenames
      */
-    public List<String> allnames(){
+    public List<String> allnames() {
         return Arrays.asList(tempfsroot.getChildren()).stream()
-                .filter(fo-> fo.isData())
+                .filter(fo -> fo.isData())
                 .map(fo -> fo.getNameExt())
                 .collect(Collectors.toList());
     }
@@ -70,6 +80,22 @@ public class MemoryFS {
      */
     public FileObject getFileObject(String name) {
         return tempfsroot.getFileObject(name);
+    }
+
+    /**
+     * Get the InputStreamReader for reading a temporary file.
+     *
+     * @param name the name of a temporary file
+     * @return the InputStreamReader object
+     */
+    public InputStreamReader getInputStreamReader(String name) {
+        FileObject fo;
+        try {
+            return (fo = tempfsroot.getFileObject(name)) != null
+                    ? new InputStreamReader(fo.getInputStream()) : null;
+        } catch (FileNotFoundException ex) {
+            return null;
+        }
     }
 
     /**
@@ -101,13 +127,13 @@ public class MemoryFS {
         if (exists(name)) {
             FileObject fo = tempfsroot.getFileObject(name);
             try (OutputStream os = fo.getOutputStream();
-                    PrintWriter pw = new PrintWriter(os) ){
+                    PrintWriter pw = new PrintWriter(os)) {
                 pw.print(content);
             }
         } else {
             FileObject fo = tempfsroot.createData(name);
             try (OutputStream os = fo.getOutputStream();
-                    PrintWriter pw = new PrintWriter(os) ){
+                    PrintWriter pw = new PrintWriter(os)) {
                 pw.print(content);
             }
         }
@@ -128,16 +154,50 @@ public class MemoryFS {
             FileObject fo = tempfsroot.getFileObject(name);
             String previouscontent = fo.asText();
             try (OutputStream os = fo.getOutputStream();
-                    PrintWriter pw = new PrintWriter(os) ){
+                    PrintWriter pw = new PrintWriter(os)) {
                 pw.print(previouscontent);
                 pw.print(content);
             }
         } else {
             FileObject fo = tempfsroot.createData(name);
             try (OutputStream os = fo.getOutputStream();
-                    PrintWriter pw = new PrintWriter(os) ){
+                    PrintWriter pw = new PrintWriter(os)) {
                 pw.print(content);
             }
+        }
+    }
+
+    /**
+     * Get the OutputStreamWriter for writing to a temporary file.
+     *
+     * @param name the name of a temporary file
+     * @return the OutputStreamWriter object
+     */
+    public OutputStreamWriter getOutputStreamWriter(String name) {
+        return getOutputStreamWriter(name, false);
+    }
+
+    /**
+     * Get the OutputStreamWriter for writing to a temporary file.
+     *
+     * @param name the name of a temporary file
+     * @param append true if writer is to set up for appending
+     * @return the OutputStreamWriter object
+     */
+    public OutputStreamWriter getOutputStreamWriter(String name, boolean append) {
+        FileObject fo;
+        try {
+            if ((fo = tempfsroot.getFileObject(name)) != null) {
+                OutputStreamWriter osw = new OutputStreamWriter(fo.getOutputStream());
+                if (append) {
+                    osw.write(fo.asText());
+                }
+                return osw;
+            } else {
+                return new OutputStreamWriter(tempfsroot.createAndOpen(name));
+            }
+        } catch (IOException ex) {
+            return null;
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 richard linsdale.
+ * Copyright 2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,21 @@ import java.util.Optional;
 import org.openide.filesystems.FileObject;
 
 /**
- * An IO Descriptor which will return a writer, which can be used to save
+ * An IO Descriptor which will return a FileObject, which can be used to save
  * content
  *
  * The content is stored in one of:
  *
- * if name starts with '!' - a "file" in the memory based temporary filestore (a
- * StringWriter)
+ * if name starts with '!' - a file in the memory based temporary filestore
  *
- * if name starts with '+' - appends to a "file" in the memory based temporary
- * filestore (a StringWriter)
+ * if name starts with '+' - appends to a file in the memory based temporary
+ * filestore
  *
- * a file located in the output folder(a FileWriter)
+ * a file located in the output folder
  *
  * @author richard linsdale
  */
-public class IOWriter extends IO<Writer> {
+public class IOOutputFO extends IO<FileObject> {
 
     private String tempfilename;
     private boolean append;
@@ -48,48 +47,38 @@ public class IOWriter extends IO<Writer> {
     /**
      * Constructor
      *
-     * @param ee the ExecutorEnvironment
-     * @param name the filename (optionally prefixed by '!' or '+')
-     * @throws IOException if problems
+     * @param ee the ExecutionEnvironment
+     * @param name the name of the input source
+     * @throws java.io.IOException if problem
      */
-    public IOWriter(ExecutionEnvironment ee, Optional<String> name) throws IOException {
+    public IOOutputFO(ExecutionEnvironment ee, Optional<String> name) throws IOException {
         super(ee, name);
     }
 
     @Override
-    protected Writer setup(String name, ExecutionEnvironment ee) throws IOException {
-        Writer writer;
+    protected FileObject setup(String name, ExecutionEnvironment ee) throws IOException {
         if (name.startsWith("!")) {
-            writer = new StringWriter();
             tempfilename = name.substring(1);
             append = false;
+            return ee.tempfs.getFileObject(name); // TODO - ***************************************
         } else if (name.startsWith("+")) {
-            writer = new StringWriter();
             tempfilename = name.substring(1);
             append = true;
+            return ee.tempfs.getFileObject(name); // TODO - *************************************** 
         } else {
-            writer = new BufferedWriter(new OutputStreamWriter(getOutputStream(ee.paths.getOutfolder(), name)));
+            return getOutputFO(ee.paths.getOutfolder(),name);
         }
-        return writer;
     }
 
     @Override
-    protected void drop(Writer writer, ExecutionEnvironment ee) throws IOException {
-        writer.close();
-        if (writer instanceof StringWriter) {
-            if (append) {
-                ee.tempfs.append(tempfilename, ((StringWriter) writer).toString());
-            } else {
-                ee.tempfs.write(tempfilename, ((StringWriter) writer).toString());
-            }
-        }
+    protected void drop(FileObject fo, ExecutionEnvironment ee) throws IOException {
     }
-
-    private OutputStream getOutputStream(FileObject todirectory, String name) throws IOException {
+    
+    private FileObject getOutputFO(FileObject todirectory, String name) throws IOException {
         FileObject outfo = todirectory.getFileObject(name);
         if (outfo != null) {
             outfo.delete();
         }
-        return todirectory.createAndOpen(name);
+        return todirectory.createData(name);
     }
 }

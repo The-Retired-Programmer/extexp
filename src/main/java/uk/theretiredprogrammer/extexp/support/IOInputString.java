@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.extexp.support;
 import java.io.IOException;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
-import uk.theretiredprogrammer.extexp.support.local.IO;
 
 /**
  * An IO Descriptor which will return the content for a given name.

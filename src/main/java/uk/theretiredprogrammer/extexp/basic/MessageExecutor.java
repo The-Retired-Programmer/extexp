@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.extexp.basic;
 
 import java.io.IOException;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputString;
 
 /**
  * The MESSAGE executor class.
@@ -44,8 +43,6 @@ public class MessageExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (IOInputString message = new IOInputString(ee, this.getParameter("text"))) {
-            ee.println(message.get());
-        }
+        ee.println(this.getParameter("text").get());
     }
 }

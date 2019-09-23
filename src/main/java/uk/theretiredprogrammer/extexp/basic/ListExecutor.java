@@ -15,9 +15,10 @@
  */
 package uk.theretiredprogrammer.extexp.basic;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputString;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The LIST executor class.
@@ -28,7 +29,7 @@ import uk.theretiredprogrammer.extexp.support.IOInputString;
  *
  * 'title' - the title which is prepended to the output.
  *
- * 'from' - the name of the IOInputString.
+ * 'from' - the name of the input file or parameter
  *
  * @author richard linsdale
  */
@@ -46,13 +47,11 @@ public class ListExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOInputString input = new IOInputString(ee, this.getParameter("from"));
-                IOInputString title = new IOInputString(ee, this.getParameter("title"))) {
+        try (BufferedReader input = IOFactory.createReader(ee, this.getParameter("from"))) {
             ee.println("======================================");
-            ee.println(title.get());
+            ee.println(this.getParameter("title").get());
             ee.println("======================================");
-            ee.println(input.get());
+            input.lines().forEach(line -> ee.println(line));
             ee.println("======================================");
         }
     }

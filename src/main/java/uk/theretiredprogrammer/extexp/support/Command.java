@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.extexp.support;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import javax.json.JsonObject;
-import org.openide.filesystems.FileObject;
 
 /**
  * The Command is a representation of the common functionality of both Control
@@ -38,7 +36,24 @@ import org.openide.filesystems.FileObject;
  * Basic command information for use by the Visual editor (name and image)
  *
  * Parameter access (read), both raw format and full expanded (parameter
- * substitution, file content expanded)
+ * substitution)
+ *
+ * The substitution indicator is of the form ${'substitutionkey'}. There is
+ * special format of the indicator ${*} which is request for a unique ID to be
+ * substituted. see
+ * {@link uk.theretiredprogrammer.extexp.support.local.IDGenerator} for more
+ * details of this.
+ *
+ * parameter substitution rule - replacement of the substitution indicator with
+ * the parameter value, seaching first the local parameters and then in turn
+ * through parent command parameters
+ *
+ * Otherwise - the parameter name will replace the substitution indicator.
+ *
+ * Note that the processing of substitution is fully recursive so any further
+ * substitution indicators found during the stages of the process will
+ * themselves be substituted.
+ *
  *
  * @author richard linsdale
  */
@@ -70,6 +85,7 @@ public abstract class Command {
     protected ExecutionEnvironment ee;
 
     private final Map<String, String> parameters = new HashMap<>();
+    protected Map<String,Map<String,String>> filegroups = new HashMap<>();
     private Command parent = null;
 
     /**
@@ -172,15 +188,14 @@ public abstract class Command {
      * @param parent the parent command
      */
     public void setParent(Command parent) {
-        this.parent = (Command) parent;
+        this.parent = parent;
     }
 
     /**
      * Get the expanded parameter value for a named parameter.
      *
-     * The parameter can be either the a localfilesystem file, a local parameter
-     * or an outer command's parameter. Expansion include both file content
-     * expansion and parameter substitution
+     * The parameter can be either the a local parameter or an outer command's
+     * parameter.
      *
      * @param name the name of the requested parameter value
      * @return the expanded parameter value
@@ -200,72 +215,22 @@ public abstract class Command {
         return parent.getParameterValue(name);
     }
 
-    private Optional<String> getParameterValue(Optional<String> name) {
-        if (name.isPresent()) {
-            String pval = parameters.get(name.get());
-            if (pval != null) {
-                return Optional.of(pval);
-            }
-            if (parent == null) {
-                return Optional.empty();
-            }
-            return parent.getParameterValue(name);
-        }
-        return Optional.empty();
-    }
-
-    private Optional<String> getFileValue(String name) {
-        return Optional.ofNullable(
-                findFile(ee, name, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder())
-                        .map(fo -> getFileContent(fo, ee)).orElse(null));
-    }
-
-    private String getFileContent(FileObject fo, ExecutionEnvironment ee) {
-        try {
-            return fo.asText();
-        } catch (IOException ex) {
-            ee.errln("Error when extracting text from file: " + ex.getLocalizedMessage());
-            return null;
-        }
-    }
-
-    private Optional<FileObject> findFile(ExecutionEnvironment ee, String filename, FileObject... fos) {
-        for (FileObject fo : fos) {
-            if (fo != null) {
-                FileObject file = fo.getFileObject(filename);
-                if (file != null && file.isData()) {
-                    return Optional.ofNullable(file);
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-    protected Optional<String> getSubText(String name) {
-        try {
-            // precedence; TEMPORARY FILES / FileValue / Parameter value
-            return ee.tempfs.read(name)
-                    .or(() -> getParameterValue(name))
-                    .or(() -> getFileValue(name))
-                    .or(() -> Optional.ofNullable(name));
-        } catch (IOException ex) {
-            ee.errln("Error during parameter evaluation - " + ex.getLocalizedMessage());
-            return Optional.empty();
-        }
+    private Optional<String> getSubText(String name) {
+        // precedence; Parameter value/parameter name
+        return getParameterValue(name)
+                .or(() -> Optional.ofNullable(name));
     }
 
     /**
      * Test if a given name can be resolved with a value.
      *
-     * This can be either a temporaryfilestore file or a command parameter
+     * This is testing for command parameter
      *
      * @param name the name to be tested for resolution
      * @return true if the name can be resolved
      */
     public boolean isParamDefined(String name) {
-        // precedence; TEMPORARY FILES, PARAMETERS (WITH FULL PARENT DESCENT);
-        return (ee.tempfs.exists(name)
-                || getParameterValue(name).isPresent());
+        return getParameterValue(name).isPresent();
     }
 
     /**
@@ -293,98 +258,12 @@ public abstract class Command {
         return extras;
     }
 
-    /**
-     * Process an input string substituting all occurrences of substitution
-     * indicators with text generated by a supplied lookup function, the
-     * resulting text being written to a given Writer.
-     *
-     * The substitution indicator is of the form ${'substitutionkey'}. There is
-     * special format of the indicator ${*} which is request for a unique ID to
-     * be substituted. see
-     * {@link uk.theretiredprogrammer.extexp.support.local.IDGenerator} for more
-     * details of this.
-     *
-     * Substitution can be from various sources, the associated priority order
-     * is:
-     *
-     * 1) localfilestore - replacement of substitution indicator with the
-     * textual content of the named file in localfilestore
-     *
-     * 2) parameter - replacement of the substitution indicator with the
-     * parameter value, seaching first the local parameters and then in turn
-     * through parent command parameters
-     *
-     * 3) File store - two directories within the filestore are then searched.
-     * The first is the current source folder, the second is the shared source
-     * folder (see {@link IOPaths} for more details of these folders}). If a
-     * file exists with the substitutionkey as its name then its content will
-     * replace the substitution indicator.
-     *
-     * 4) Otherwise - the default if no previous cases are matched, then the raw
-     * parameter value will replace the substitution indicator.
-     *
-     * Note that the processing of substitution is fully recursive so any
-     * further substitution indicators found during the stages of the process
-     * will themselves be substituted.
-     *
-     * @param in the input string
-     * @param getparam the function to provide a substitution value given the
-     * substitution key
-     * @param out the Writer to receive the resulting string
-     */
-    protected void substitute(Optional<String> in, Function<String, Optional<String>> getparam, Writer out) {
-        substitute(in, getparam).ifPresent(s -> writeout(s, out));
-    }
-
-    private void writeout(String s, Writer out) {
-        try {
-            out.write(s);
-        } catch (IOException ex) {
-            ee.errln("Error while writing substituted text: " + ex.getLocalizedMessage());
-        }
-    }
-
-    /**
-     * Process an input string substituting all occurrences of substitution
-     * indicators with text generated by a supplied lookup function, return the
-     * resulting string.
-     *
-     * The substitution indicator is of the form ${'substitutionkey'}. There is
-     * special format of the indicator ${*} which is request for a unique ID to
-     * be substituted. see
-     * {@link uk.theretiredprogrammer.extexp.support.local.IDGenerator} for more
-     * details of this.
-     *
-     * Substitution can be from various sources, the associated priority order
-     * is:
-     *
-     * 1) localfilestore - replacement of substitution indicator with the
-     * textual content of the named file in localfilestore
-     *
-     * 2) parameter - replacement of the substitution indicator with the
-     * parameter value, seaching first the local parameters and then in turn
-     * through parent command parameters
-     *
-     * 3) File store - two directories within the filestore are then searched.
-     * The first is the current source folder, the second is the shared source
-     * folder (see {@link IOPaths} for more details of these folders}). If a
-     * file exists with the substitutionkey as its name then its content will
-     * replace the substitution indicator.
-     *
-     * 4) Otherwise - the default if no previous cases are matched, then the raw
-     * parameter value will replace the substitution indicator.
-     *
-     * Note that the processing of substitution is fully recursive so any
-     * further substitution indicators found during the stages of the process
-     * will themselves be substituted.
-     *
-     * @param in the input string
-     * @param getparam the function to provide a substitution value given the
-     * substitution key
-     * @return the resulting string
-     */
-    protected Optional<String> substitute(Optional<String> in, Function<String, Optional<String>> getparam) {
+    private Optional<String> substitute(Optional<String> in, Function<String, Optional<String>> getparam) {
         return in.map(i -> sub(i, getparam));
+    }
+
+    protected String substitute(String string) {
+        return sub(string, (s) -> getSubText(s));
     }
 
     /* note this is not private, as it has been exposed to support unit testing */
@@ -396,8 +275,7 @@ public abstract class Command {
         StringBuilder sb = new StringBuilder();
         String fragment = in.substring(0, p);
         if (!fragment.isEmpty()) {
-            sb.append(fragment
-            );
+            sb.append(fragment);
         }
         int q = in.indexOf("}", p + 2);
         String name = in.substring(p + 2, q);
@@ -414,5 +292,26 @@ public abstract class Command {
             sb.append(sub(fragment, getparam));
         }
         return sb.toString();
+    }
+    
+    protected Map<String,String> getFileGroup(String name) {
+        Map<String,String> all = new HashMap<>();
+        if (parent != null) {
+            all.putAll(parent.getFileGroup(name));
+        }
+        Map<String,String> group;
+        if ((group=filegroups.get(name)) != null){
+            all.putAll(group);
+        }
+        return all;
+    }
+    
+    protected void setFileGroup(String name, Map<String,String> group){
+        if (filegroups.containsKey(name)) {
+            Map<String,String> existinggroup = filegroups.get(name);
+            existinggroup.putAll(group);
+        } else {
+            filegroups.put(name, group);
+        }
     }
 }

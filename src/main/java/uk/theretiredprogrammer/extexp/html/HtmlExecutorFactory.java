@@ -22,7 +22,7 @@ import uk.theretiredprogrammer.extexp.support.Executor;
 
 /**
  * The Factory creating a set of html orientated Executors. These include:
- * Markdown, MarkdownAndSubstitute and CreateImageSet.
+ * CreateImageSet.
  *
  * @author richard linsdale
  */

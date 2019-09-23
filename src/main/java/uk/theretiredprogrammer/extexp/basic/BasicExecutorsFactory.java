@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.extexp.external;
+package uk.theretiredprogrammer.extexp.basic;
 
 import java.util.function.Consumer;
 import org.openide.util.lookup.ServiceProvider;
@@ -21,34 +21,34 @@ import uk.theretiredprogrammer.extexp.api.ExecutorFactory;
 import uk.theretiredprogrammer.extexp.support.Executor;
 
 /**
- * The Factory creating External Process Executors. These include: FOP and
- * External.
+ * The Factory creating a set of basic Executors. These include: Copy,
+ * CopyResources, List and Substitute.
  *
  * @author richard linsdale
  */
 @ServiceProvider(service = ExecutorFactory.class)
-public class FopExecutorFactory implements ExecutorFactory {
+public class BasicExecutorsFactory implements ExecutorFactory {
 
     @Override
     public Executor create(String name) {
         switch (name) {
-            case "markdown":
-                return new MarkdownExecutor();
-            case "markdown-substitute":
-                return new MarkdownAndSubstituteExecutor();
-            case "fop":
-                return new FopExecutor();
-            case "external":
-                return new ExternalExecutor();
+            case "copy":
+                return new CopyExecutor();
+            case "copy-resources":
+                return new CopyResourcesExecutor();
+            case "list":
+                return new ListExecutor();
+            case "message":
+                return new MessageExecutor();
         }
         return null;
     }
 
     @Override
     public void consumeAllExecutors(Consumer<Executor> consumer) {
-        consumer.accept(new MarkdownExecutor());
-        consumer.accept(new MarkdownAndSubstituteExecutor());
-        consumer.accept(new FopExecutor());
-        consumer.accept(new ExternalExecutor());
+        consumer.accept(new CopyExecutor());
+        consumer.accept(new CopyResourcesExecutor());
+        consumer.accept(new ListExecutor());
+        consumer.accept(new MessageExecutor());
     }
 }

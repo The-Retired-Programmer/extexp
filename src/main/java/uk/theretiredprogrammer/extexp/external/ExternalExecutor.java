@@ -18,10 +18,10 @@ package uk.theretiredprogrammer.extexp.external;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOInputString;
-import uk.theretiredprogrammer.extexp.support.IOReader;
-import uk.theretiredprogrammer.extexp.support.IOWriter;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The EXTERNAL executor class.
@@ -57,14 +57,13 @@ public class ExternalExecutor extends Executor {
         try (
                 IOInputString command = new IOInputString(ee, getParameter("command"));
                 IOInputString parameters = new IOInputString(ee, getParameter("parameters"));
-                IOReader reader = new IOReader(ee, getParameter("from"));
-                BufferedReader breader = new BufferedReader(reader.get());
-                IOWriter writer = new IOWriter(ee, getParameter("to"));
-                PrintWriter bwriter = new PrintWriter(writer.get())) {
+                BufferedReader reader = IOFactory.createReader(ee, getParameter("from"));
+                Writer writer = IOFactory.createWriter(ee, getParameter("to"));
+                PrintWriter bwriter = new PrintWriter(writer)) {
             ProcessExecutor pexec = new ProcessExecutor(command.get(), parameters.get());
             pexec.setDisplayName(command.get());
             pexec.setErrorLineFunction(s -> ee.errln(s));
-            pexec.setInputLineFunction(() -> readLine(breader));
+            pexec.setInputLineFunction(() -> readLine(reader));
             pexec.setOutputLineFunction(s -> bwriter.println(s));
             pexec.execute();
         }

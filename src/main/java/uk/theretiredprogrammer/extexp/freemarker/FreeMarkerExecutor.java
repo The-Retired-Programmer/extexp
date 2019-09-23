@@ -15,26 +15,25 @@
  */
 package uk.theretiredprogrammer.extexp.freemarker;
 
-//import freemarker.template.Configuration;
-//import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
+import org.netbeans.api.templates.CreateDescriptor;
+import org.netbeans.api.templates.FileBuilder;
+import org.openide.filesystems.FileObject;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputPath;
-import uk.theretiredprogrammer.extexp.support.IOWriter;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The FREEMARKER executor class.
  *
- * Execute a FreeMarker Template (IOInputPath) outputting to the named IOWriter,
- * with the set of all parameters and their expanded values presented as
- * template processing parameters.
+ * Execute a FreeMarker Template outputting to the named output, with the set of
+ * all parameters (expanded values) presented as template processing parameters,
+ * additional files may be presented as processing parameters, if explicitly
+ * declared.
  *
  * Requires two parameters:
  *
@@ -42,41 +41,12 @@ import uk.theretiredprogrammer.extexp.support.IOWriter;
  *
  * 'to' - the name of the output
  *
- * Note that the path to the Freemarker template root must be defined in the
- * FreeMarker options panel before executing this command.
+ * 'uses' - a file group which is be be added to the processing
+ * parameters(optional)
  *
  * @author richard linsdale
  */
 public class FreeMarkerExecutor extends Executor {
-
-//    private static Configuration cfg = null;
-    private final String templateroot;
-
-    public FreeMarkerExecutor(String templateroot) {
-        super();
-        this.templateroot = templateroot;
-//        if (cfg == null) {
-//            buildConfig();
-//        }
-    }
-
-    // for test purposes
-    public FreeMarkerExecutor(String test, String templateroot) {
-        this.templateroot = templateroot;
-//        if (cfg == null) {
-//            buildConfig();
-//        }
-    }
-
-//    private void buildConfig() {
-//        try {
-//            cfg = new Configuration();
-//            cfg.setDirectoryForTemplateLoading(new File(templateroot));
-//            cfg.setDefaultEncoding("UTF-8");
-//        } catch (IOException ex) {
-//            cfg = null;
-//        }
-//    }
 
     @Override
     public String getDisplayName() {
@@ -85,60 +55,58 @@ public class FreeMarkerExecutor extends Executor {
 
     @Override
     public String[] getPrimaryPinData() {
-        return new String[]{"template", "to"};
+        return new String[]{"template", "to", "uses"};
     }
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOWriter output = new IOWriter(ee, getParameter("to"));
-                IOInputPath input = new IOInputPath(ee, getParameter("template"))) {
-            freemarkerrun((s) -> ee.errln(s), input.get(), output.get(), getFreemarkerMap());
+        Optional<String> outputfn = getParameter("to");
+        if (!outputfn.isPresent()) {
+            throw new IOException("missing parameter value(s) for Freemarker output");
         }
+        Map<String, String> usesgroup = null;
+        Optional<String> usesp = getParameter("uses");
+        if (usesp.isPresent()) {
+            usesgroup = getFileGroup(usesp.get());
+        }
+        FileObject input = IOFactory.getInputFO(ee, getParameter("template"));
+        freemarkerrun(input, outputfn.get(), usesgroup);
     }
 
-    public void freemarkerrun(Consumer<String> reporter, String templatename, Writer writer, Map<String, String> model) {
-//        if (cfg == null) {
-//            reporter.accept("Error FreeMarker: configuration not created");
-//            return;
-//        }
-//        try {
-            if (!templatename.startsWith(templateroot)) {
-                reporter.accept("Error FreeMarker: requested template does not exist "
-                        + "in current template root\n"
-                        + "root=" + templateroot
-                        + "template=" + templatename);
-                //return;
-            }
-//            cfg.getTemplate(templatename.substring(templateroot.length())).process(model, writer);
-//        } catch (TemplateException | IOException ex) {
-//            reporter.accept("Error FreeMarker: " + ex.getLocalizedMessage());
-//        }
+    public void freemarkerrun(FileObject templatefo, String outputfn, Map<String, String> usesgroup) throws IOException {
+        templatefo.setAttribute("template", Boolean.TRUE);
+        templatefo.setAttribute("javax.script.ScriptEngine", "freemarker");
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(CreateDescriptor.FREE_FILE_EXTENSION, Boolean.TRUE);
+        addParameterAttributes(attributes);
+        if (usesgroup != null) {
+            addFileAttributes(attributes, usesgroup);
+        }
+        //
+        FileObject outfolder = outputfn.startsWith("!") ? ee.tempfs.getRoot() : ee.paths.getOutfolder();
+        String outfn = outputfn.startsWith("!") ? outputfn.substring(1) : outputfn;
+        FileBuilder.createFromTemplate(templatefo, outfolder, outfn,
+                attributes, FileBuilder.Mode.FORMAT);
     }
 
-    private Map<String, String> getFreemarkerMap() {
-        Map<String, String> res = new HashMap<>();
-        Set<String> names = new HashSet<>(ee.tempfs.allnames());
-        names.forEach((name) -> {
-            try {
-                Optional<String> p = ee.tempfs.read(name);
-                if (p.isPresent()) {
-                    res.put(name, p.get());
-                }
-            } catch (IOException ex) {
-                ee.errln("Error when creating the Freemarker map - "+ ex.getLocalizedMessage());
-            }
-        });
-        names = new HashSet<>(getAllNames());
+    private void addParameterAttributes(Map<String, Object> attributes) {
+        Set<String> names = new HashSet<>(getAllNames());
         names.forEach((name) -> {
             Optional<String> p = this.getParameter(name);
             if (p.isPresent()) {
-                p = this.getSubText(p.get());
-                if (p.isPresent()) {
-                    res.put(name, p.get());
-                }
+                attributes.put(name, p.get());
             }
         });
-        return res;
+    }
+
+    private void addFileAttributes(Map<String, Object> attributes, Map<String, String> usesgroup) throws IOException {
+        for (Map.Entry<String, String> usesfile : usesgroup.entrySet()) {
+            String filename = substitute(usesfile.getValue());
+            FileObject fo = IOFactory.getInputFO(ee, filename);
+            if (fo == null) {
+                throw new IOException("Filename in usesgroup is missing(" + filename + ")");
+            }
+            attributes.put(usesfile.getKey(), fo.asText());
+        }
     }
 }
