@@ -19,8 +19,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Optional;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputString;
 import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
@@ -54,10 +54,15 @@ public class ExternalExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOInputString command = new IOInputString(ee, getParameter("command"));
-                IOInputString parameters = new IOInputString(ee, getParameter("parameters"));
-                BufferedReader reader = IOFactory.createReader(ee, getParameter("from"));
+        Optional<String> command = getParameter("command");
+        if (!command.isPresent()) {
+            throw new IOException("command parameter missing in External Executor");
+        }
+        Optional<String> parameters = getParameter("parameters");
+        if (!parameters.isPresent()) {
+            throw new IOException("parameters parameter missing in External Executor");
+        }
+        try ( BufferedReader reader = IOFactory.createReader(ee, getParameter("from"));
                 Writer writer = IOFactory.createWriter(ee, getParameter("to"));
                 PrintWriter bwriter = new PrintWriter(writer)) {
             ProcessExecutor pexec = new ProcessExecutor(command.get(), parameters.get());

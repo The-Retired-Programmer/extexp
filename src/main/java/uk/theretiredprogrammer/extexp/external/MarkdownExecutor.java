@@ -18,13 +18,10 @@ package uk.theretiredprogrammer.extexp.external;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.Writer;
 import org.openide.util.NbPreferences;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputPath;
 import uk.theretiredprogrammer.extexp.support.IOFactory;
-import uk.theretiredprogrammer.extexp.support.IOWriter;
 
 /**
  * The MARKDOWN executor class.
@@ -56,24 +53,16 @@ public class MarkdownExecutor extends Executor {
 
     @Override
     public String[] getPrimaryPinData() {
-        return new String[]{"from", "template", "to"};
+        return new String[]{"from", "to"};
     }
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                Writer output = IOFactory.createWriter(ee, getParameter("to"));
+        try (Writer output = IOFactory.createWriter(ee, getParameter("to"));
                 BufferedReader input = IOFactory.createReader(ee, getParameter("from"));
                 PrintWriter bwriter = new PrintWriter(output)) {
             String kramdownpath = NbPreferences.forModule(MarkDownPanel.class).get("kramdownPath", "kramdown");
-            ProcessExecutor pexec;
-            try {
-                try (IOInputPath template = new IOInputPath(ee, getParameter("template"))) {
-                    pexec = new ProcessExecutor(kramdownpath, "--no-auto-ids", "--template", template.get());
-                }
-            } catch (IOException ex) {
-                pexec = new ProcessExecutor(kramdownpath, "--no-auto-ids");
-            }
+            ProcessExecutor pexec = new ProcessExecutor(kramdownpath, "--no-auto-ids");
             pexec.setDisplayName("MARKDOWN");
             pexec.setErrorLineFunction(s -> ee.errln(s));
             pexec.setInputLineFunction(() -> readLine(input));

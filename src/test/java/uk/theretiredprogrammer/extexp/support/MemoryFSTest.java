@@ -16,7 +16,10 @@
 package uk.theretiredprogrammer.extexp.support;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Optional;
+import javax.xml.transform.stream.StreamSource;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,10 +27,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 
 /**
  * Test for in-memory filesystem for temporary file storage.
- * 
+ *
  * @author richard linsdale
  */
 public class MemoryFSTest {
@@ -216,6 +221,85 @@ public class MemoryFSTest {
             assertEquals(NEWCONTENT2, content.get());
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Test of streams and reader methods in class MemoryFS.
+     */
+    @Test
+    public void testStreamsAndReaders() {
+        MemoryFS tempfs = new MemoryFS();
+        System.out.println("Streams and Readers - simple reader");
+        String WRITTENCONTENT = "ABC..XYZ";
+        try {
+            tempfs.write("test1", WRITTENCONTENT);
+        } catch (IOException ex) {
+            fail("Unexpected exception - " + ex.getLocalizedMessage());
+        }
+        Reader rdr = tempfs.getInputStreamReader("test1");
+        try {
+            int c;
+            String res = "";
+            while ((c = rdr.read()) != -1) {
+                res = res+((char)c);
+            }
+            assertEquals(res, WRITTENCONTENT);
+            rdr.close();
+        } catch (IOException ex) {
+            fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
+        }
+        System.out.println("Streams and Readers - simple writer then reader");
+        String WRITTENCONTENT2 = "PQR...WXY";
+        try {
+            try (Writer wtr = tempfs.getOutputStreamWriter("test2")) {
+                wtr.write(WRITTENCONTENT2);
+            }
+        } catch (IOException ex) {
+            fail("Unexpected exception - " + ex.getLocalizedMessage());
+        }
+        try {
+            try (Reader rdr2 = tempfs.getInputStreamReader("test2")){
+            int c;
+            String res = "";
+            while ((c = rdr2.read()) != -1) {
+                res = res+((char)c);
+            }
+            assertEquals(res, WRITTENCONTENT2);
+            }
+        } catch (IOException ex) {
+            fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
+        }
+    }
+    
+    /**
+     * Test of streamsource methods in class MemoryFS.
+     */
+    @Test
+    public void testStreamSource() {
+        MemoryFS tempfs = new MemoryFS();
+        System.out.println("StreamSource");
+        String WRITTENCONTENT = "ABC..XYZ";
+        try {
+            tempfs.write("test1", WRITTENCONTENT);
+        } catch (IOException ex) {
+            fail("Unexpected exception - " + ex.getLocalizedMessage());
+        }
+        StreamSource ss = new StreamSource();
+        assertTrue(ss.isEmpty());
+        try {
+            try( Reader rdr = tempfs.getInputStreamReader("test1")){
+            StreamSource in = new StreamSource(rdr);
+            assertFalse(in.isEmpty());
+            int c;
+            String res = "";
+            while ((c = rdr.read()) != -1) {
+                res = res+((char)c);
+            }
+            assertEquals(res, WRITTENCONTENT);
+            }
+        } catch (IOException ex) {
+            fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
         }
     }
 }

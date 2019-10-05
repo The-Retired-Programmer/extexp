@@ -18,12 +18,15 @@ package uk.theretiredprogrammer.extexp.support;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 
 /**
  * A Factory which will return a reader, which can be used to obtain the content
@@ -44,7 +47,7 @@ public class IOFactory {
      * Create a Reader based on the provided parameter value.
      *
      * @param ee the ExecutionEnvironment
-     * @param parametervalue the name of the input source
+     * @param parametervalue the filename
      * @return a Reader to act as a source
      * @throws java.io.IOException if problem
      */
@@ -59,7 +62,7 @@ public class IOFactory {
      * Create a Reader based on the provided parameter.
      *
      * @param ee the ExecutionEnvironment
-     * @param parametervalue the name of the input source
+     * @param parametervalue the filename
      * @return a Reader to act as a source
      * @throws java.io.IOException if problem
      */
@@ -92,7 +95,7 @@ public class IOFactory {
      * Get an input FileObject based on the provided parameter.
      *
      * @param ee the ExecutionEnvironment
-     * @param parametervalue the name of the input source
+     * @param parametervalue the filename
      * @return a FileObject to act as a source
      * @throws java.io.IOException if problem
      */
@@ -107,7 +110,7 @@ public class IOFactory {
      * Get an input FileObject based on the provided parameter.
      *
      * @param ee the ExecutionEnvironment
-     * @param parametervalue the name of the input source
+     * @param parametervalue the filename
      * @return a FileObject to act as a source
      * @throws java.io.IOException if problem
      */
@@ -117,6 +120,48 @@ public class IOFactory {
             return fo;
         }
         return findInputFile(parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
+    }
+    
+    /**
+     * Get an input filepath based on the provided parameter.
+     *
+     * @param ee the ExecutionEnvironment
+     * @param parametervalue the filename
+     * @return the filepath
+     * @throws java.io.IOException if problem, including file not found
+     */
+    public static String getInputPath(ExecutionEnvironment ee, Optional<String> parametervalue) throws IOException {
+        if (!parametervalue.isPresent()) {
+            throw new IOException("Missing Parameter Value");
+        }
+        return getInputPath(ee, parametervalue.get());
+    }
+    
+    /**
+     * Get an input filepath based on the provided parameter.
+     *
+     * @param ee the ExecutionEnvironment
+     * @param parametervalue the filename
+     * @return the filepath
+     * @throws java.io.IOException if problem, including file not found
+     */
+    public static String getInputPath(ExecutionEnvironment ee, String parametervalue) throws IOException {
+        FileObject fo = ee.tempfs.getFileObject(parametervalue);
+        if (fo == null) {
+            fo = findInputFile(parametervalue, ee.paths.getContentfolder(), ee.paths.getSharedcontentfolder());
+        } else {
+            fo = toCacheFo(parametervalue,fo,ee);
+        }
+        return FileUtil.toFile(fo).getCanonicalPath();
+    }
+    
+    private static FileObject toCacheFo(String name, FileObject fromFo, ExecutionEnvironment ee) throws IOException {
+        FileObject cachefolder = ee.paths.getCachefolder();
+        FileObject outfo = cachefolder.getFileObject(name);
+        if (outfo != null) {
+            outfo.delete();
+        }
+        return fromFo.copy(cachefolder, name, "");
     }
 
     /**
@@ -158,5 +203,44 @@ public class IOFactory {
             outfo.delete();
         }
         return todirectory.createAndOpen(name);
+    }
+    
+    /**
+     * Get an output filepath based on the provided parameter.
+     *
+     * @param ee the ExecutionEnvironment
+     * @param parametervalue the filename (optionally prefixed by '!' or '+')
+     * @return the filepath
+     * @throws java.io.IOException if problem
+     */
+    public static String getOutputPath(ExecutionEnvironment ee, Optional<String> parametervalue) throws IOException {
+        if (!parametervalue.isPresent()) {
+            throw new IOException("Missing Parameter Value");
+        }
+        return getOutputPath(ee, parametervalue.get());
+    }
+    
+    /**
+     * Get an input filepath based on the provided parameter.
+     *
+     * @param ee the ExecutionEnvironment
+     * @param parametervalue the filename (optionally prefixed by '!' or '+')
+     * @return the filepath
+     * @throws java.io.IOException if problem, including file not found
+     */
+    public static String getOutputPath(ExecutionEnvironment ee, String parametervalue) throws IOException {
+        if (parametervalue.startsWith("!")) {
+            throw new IOException("Path name cannot be created for a in-memory file");
+        }
+        if (parametervalue.startsWith("+")) {
+            throw new IOException("Path name cannot be created for a in-memory file");
+        }
+        FileObject outfolder = ee.paths.getOutfolder();
+        FileObject outfo = outfolder.getFileObject(parametervalue);
+        if (outfo != null) {
+            outfo.delete();
+        }
+        outfo = outfolder.createData(parametervalue);
+        return FileUtil.toFile(outfo).getCanonicalPath();
     }
 }

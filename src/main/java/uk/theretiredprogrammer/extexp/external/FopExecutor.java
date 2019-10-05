@@ -18,8 +18,7 @@ package uk.theretiredprogrammer.extexp.external;
 import java.io.IOException;
 import org.openide.util.NbPreferences;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOInputPath;
-import uk.theretiredprogrammer.extexp.support.IOOutputPath;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The FOP executor class.
@@ -51,16 +50,12 @@ public class FopExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOOutputPath pdf = new IOOutputPath(ee, getParameter("pdf"));
-                IOInputPath foxsl = new IOInputPath(ee, getParameter("fo-xsl"))) {
-            String fopPath = NbPreferences.forModule(FOPPanel.class).get("FOPPath", "fop");
-            ProcessExecutor pexec = new ProcessExecutor(fopPath,
-                    "-fo", foxsl.get(),
-                    "-pdf", pdf.get());
-            pexec.setDisplayName("FOP");
-            pexec.setErrorLineFunction(s -> ee.errln(s));
-            pexec.execute();
-        }
+        String foxsl = IOFactory.getInputPath(ee, getParameter("fo-xsl"));
+        String pdf = IOFactory.getOutputPath(ee, getParameter("pdf"));
+        String fopPath = NbPreferences.forModule(FOPPanel.class).get("FOPPath", "fop");
+        ProcessExecutor pexec = new ProcessExecutor(fopPath, "-fo", foxsl, "-pdf", pdf);
+        pexec.setDisplayName("FOP");
+        pexec.setErrorLineFunction(s -> ee.errln(s));
+        pexec.execute();
     }
 }

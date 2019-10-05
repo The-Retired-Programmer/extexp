@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.openide.filesystems.FileObject;
 import uk.theretiredprogrammer.extexp.support.Executor;
-import uk.theretiredprogrammer.extexp.support.IOWriter;
+import uk.theretiredprogrammer.extexp.support.IOFactory;
 
 /**
  * The IMAGESET executor class.
@@ -58,8 +58,7 @@ public class ImagesetExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
-        try (
-                IOWriter output = new IOWriter(ee, this.getParameter("to"))) {
+        try (Writer output = IOFactory.createWriter(ee, this.getParameter("to"))) {
             String imagestring = getParameter("image").orElseThrow();
             int p = imagestring.lastIndexOf('.');
             String fn = imagestring.substring(0, p);
@@ -94,34 +93,33 @@ public class ImagesetExecutor extends Executor {
                     }
                 }
             }
-            Writer out = output.get();
-            out.append("<img width=\"");
-            out.append(widthstring);
-            out.append("\" height=\"");
-            out.append(heightstring);
-            out.append("\"\n    src=\"");
-            out.append(relativeresourcesfolderpath);
-            out.append(fn);
-            out.append('.');
-            out.append(fext);
-            out.append("\"\n    class=\"");
-            out.append(classstring);
-            out.append("\" alt=\"\"\n    srcset=\"");
+            output.append("<img width=\"");
+            output.append(widthstring);
+            output.append("\" height=\"");
+            output.append(heightstring);
+            output.append("\"\n    src=\"");
+            output.append(relativeresourcesfolderpath);
+            output.append(fn);
+            output.append('.');
+            output.append(fext);
+            output.append("\"\n    class=\"");
+            output.append(classstring);
+            output.append("\" alt=\"\"\n    srcset=\"");
             String prefix = "";
             for (Map.Entry<Integer, String> es : images.entrySet()) {
-                out.append(prefix);
-                out.append(relativeresourcesfolderpath);
-                out.append(es.getValue());
-                out.append(" ");
-                out.append(Integer.toString(es.getKey()));
-                out.append('w');
+                output.append(prefix);
+                output.append(relativeresourcesfolderpath);
+                output.append(es.getValue());
+                output.append(" ");
+                output.append(Integer.toString(es.getKey()));
+                output.append('w');
                 prefix = ",\n    ";
             }
-            out.append("\"\n    sizes=\"(max-width: ");
-            out.append(widthstring);
-            out.append("px) 100vw, ");
-            out.append(widthstring);
-            out.append("px\" />\n");
+            output.append("\"\n    sizes=\"(max-width: ");
+            output.append(widthstring);
+            output.append("px) 100vw, ");
+            output.append(widthstring);
+            output.append("px\" />\n");
         }
     }
 }
