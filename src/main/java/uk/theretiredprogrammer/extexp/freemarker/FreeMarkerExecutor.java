@@ -26,6 +26,7 @@ import org.netbeans.api.templates.FileBuilder;
 import org.openide.filesystems.FileObject;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOFactory;
+import uk.theretiredprogrammer.extexp.support.IOFactory.OutputDescriptor;
 
 /**
  * The FREEMARKER executor class.
@@ -82,10 +83,8 @@ public class FreeMarkerExecutor extends Executor {
         if (usesgroup != null) {
             addFileAttributes(attributes, usesgroup);
         }
-        //
-        FileObject outfolder = outputfn.startsWith("!") ? ee.tempfs.getRoot() : ee.paths.getOutfolder();
-        String outfn = outputfn.startsWith("!") ? outputfn.substring(1) : outputfn;
-        FileBuilder.createFromTemplate(templatefo, outfolder, outfn,
+        OutputDescriptor iod = IOFactory.getOutputDescriptor(ee, outputfn);
+        FileBuilder.createFromTemplate(templatefo, iod.folder, iod.filename,
                 attributes, FileBuilder.Mode.FORMAT);
     }
 
