@@ -38,7 +38,7 @@ public class MessageExecutor extends Executor {
 
     @Override
     public String[] getPrimaryPinData() {
-        return new String[]{"message"};
+        return new String[]{"text"};
     }
 
     @Override

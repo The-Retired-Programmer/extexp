@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.openide.filesystems.FileAlreadyLockedException;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
@@ -40,10 +41,10 @@ public class MemoryFS {
     public MemoryFS() {
         this.tempfsroot = FileUtil.createMemoryFileSystem().getRoot();
     }
-    
+
     /**
-     *  get the root folder for this filesystem
-     * 
+     * get the root folder for this filesystem
+     *
      * @return the root folder
      */
     public FileObject getRoot() {
@@ -172,8 +173,9 @@ public class MemoryFS {
      *
      * @param name the name of a temporary file
      * @return the OutputStreamWriter object
+     * @throws java.io.IOException if problems
      */
-    public OutputStreamWriter getOutputStreamWriter(String name) {
+    public OutputStreamWriter getOutputStreamWriter(String name) throws IOException {
         return getOutputStreamWriter(name, false);
     }
 
@@ -183,21 +185,34 @@ public class MemoryFS {
      * @param name the name of a temporary file
      * @param append true if writer is to set up for appending
      * @return the OutputStreamWriter object
+     * @throws java.io.IOException if problems
      */
-    public OutputStreamWriter getOutputStreamWriter(String name, boolean append) {
+    public OutputStreamWriter getOutputStreamWriter(String name, boolean append) throws IOException {
         FileObject fo;
+        String oldvalue = "";
         try {
             if ((fo = tempfsroot.getFileObject(name)) != null) {
+                if (append) {
+                    oldvalue = fo.asText();
+                }
                 OutputStreamWriter osw = new OutputStreamWriter(fo.getOutputStream());
                 if (append) {
-                    osw.write(fo.asText());
+                    osw.write(oldvalue);
                 }
                 return osw;
-            } else {
-                return new OutputStreamWriter(tempfsroot.createAndOpen(name));
             }
+            return new OutputStreamWriter(tempfsroot.createAndOpen(name));
+        } catch (FileAlreadyLockedException ex) {
+            String msg = append ? "failed to get OutputStreamWriter when appending to " + name + "(file locked)"
+                    : "failed to get OutputStreamWriter when creating " + name + "(file locked)";
+            throw new IOException(msg);
         } catch (IOException ex) {
-            return null;
+            String msg = ex.getLocalizedMessage();
+            if (msg == null) {
+                msg = append ? "failed to get OutputStreamWriter when appending to " + name
+                        : "failed to get OutputStreamWriter when creating " + name;
+            }
+            throw new IOException(msg);
         }
     }
 }

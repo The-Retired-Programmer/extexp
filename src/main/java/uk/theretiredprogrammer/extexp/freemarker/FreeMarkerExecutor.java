@@ -74,7 +74,7 @@ public class FreeMarkerExecutor extends Executor {
         freemarkerrun(input, outputfn.get(), usesgroup);
     }
 
-    public void freemarkerrun(FileObject templatefo, String outputfn, Map<String, String> usesgroup) throws IOException {
+    private void freemarkerrun(FileObject templatefo, String outputfn, Map<String, String> usesgroup) throws IOException {
         templatefo.setAttribute("template", Boolean.TRUE);
         templatefo.setAttribute("javax.script.ScriptEngine", "freemarker");
         Map<String, Object> attributes = new HashMap<>();

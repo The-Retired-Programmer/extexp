@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.extexp.support;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Optional;
@@ -301,5 +303,50 @@ public class MemoryFSTest {
         } catch (IOException ex) {
             fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
         }
+    }
+    
+    /**
+     * Test of locks and close in class MemoryFS.
+     * @throws java.io.IOException if problems
+     */
+    @Test
+    public void testLocksAndClose()  throws IOException{
+        MemoryFS tempfs = new MemoryFS();
+        System.out.println("Locks and Close");
+        FileObject fo = tempfs.getFileObject("test2");
+        assertNull(fo);
+        BufferedWriter writer = new BufferedWriter(tempfs.getOutputStreamWriter("test2"));
+        assertNotNull(writer);
+        fo = tempfs.getFileObject("test2");
+        assertNotNull(fo);
+        assertTrue(fo.isLocked());
+        writer.close();
+        assertFalse(fo.isLocked());
+    }
+    
+    /**
+     * Test of locks and close in class MemoryFS.
+     * @throws java.io.IOException if problems
+     */
+    @Test
+    public void testAppendLocksAndClose()  throws IOException{
+        MemoryFS tempfs = new MemoryFS();
+        System.out.println("Append Locks and Close");
+        String WRITTENCONTENT = "ABC..XYZ";
+        String APPENDEDCONTENT = "*** Appended Text ***";
+        try {
+            tempfs.write("test1", WRITTENCONTENT);
+        } catch (IOException ex) {
+            fail("Unexpected exception - " + ex.getLocalizedMessage());
+        }
+        FileObject fo = tempfs.getFileObject("test1");
+        assertNotNull(fo);
+        BufferedWriter writer = new BufferedWriter(tempfs.getOutputStreamWriter("test1", true));
+        assertNotNull(writer);
+        assertTrue(fo.isLocked());
+        writer.write(APPENDEDCONTENT);
+        writer.close();
+        assertFalse(fo.isLocked());
+        assertEquals(tempfs.read("test1").get(),WRITTENCONTENT+APPENDEDCONTENT);
     }
 }
