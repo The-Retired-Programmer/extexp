@@ -17,11 +17,8 @@ package uk.theretiredprogrammer.extexp.support;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Optional;
-import javax.xml.transform.stream.StreamSource;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,8 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 
 /**
  * Test for in-memory filesystem for temporary file storage.
@@ -64,47 +59,40 @@ public class MemoryFSTest {
     @Test
     public void testALL() {
         MemoryFS tempfs = new MemoryFS();
+        FileObject tempfsroot = tempfs.getRoot();
         //
         //  run a set of tests to check results on empty file store
         //
-        System.out.println("getallnames");
-        assertEquals(0, tempfs.allnames().size());
-        System.out.println("exists");
-        assertEquals(false, tempfs.exists("not_a_file"));
-        System.out.println("fo");
+        assertEquals(0, tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
-        System.out.println("content");
-        try {
-            assertFalse(tempfs.read("not_a_file").isPresent());
-        } catch (IOException ex) {
-            fail("Unexpected exception - " + ex.getLocalizedMessage());
-        }
+        assertNull(tempfs.getInputStreamReader("not_a_file"));
         //
         //  write first file then run set of tests to check results
         //
         System.out.println("write");
         String WRITTENCONTENT = "ABC..XYZ";
         try {
-            tempfs.write("written", WRITTENCONTENT);
+            try (Writer writer = tempfs.getOutputStreamWriter("written")) {
+                writer.write(WRITTENCONTENT);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
-        System.out.println("getallnames - after write");
-        assertEquals(1, tempfs.allnames().size());
-        System.out.println("exists - after write");
-        assertEquals(false, tempfs.exists("not_a_file"));
-        assertEquals(true, tempfs.exists("written"));
-        System.out.println("fo - after write");
+        FileObject fo;
+        assertEquals(1, tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
-        FileObject fo = tempfs.getFileObject("written");
-        assertNotNull(fo);
+        assertNull(tempfs.getInputStreamReader("not_a_file"));
+        assertNotNull(fo = tempfs.getFileObject("written"));
         assertEquals("written", fo.getNameExt());
-        System.out.println("content - after write");
+        Reader reader;
+        assertNotNull(reader = tempfs.getInputStreamReader("written"));
         try {
-            assertFalse(tempfs.read("not_a_file").isPresent());
-            Optional<String> content = tempfs.read("written");
-            assertTrue(content.isPresent());
-            assertEquals(WRITTENCONTENT, content.get());
+            reader.close();
+        } catch (IOException ex) {
+            fail("Unexpected exception - " + ex.getLocalizedMessage());
+        }
+        try {
+            assertEquals(WRITTENCONTENT, fo.asText());
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
@@ -114,26 +102,21 @@ public class MemoryFSTest {
         System.out.println("append new");
         String APPENDNEWCONTENT = "123..890";
         try {
-            tempfs.append("append.new", APPENDNEWCONTENT);
+            try (Writer writer = tempfs.getOutputStreamWriter("append.new", true)) {
+                writer.write(APPENDNEWCONTENT);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
-        System.out.println("getallnames - after append new");
-        assertEquals(2, tempfs.allnames().size());
-        System.out.println("exists - after append new");
-        assertEquals(false, tempfs.exists("not_a_file"));
-        assertEquals(true, tempfs.exists("append.new"));
-        System.out.println("fo - after append new");
+        assertEquals(2, tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
-        FileObject fo2 = tempfs.getFileObject("append.new");
-        assertNotNull(fo2);
+        assertNotNull(tempfs.getFileObject("append.new"));
+        assertNull(tempfs.getFileObject("not_a_file"));
+        FileObject fo2;
+        assertNotNull(fo2 = tempfs.getFileObject("append.new"));
         assertEquals("append.new", fo2.getNameExt());
-        System.out.println("content - after append new");
         try {
-            assertFalse(tempfs.read("not_a_file").isPresent());
-            Optional<String> content = tempfs.read("append.new");
-            assertTrue(content.isPresent());
-            assertEquals(APPENDNEWCONTENT, content.get());
+            assertEquals(APPENDNEWCONTENT, fo2.asText());
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
@@ -143,26 +126,21 @@ public class MemoryFSTest {
         System.out.println("append existing");
         String APPENDCONTENT = "234..678";
         try {
-            tempfs.append("written", APPENDCONTENT);
+            try (Writer writer = tempfs.getOutputStreamWriter("written", true)) {
+                writer.write(APPENDCONTENT);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
-        System.out.println("getallnames - after append");
-        assertEquals(2, tempfs.allnames().size());
-        System.out.println("exists - after append");
-        assertEquals(false, tempfs.exists("not_a_file"));
-        assertEquals(true, tempfs.exists("written"));
-        System.out.println("fo - after append");
+        assertEquals(2, tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
-        FileObject fo3 = tempfs.getFileObject("written");
-        assertNotNull(fo3);
+        assertNotNull(tempfs.getFileObject("written"));
+        assertNull(tempfs.getFileObject("not_a_file"));
+        FileObject fo3;
+        assertNotNull(fo3 = tempfs.getFileObject("written"));
         assertEquals("written", fo3.getNameExt());
-        System.out.println("content - after append");
         try {
-            assertFalse(tempfs.read("not_a_file").isPresent());
-            Optional<String> content = tempfs.read("written");
-            assertTrue(content.isPresent());
-            assertEquals(WRITTENCONTENT + APPENDCONTENT, content.get());
+            assertEquals(WRITTENCONTENT + APPENDCONTENT, fo3.asText());
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
@@ -172,26 +150,21 @@ public class MemoryFSTest {
         System.out.println("Overwrite existing with less");
         String NEWCONTENT = "P..W";
         try {
-            tempfs.write("append.new", NEWCONTENT);
+            try (Writer writer = tempfs.getOutputStreamWriter("append.new")) {
+                writer.write(NEWCONTENT);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
-        System.out.println("getallnames - after overwrite");
-        assertEquals(2, tempfs.allnames().size());
-        System.out.println("exists - after overwrite");
-        assertEquals(false, tempfs.exists("not_a_file"));
-        assertEquals(true, tempfs.exists("append.new"));
-        System.out.println("fo - after overwrite");
+        assertEquals(2, tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
-        FileObject fo4 = tempfs.getFileObject("append.new");
-        assertNotNull(fo4);
+        assertNotNull(tempfs.getFileObject("append.new"));
+        assertNull(tempfs.getFileObject("not_a_file"));
+        FileObject fo4;
+        assertNotNull(fo4 = tempfs.getFileObject("append.new"));
         assertEquals("append.new", fo4.getNameExt());
-        System.out.println("content - after overwrite");
         try {
-            assertFalse(tempfs.read("not_a_file").isPresent());
-            Optional<String> content = tempfs.read("append.new");
-            assertTrue(content.isPresent());
-            assertEquals(NEWCONTENT, content.get());
+            assertEquals(NEWCONTENT, fo4.asText());
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
@@ -201,26 +174,21 @@ public class MemoryFSTest {
         System.out.println("Overwrite existing - with more");
         String NEWCONTENT2 = "abcdefghijklmnopqrstuvwxyz";
         try {
-            tempfs.write("append.new", NEWCONTENT2);
+            try (Writer writer = tempfs.getOutputStreamWriter("append.new")) {
+                writer.write(NEWCONTENT2);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
-        System.out.println("getallnames - after overwrite");
-        assertEquals(2, tempfs.allnames().size());
-        System.out.println("exists - after overwrite");
-        assertEquals(false, tempfs.exists("not_a_file"));
-        assertEquals(true, tempfs.exists("append.new"));
-        System.out.println("fo - after overwrite");
+        assertEquals(2, tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
-        FileObject fo5 = tempfs.getFileObject("append.new");
-        assertNotNull(fo5);
+        assertNotNull(tempfs.getFileObject("append.new"));
+        assertNull(tempfs.getFileObject("not_a_file"));
+        FileObject fo5;
+        assertNotNull(fo5 = tempfs.getFileObject("append.new"));
         assertEquals("append.new", fo5.getNameExt());
-        System.out.println("content - after overwrite");
         try {
-            assertFalse(tempfs.read("not_a_file").isPresent());
-            Optional<String> content = tempfs.read("append.new");
-            assertTrue(content.isPresent());
-            assertEquals(NEWCONTENT2, content.get());
+            assertEquals(NEWCONTENT2, fo5.asText());
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
@@ -235,23 +203,24 @@ public class MemoryFSTest {
         System.out.println("Streams and Readers - simple reader");
         String WRITTENCONTENT = "ABC..XYZ";
         try {
-            tempfs.write("test1", WRITTENCONTENT);
+            try (Writer writer = tempfs.getOutputStreamWriter("test1")) {
+                writer.write(WRITTENCONTENT);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
-        Reader rdr = tempfs.getInputStreamReader("test1");
         try {
-            int c;
-            String res = "";
-            while ((c = rdr.read()) != -1) {
-                res = res+((char)c);
+            try (Reader rdr = tempfs.getInputStreamReader("test1")) {
+                int c;
+                String res = "";
+                while ((c = rdr.read()) != -1) {
+                    res = res + ((char) c);
+                }
+                assertEquals(res, WRITTENCONTENT);
             }
-            assertEquals(res, WRITTENCONTENT);
-            rdr.close();
         } catch (IOException ex) {
             fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
         }
-        System.out.println("Streams and Readers - simple writer then reader");
         String WRITTENCONTENT2 = "PQR...WXY";
         try {
             try (Writer wtr = tempfs.getOutputStreamWriter("test2")) {
@@ -261,92 +230,65 @@ public class MemoryFSTest {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
         try {
-            try (Reader rdr2 = tempfs.getInputStreamReader("test2")){
-            int c;
-            String res = "";
-            while ((c = rdr2.read()) != -1) {
-                res = res+((char)c);
-            }
-            assertEquals(res, WRITTENCONTENT2);
-            }
-        } catch (IOException ex) {
-            fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
-        }
-    }
-    
-    /**
-     * Test of streamsource methods in class MemoryFS.
-     */
-    @Test
-    public void testStreamSource() {
-        MemoryFS tempfs = new MemoryFS();
-        System.out.println("StreamSource");
-        String WRITTENCONTENT = "ABC..XYZ";
-        try {
-            tempfs.write("test1", WRITTENCONTENT);
-        } catch (IOException ex) {
-            fail("Unexpected exception - " + ex.getLocalizedMessage());
-        }
-        StreamSource ss = new StreamSource();
-        assertTrue(ss.isEmpty());
-        try {
-            try( Reader rdr = tempfs.getInputStreamReader("test1")){
-            StreamSource in = new StreamSource(rdr);
-            assertFalse(in.isEmpty());
-            int c;
-            String res = "";
-            while ((c = rdr.read()) != -1) {
-                res = res+((char)c);
-            }
-            assertEquals(res, WRITTENCONTENT);
+            try (Reader rdr2 = tempfs.getInputStreamReader("test2")) {
+                int c;
+                String res = "";
+                while ((c = rdr2.read()) != -1) {
+                    res = res + ((char) c);
+                }
+                assertEquals(res, WRITTENCONTENT2);
             }
         } catch (IOException ex) {
             fail("Unexpected exception while reading- " + ex.getLocalizedMessage());
         }
     }
-    
+
     /**
      * Test of locks and close in class MemoryFS.
+     *
      * @throws java.io.IOException if problems
      */
     @Test
-    public void testLocksAndClose()  throws IOException{
+    public void testLocksAndClose() throws IOException {
         MemoryFS tempfs = new MemoryFS();
         System.out.println("Locks and Close");
         FileObject fo = tempfs.getFileObject("test2");
         assertNull(fo);
-        BufferedWriter writer = new BufferedWriter(tempfs.getOutputStreamWriter("test2"));
-        assertNotNull(writer);
-        fo = tempfs.getFileObject("test2");
-        assertNotNull(fo);
-        assertTrue(fo.isLocked());
-        writer.close();
+        try (BufferedWriter writer = new BufferedWriter(tempfs.getOutputStreamWriter("test2"))) {
+            assertNotNull(writer);
+            fo = tempfs.getFileObject("test2");
+            assertNotNull(fo);
+            assertTrue(fo.isLocked());
+        }
         assertFalse(fo.isLocked());
     }
-    
+
     /**
-     * Test of locks and close in class MemoryFS.
+     * Test of append locks and close in class MemoryFS.
+     *
      * @throws java.io.IOException if problems
      */
     @Test
-    public void testAppendLocksAndClose()  throws IOException{
+    public void testAppendLocksAndClose() throws IOException {
         MemoryFS tempfs = new MemoryFS();
         System.out.println("Append Locks and Close");
         String WRITTENCONTENT = "ABC..XYZ";
         String APPENDEDCONTENT = "*** Appended Text ***";
         try {
-            tempfs.write("test1", WRITTENCONTENT);
+            try (Writer wtr = tempfs.getOutputStreamWriter("test1")) {
+                wtr.write(WRITTENCONTENT);
+            }
         } catch (IOException ex) {
             fail("Unexpected exception - " + ex.getLocalizedMessage());
         }
         FileObject fo = tempfs.getFileObject("test1");
         assertNotNull(fo);
-        BufferedWriter writer = new BufferedWriter(tempfs.getOutputStreamWriter("test1", true));
-        assertNotNull(writer);
-        assertTrue(fo.isLocked());
-        writer.write(APPENDEDCONTENT);
-        writer.close();
+        try (Writer writer = tempfs.getOutputStreamWriter("test1", true)) {
+            assertNotNull(writer);
+            assertTrue(fo.isLocked());
+            writer.write(APPENDEDCONTENT);
+        }
         assertFalse(fo.isLocked());
-        assertEquals(tempfs.read("test1").get(),WRITTENCONTENT+APPENDEDCONTENT);
+        assertEquals(fo.asText(), WRITTENCONTENT + APPENDEDCONTENT);
     }
 }
