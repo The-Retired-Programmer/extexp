@@ -45,7 +45,7 @@ import javax.json.JsonObject;
  * details of this.
  *
  * parameter substitution rule - replacement of the substitution indicator with
- * the parameter value, seaching first the local parameters and then in turn
+ * the parameter value, searching first the local parameters and then in turn
  * through parent command parameters
  *
  * Otherwise - the parameter name will replace the substitution indicator.
@@ -178,7 +178,7 @@ public abstract class Command {
      * @param name the name of the requested parameter value
      * @return the expanded parameter value
      */
-    public Optional<String> getLocalParameter(String name) {
+    protected Optional<String> getLocalParameter(String name) {
         return substitute(Optional.ofNullable(parameters.get(name)), (s) -> getSubText(s));
     }
 
@@ -187,7 +187,7 @@ public abstract class Command {
      *
      * @param parent the parent command
      */
-    public void setParent(Command parent) {
+    void setParent(Command parent) {
         this.parent = parent;
     }
 
@@ -200,7 +200,7 @@ public abstract class Command {
      * @param name the name of the requested parameter value
      * @return the expanded parameter value
      */
-    public Optional<String> getParameter(String name) {
+    protected Optional<String> getParameter(String name) {
         return substitute(getParameterValue(name), (s) -> getSubText(s));
     }
 
@@ -229,7 +229,7 @@ public abstract class Command {
      * @param name the name to be tested for resolution
      * @return true if the name can be resolved
      */
-    public boolean isParamDefined(String name) {
+    protected boolean isParamDefined(String name) {
         return getParameterValue(name).isPresent();
     }
 
@@ -266,7 +266,6 @@ public abstract class Command {
         return sub(string, (s) -> getSubText(s));
     }
 
-    /* note this is not private, as it has been exposed to support unit testing */
     String sub(String in, Function<String, Optional<String>> getparam) {
         int p = in.indexOf("${");
         if (p == -1) {
@@ -306,7 +305,7 @@ public abstract class Command {
         return all;
     }
     
-    protected void setFileGroup(String name, Map<String,String> group){
+    void setFileGroup(String name, Map<String,String> group){
         if (filegroups.containsKey(name)) {
             Map<String,String> existinggroup = filegroups.get(name);
             existinggroup.putAll(group);

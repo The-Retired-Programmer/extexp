@@ -53,11 +53,11 @@ public class ControlTest {
     }
 
     /**
-     * Test of parse method, of class Control.
+     * Test of FileGroup creation by parsing JsonArray, of class Control.
      */
     @Test
-    public void testParse() {
-        System.out.println("parse");
+    public void testFileGroupCreation() {
+        System.out.println("FileGroup creation (parsing JSONARRAY)");
         Control instance = new ControlImpl();
         assertNotNull(instance);
         JsonObject json = createJson();
