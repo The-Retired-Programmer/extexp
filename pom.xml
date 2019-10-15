@@ -39,7 +39,7 @@
     </licenses>
        
     <properties>
-        <netbeans.version>RELEASE82</netbeans.version>
+        <netbeans.version>RELEASE111</netbeans.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -156,6 +156,7 @@
         </dependency>
     </dependencies>
     
+    <!--
     <repositories>
         <repository>
             <id>netbeans</id>
@@ -169,6 +170,7 @@
             </snapshots>
         </repository>
     </repositories>
+    -->
     
     <build>
         <pluginManagement>
