@@ -19,13 +19,12 @@ import java.io.IOException;
 import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObject;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 /**
  *
@@ -33,44 +32,24 @@ import org.junit.Test;
  */
 public class ControlTest {
 
-    public ControlTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    /**
-     * Test of FileGroup creation by parsing JsonArray, of class Control.
-     */
     @Test
-    public void testFileGroupCreation() {
-        System.out.println("FileGroup creation (parsing JSONARRAY)");
+    @Order(1)
+    @DisplayName("FileGroup creation (parsing JSONARRAY)")
+    void testFileGroupCreation(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         Control instance = new ControlImpl();
         assertNotNull(instance);
         JsonObject json = createJson();
         assertNotNull(json);
         instance.parse(json);
-        Map<String,String> res = instance.getFileGroup("UNKNOWN");
-        assertEquals(res.size(), 0); 
+        Map<String, String> res = instance.getFileGroup("UNKNOWN");
+        assertEquals(res.size(), 0);
         res = instance.getFileGroup("Testing_name");
         assertEquals(res.size(), 5);
         assertEquals(res.get("swimmingimage"), "index-swimming.html");
     }
 
-    public JsonObject createJson() {
+    private JsonObject createJson() {
         JsonObject object = Json.createObjectBuilder()
                 .add("Testing_name",
                         Json.createArrayBuilder()
@@ -84,7 +63,7 @@ public class ControlTest {
         return object;
     }
 
-    public class ControlImpl extends Control {
+    class ControlImpl extends Control {
 
         @Override
         public String[] getPrimaryPinData() {

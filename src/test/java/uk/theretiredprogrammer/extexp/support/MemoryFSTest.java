@@ -18,64 +18,60 @@ package uk.theretiredprogrammer.extexp.support;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.openide.filesystems.FileObject;
 
 /**
- * Test for in-memory filesystem for temporary file storage.
+ * Tests for in-memory filesystem
  *
  * @author richard linsdale
  */
-public class MemoryFSTest {
+@TestMethodOrder(OrderAnnotation.class)
+class MemoryFSTest {
 
     private MemoryFS tempfs = null;
     private FileObject tempfsroot = null;
 
-    public MemoryFSTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void init() {
         tempfs = new MemoryFS();
         tempfsroot = tempfs.getRoot();
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         tempfs = null;
         tempfsroot = null;
     }
 
-    /**
-     * Test of initial setup in class MemoryFS.
-     */
     @Test
-    public void testSetup() {
-        System.out.println("Constructor Checks");
+    @Order(1)
+    @DisplayName("Constructor Checks")
+    void constructor(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         assertEquals(0L, (long) tempfsroot.getChildren().length);
         assertNull(tempfs.getFileObject("not_a_file"));
         assertNull(tempfs.getInputStreamReader("not_a_file"));
     }
 
-    /**
-     * Test of writing content in class MemoryFS.
-     */
     @Test
-    public void testWriter() {
-        System.out.println("Writer");
+    @Order(2)
+    @DisplayName("Writer")
+    void writer(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         String WRITTENCONTENT = "ABC..XYZ";
         try {
             FileObject fo = writeToNewFile("written", WRITTENCONTENT);
@@ -92,12 +88,11 @@ public class MemoryFSTest {
         }
     }
 
-    /**
-     * Test of appending content to new file in class MemoryFS.
-     */
     @Test
-    public void testAppendNewWriter() {
-        System.out.println("writer append to new");
+    @Order(3)
+    @DisplayName("Writer append to new")
+    void appendNewWriter(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         try {
             String APPENDNEWCONTENT = "123..890";
             FileObject fo = appendToNewFile("append.new", APPENDNEWCONTENT);
@@ -114,12 +109,11 @@ public class MemoryFSTest {
         }
     }
 
-    /**
-     * Test of appending content to existing file in class MemoryFS.
-     */
     @Test
-    public void testAppendWriter() {
-        System.out.println("writer append to existing");
+    @Order(4)
+    @DisplayName("Writer append to existing")
+    void appendWriter(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         String WRITTENCONTENT = "ABC..XYZ";
         String APPENDCONTENT = "234..678";
         try {
@@ -137,31 +131,27 @@ public class MemoryFSTest {
         }
     }
 
-    /**
-     * Test of overwriting with less content to existing file in class MemoryFS.
-     */
     @Test
-    public void testOverwriteLessWriter() {
-        System.out.println("writer overwriting with less");
+    @Order(5)
+    @DisplayName("Writer overwriting with less")
+    void overwriteLessWriter(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         overwriteFile("ABC..XYZ", "P..W");
-
     }
 
-    /**
-     * Test of overwriting with more content to existing file in class MemoryFS.
-     */
     @Test
-    public void testOverwriteMOREWriter() {
-        System.out.println("writer overwriting with more");
+    @Order(6)
+    @DisplayName("Writer overwriting with more")
+    void overwriteMOREWriter(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         overwriteFile("ABC..XYZ", "abcdefghijklmnopqrstuvwxyz");
     }
 
-    /**
-     * Test of file reader (reading a new file) in class MemoryFS.
-     */
     @Test
-    public void testReaderFromNew() {
-        System.out.println("Reader from new");
+    @Order(7)
+    @DisplayName("Reader from new")
+    void readerFromNew(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         String WRITTENCONTENT = "ABC..XYZ";
         try {
             FileObject fo = writeToNewFile("test1", WRITTENCONTENT);
@@ -178,12 +168,11 @@ public class MemoryFSTest {
         }
     }
 
-    /**
-     * Test of file reader (reading an appended file) in class MemoryFS.
-     */
     @Test
-    public void testReaderFromAppended() {
-        System.out.println("Reader from appended");
+    @Order(8)
+    @DisplayName("Reader from appended")
+    void readerFromAppended(TestInfo testInfo) {
+        System.out.println(testInfo.getDisplayName());
         String WRITTENCONTENT = "ABC..XYZ";
         String APPENDCONTENT = "234..678";
         try {
