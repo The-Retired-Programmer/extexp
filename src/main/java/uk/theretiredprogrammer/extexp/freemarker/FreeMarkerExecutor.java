@@ -18,9 +18,11 @@ package uk.theretiredprogrammer.extexp.freemarker;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.netbeans.api.templates.CreateDescriptor;
 import org.netbeans.api.templates.FileBuilder;
 import org.openide.filesystems.FileObject;
@@ -56,7 +58,7 @@ public class FreeMarkerExecutor extends Executor {
 
     @Override
     public String[] getPrimaryPinData() {
-        return new String[]{"template", "to", "uses"};
+        return new String[]{"template", "to", "uses", "data"};
     }
 
     @Override
@@ -70,11 +72,13 @@ public class FreeMarkerExecutor extends Executor {
         if (usesp.isPresent()) {
             usesgroup = getFileGroup(usesp.get());
         }
+        Optional<String> data = getParameter("data");
         FileObject input = IOFactory.getInputFO(ee, getParameter("template"));
-        freemarkerrun(input, outputfn.get(), usesgroup);
+        freemarkerrun(input, outputfn.get(), usesgroup, data);
     }
 
-    private void freemarkerrun(FileObject templatefo, String outputfn, Map<String, String> usesgroup) throws IOException {
+    private void freemarkerrun(FileObject templatefo, String outputfn,
+            Map<String, String> usesgroup, Optional<String> data) throws IOException {
         templatefo.setAttribute("template", Boolean.TRUE);
         templatefo.setAttribute("javax.script.ScriptEngine", "freemarker");
         Map<String, Object> attributes = new HashMap<>();
@@ -82,6 +86,9 @@ public class FreeMarkerExecutor extends Executor {
         addParameterAttributes(attributes);
         if (usesgroup != null) {
             addFileAttributes(attributes, usesgroup);
+        }
+        if (data.isPresent()) {
+            addDataAttributes(attributes, data.get());
         }
         OutputDescriptor iod = IOFactory.getOutputDescriptor(ee, outputfn);
         FileBuilder.createFromTemplate(templatefo, iod.folder, iod.filename,
@@ -107,5 +114,34 @@ public class FreeMarkerExecutor extends Executor {
             }
             attributes.put(usesfile.getKey(), fo.asText());
         }
+    }
+
+    private void addDataAttributes(Map<String, Object> attributes, String datafilename) throws IOException {
+        FileObject fo = IOFactory.getInputFO(ee, datafilename);
+        if (fo == null) {
+            throw new IOException("Data filename is missing(" + datafilename + ")");
+        }
+        List<String> alllines = fo.asLines();
+        String[] hdrcolumns = alllines.get(0).split(",");
+        for (int i = 0; i < hdrcolumns.length; i++) {
+            hdrcolumns[i] = hdrcolumns[i].trim();
+        }
+        attributes.put("data",
+                alllines.subList(1, alllines.size()).stream()
+                        .map((line) -> line2map(hdrcolumns, line))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private Map<String, Object> line2map(String[] hdrcolumns, String line) {
+        Map<String, Object> result = new HashMap<>();
+        String[] datacolumns = line.split(",");
+        for (int col = 0; col < hdrcolumns.length; col++) {
+            String colval = col < datacolumns.length
+                    ? datacolumns[col].trim()
+                    : "";
+            result.put(hdrcolumns[col], colval);
+        }
+        return result;
     }
 }
