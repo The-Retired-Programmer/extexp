@@ -67,28 +67,32 @@ public class FreeMarkerExecutor extends Executor {
         if (!outputfn.isPresent()) {
             throw new IOException("missing parameter value(s) for Freemarker output");
         }
-        Map<String, String> usesgroup = null;
-        Optional<String> usesp = getParameter("uses");
-        if (usesp.isPresent()) {
-            usesgroup = getFileGroup(usesp.get());
+        Map<String, String> filesgroup = null;
+        Optional<String> filesp = getParameter("uses-files");
+        if (filesp.isPresent()) {
+            filesgroup = getFileGroup(filesp.get());
         }
-        Optional<String> data = getParameter("data");
+        Map<String, String> datafilesgroup = null;
+        Optional<String> datafilesp = getParameter("uses-data-files");
+        if (datafilesp.isPresent()) {
+            datafilesgroup = getFileGroup(datafilesp.get());
+        }
         FileObject input = IOFactory.getInputFO(ee, getParameter("template"));
-        freemarkerrun(input, outputfn.get(), usesgroup, data);
+        freemarkerrun(input, outputfn.get(), filesgroup, datafilesgroup);
     }
 
     private void freemarkerrun(FileObject templatefo, String outputfn,
-            Map<String, String> usesgroup, Optional<String> data) throws IOException {
+            Map<String, String> filesgroup, Map<String, String> datafilesgroup) throws IOException {
         templatefo.setAttribute("template", Boolean.TRUE);
         templatefo.setAttribute("javax.script.ScriptEngine", "freemarker");
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(CreateDescriptor.FREE_FILE_EXTENSION, Boolean.TRUE);
         addParameterAttributes(attributes);
-        if (usesgroup != null) {
-            addFileAttributes(attributes, usesgroup);
+        if (filesgroup != null) {
+            addFileAttributes(attributes, filesgroup);
         }
-        if (data.isPresent()) {
-            addDataAttributes(attributes, data.get());
+        if (datafilesgroup != null) {
+            addDataFileAttributes(attributes, datafilesgroup);
         }
         OutputDescriptor iod = IOFactory.getOutputDescriptor(ee, outputfn);
         FileBuilder.createFromTemplate(templatefo, iod.folder, iod.filename,
@@ -105,32 +109,37 @@ public class FreeMarkerExecutor extends Executor {
         });
     }
 
-    private void addFileAttributes(Map<String, Object> attributes, Map<String, String> usesgroup) throws IOException {
-        for (Map.Entry<String, String> usesfile : usesgroup.entrySet()) {
-            String filename = substitute(usesfile.getValue());
+    private void addFileAttributes(Map<String, Object> attributes, Map<String, String> filesgroup) throws IOException {
+        for (Map.Entry<String, String> fileentry : filesgroup.entrySet()) {
+            String filename = substitute(fileentry.getValue());
+            String key = substitute(fileentry.getKey());
             FileObject fo = IOFactory.getInputFO(ee, filename);
             if (fo == null) {
-                throw new IOException("Filename in usesgroup is missing(" + filename + ")");
+                throw new IOException("Filename in uses-file group is missing(" + filename + ")");
             }
-            attributes.put(usesfile.getKey(), fo.asText());
+            attributes.put(key, fo.asText());
         }
     }
 
-    private void addDataAttributes(Map<String, Object> attributes, String datafilename) throws IOException {
-        FileObject fo = IOFactory.getInputFO(ee, datafilename);
-        if (fo == null) {
-            throw new IOException("Data filename is missing(" + datafilename + ")");
+    private void addDataFileAttributes(Map<String, Object> attributes, Map<String, String> datafilesgroup) throws IOException {
+        for (Map.Entry<String, String> datafiles : datafilesgroup.entrySet()) {
+            String datafilename = substitute(datafiles.getValue());
+            String key = substitute(datafiles.getKey());
+            FileObject fo = IOFactory.getInputFO(ee, datafilename);
+            if (fo == null) {
+                throw new IOException("Filename in uses-file group is missing(" + datafilename + ")");
+            }
+            List<String> alllines = fo.asLines();
+            String[] hdrcolumns = alllines.get(0).split(",");
+            for (int i = 0; i < hdrcolumns.length; i++) {
+                hdrcolumns[i] = hdrcolumns[i].trim();
+            }
+            attributes.put(key,
+                    alllines.subList(1, alllines.size()).stream()
+                            .map((line) -> line2map(hdrcolumns, line))
+                            .collect(Collectors.toList())
+            );
         }
-        List<String> alllines = fo.asLines();
-        String[] hdrcolumns = alllines.get(0).split(",");
-        for (int i = 0; i < hdrcolumns.length; i++) {
-            hdrcolumns[i] = hdrcolumns[i].trim();
-        }
-        attributes.put("data",
-                alllines.subList(1, alllines.size()).stream()
-                        .map((line) -> line2map(hdrcolumns, line))
-                        .collect(Collectors.toList())
-        );
     }
 
     private Map<String, Object> line2map(String[] hdrcolumns, String line) {
