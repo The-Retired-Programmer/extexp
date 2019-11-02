@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.extexp.xslt;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -25,6 +26,8 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.w3c.dom.Document;
 import uk.theretiredprogrammer.extexp.support.Executor;
 import uk.theretiredprogrammer.extexp.support.IOFactory;
@@ -59,13 +62,17 @@ public class XsltExecutor extends Executor {
 
     @Override
     protected void executecommand() throws IOException {
+        File ssFile = FileUtil.toFile(IOFactory.getInputFO(ee, getParameter("stylesheet")));
+        if (ssFile == null) {
+            throw new IOException("Cannot resolve a FilePath for stylesheet");
+        } 
         try (
                 Writer output = IOFactory.createWriter(ee, getParameter("to"));
                 Reader input = IOFactory.createReader(ee, getParameter("from"));
-                Reader stylesheet = IOFactory.createReader(ee, getParameter("stylesheet"))) {
+                ) { 
             try {
                 Transformer tr;
-                tr = TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheet));
+                tr = TransformerFactory.newInstance().newTransformer(new StreamSource(ssFile));
                 DOMResult dr = new DOMResult();
                 tr.transform(new StreamSource(input), dr);
                 //
