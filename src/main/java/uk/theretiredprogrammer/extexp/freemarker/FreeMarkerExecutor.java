@@ -58,7 +58,7 @@ public class FreeMarkerExecutor extends Executor {
 
     @Override
     public String[] getPrimaryPinData() {
-        return new String[]{"template", "to", "uses", "data"};
+        return new String[]{"template", "to", "uses-files", "uses-data-files"};
     }
 
     @Override

@@ -45,6 +45,6 @@ public class ActionClean extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionClean.class).post(new ActionsWorker(project, buildfile, true, false));
+        new RequestProcessor(ActionClean.class).post(new ActionsWorker(project, buildfile, true, false, false));
     }
 }

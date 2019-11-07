@@ -85,7 +85,7 @@ public class VisualEditorWorker implements Runnable {
     private int veWorker(FileObject projectfolder, FileObject buildfile,
             OutputWriter msg, OutputWriter err) throws IOException {
         msg.println("Building...");
-        ExecutionEnvironment env = new ExecutionEnvironment(projectfolder, buildfile, msg, err);
+        ExecutionEnvironment env = new ExecutionEnvironment(projectfolder, buildfile, msg, err, false);
         PTC tc = new PTC();
         try {
             tc.setDisplayName(project.getProjectDirectory().getName() + " - " + buildfile.getName());

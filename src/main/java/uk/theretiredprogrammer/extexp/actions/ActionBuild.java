@@ -45,6 +45,6 @@ public class ActionBuild extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionBuild.class).post(new ActionsWorker(project, buildfile, false, true));
+        new RequestProcessor(ActionBuild.class).post(new ActionsWorker(project, buildfile, false, true, false));
     }
 }

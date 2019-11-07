@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 richard linsdale.
+ * Copyright 2019 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.extexp.PProject;
  * 
  * @author richard linsdale
  */
-public class ActionCleanBuild extends AbstractAction {
+public class ActionCleanDebugBuild extends AbstractAction {
 
     private final PProject project;
     private final FileObject buildfile;
@@ -37,14 +37,14 @@ public class ActionCleanBuild extends AbstractAction {
      * @param project the Extexp project
      * @param buildfile the build file
      */
-    public ActionCleanBuild(PProject project, FileObject buildfile) {
-        super("Clean and Build");
+    public ActionCleanDebugBuild(PProject project, FileObject buildfile) {
+        super("Clean and Build with Debug");
         this.project = project;
         this.buildfile = buildfile;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionCleanBuild.class).post(new ActionsWorker(project, buildfile, true, true, false));
+        new RequestProcessor(ActionCleanDebugBuild.class).post(new ActionsWorker(project, buildfile, true, true, true));
     }
 }

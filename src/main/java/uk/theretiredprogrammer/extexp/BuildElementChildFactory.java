@@ -29,6 +29,8 @@ import org.openide.util.ImageUtilities;
 import uk.theretiredprogrammer.extexp.actions.ActionBuild;
 import uk.theretiredprogrammer.extexp.actions.ActionClean;
 import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
+import uk.theretiredprogrammer.extexp.actions.ActionCleanDebugBuild;
+import uk.theretiredprogrammer.extexp.actions.ActionDebugBuild;
 import uk.theretiredprogrammer.extexp.visualeditor.ActionOpenVisualEditor;
 
 /**
@@ -103,9 +105,13 @@ public class BuildElementChildFactory extends ChildFactory<FileObject> {
                     ? new Action[]{}
                     : new Action[]{
                         new ActionOpenVisualEditor(project, fo),
+                        new ActionClean(project, fo),
                         new ActionBuild(project, fo),
                         new ActionCleanBuild(project, fo),
-                        new ActionClean(project, fo),};
+                        new ActionDebugBuild(project, fo),
+                        new ActionCleanDebugBuild(project, fo),
+                    }
+                    ;
         }
     }
 }

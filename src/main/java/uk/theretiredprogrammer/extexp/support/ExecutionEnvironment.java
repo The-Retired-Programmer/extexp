@@ -66,6 +66,10 @@ public class ExecutionEnvironment {
      */
     public final ErrorCount errorflag;
     
+    /**
+     * the debug required flag
+     */
+    public final boolean debugrequired;
     
 
     /**
@@ -75,10 +79,11 @@ public class ExecutionEnvironment {
      * @param buildfile the build file
      * @param msg the reporting output stream
      * @param err the error reporting output stream
+     * @param debugrequired true if debugging required
      * @throws IOException if any error detected during construction
      */
     public ExecutionEnvironment(FileObject projectfolder, FileObject buildfile,
-            OutputWriter msg, OutputWriter err) throws IOException {
+            OutputWriter msg, OutputWriter err, boolean debugrequired) throws IOException {
         this.commandsequences = new CommandSequenceStore(buildfile, err::println);
         this.paths = new IOPaths(
                 projectfolder,
@@ -90,15 +95,17 @@ public class ExecutionEnvironment {
         this.tempfs = new MemoryFS();
         this.idgenerator = new IDGenerator();
         this.errorflag = new ErrorCount();
+        this.debugrequired = debugrequired;
     }
 
     private ExecutionEnvironment(IOPaths paths, MemoryFS tempfs, CommandSequenceStore commandsequences,
-            IDGenerator idgenerator, ErrorCount errorflag) {
+            IDGenerator idgenerator, ErrorCount errorflag, boolean debugrequired) {
         this.paths = paths;
         this.tempfs = tempfs;
         this.commandsequences = commandsequences;
         this.idgenerator = idgenerator;
         this.errorflag = errorflag;
+        this.debugrequired = debugrequired;
     }
 
     /**
@@ -109,7 +116,8 @@ public class ExecutionEnvironment {
      * @return the new ExecutionEnvironment
      */
     public final ExecutionEnvironment clone(IOPaths paths) {
-        return new ExecutionEnvironment(paths, this.tempfs, this.commandsequences, this.idgenerator, this.errorflag);
+        return new ExecutionEnvironment(paths, this.tempfs,
+                this.commandsequences, this.idgenerator, this.errorflag, this.debugrequired);
     }
 
     /**
@@ -122,7 +130,7 @@ public class ExecutionEnvironment {
      */
     public final ExecutionEnvironment cloneWithNewTFS(IOPaths paths) {
         return new ExecutionEnvironment(paths, new MemoryFS(),
-                this.commandsequences, this.idgenerator, this.errorflag);
+                this.commandsequences, this.idgenerator, this.errorflag, this.debugrequired);
     }
 
     private FileObject useOrCreateFolder(OutputWriter err, FileObject parent, String... foldernames) {

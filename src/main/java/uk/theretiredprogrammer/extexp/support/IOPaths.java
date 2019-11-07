@@ -21,7 +21,7 @@ import org.openide.windows.OutputWriter;
 
 /**
  * Describes the applicable file paths, a component of the ExecutionEnvironment
- * 
+ *
  * @author richard linsdale.
  */
 public class IOPaths {
@@ -38,7 +38,7 @@ public class IOPaths {
 
     /**
      * Constructor
-     * 
+     *
      * @param projectfolder the project folder
      * @param contentfolder the content folder
      * @param cachefolder the cache (temporary files) folder
@@ -66,21 +66,24 @@ public class IOPaths {
 
     /**
      * Update the path to be used for the content folder.
-     * 
-     * @param path the incremental child folder to be added to the connect folder path
+     *
+     * @param path the incremental child folder to be added to the connect
+     * folder path
      * @return The new IOPaths instance.
      */
     public IOPaths updatePath(String path) {
         return new IOPaths(getProjectfolder(), contentfolder.getFileObject(path),
                 sharedcontentfolder == null ? contentfolder : sharedcontentfolder,
-                useOrCreateFolder(cachefolder, path), outfolder,
+                cachefolder, outfolder,
                 resourcesfolder, relativepath, getMsg(), getErr());
     }
 
     /**
-     * Update the paths to be used for the content folder, cache folder and output folder.
-     * 
-     * @param path the incremental child folder to be added to the content folder, cache folder and output folder path
+     * Update the paths to be used for the content folder, cache folder and
+     * output folder.
+     *
+     * @param path the incremental child folder to be added to the content
+     * folder, cache folder and output folder path
      * @return The new IOPaths instance.
      */
     public IOPaths updateBothPath(String path) {
@@ -113,7 +116,7 @@ public class IOPaths {
 
     /**
      * Get the project folder.
-     * 
+     *
      * @return the projectfolder
      */
     public FileObject getProjectfolder() {
@@ -122,7 +125,7 @@ public class IOPaths {
 
     /**
      * Get the content folder
-     * 
+     *
      * @return the contentfolder
      */
     public FileObject getContentfolder() {
@@ -131,7 +134,7 @@ public class IOPaths {
 
     /**
      * Get the shared content folder
-     * 
+     *
      * @return the sharedcontentfolder
      */
     public FileObject getSharedcontentfolder() {
@@ -140,7 +143,7 @@ public class IOPaths {
 
     /**
      * Get the cache folder
-     * 
+     *
      * @return the cachefolder
      */
     public FileObject getCachefolder() {
@@ -149,7 +152,7 @@ public class IOPaths {
 
     /**
      * Get the output folder
-     * 
+     *
      * @return the outfolder
      */
     public FileObject getOutfolder() {
@@ -158,7 +161,7 @@ public class IOPaths {
 
     /**
      * Get the output folder path
-     * 
+     *
      * @return the output folder path
      */
     public String getOutPath() {
@@ -167,7 +170,7 @@ public class IOPaths {
 
     /**
      * Get the resources folder
-     * 
+     *
      * @return the resourcesfolder
      */
     public FileObject getResourcesfolder() {
@@ -176,7 +179,7 @@ public class IOPaths {
 
     /**
      * Set the resources folder.
-     * 
+     *
      * @param root the root folder for target resources
      * @param foldername the folder name for resources
      * @return the resources folder
@@ -189,7 +192,7 @@ public class IOPaths {
 
     /**
      * Get the relative path to the resources folder
-     * 
+     *
      * @return the relativepath
      */
     public String getRelativepath() {
@@ -198,7 +201,7 @@ public class IOPaths {
 
     /**
      * Get the message writer
-     * 
+     *
      * @return the msg writer
      */
     public OutputWriter getMsg() {
@@ -207,7 +210,7 @@ public class IOPaths {
 
     /**
      * Get the error writer
-     * 
+     *
      * @return the error writer
      */
     public OutputWriter getErr() {

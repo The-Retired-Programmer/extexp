@@ -37,6 +37,7 @@ public class ActionsWorker implements Runnable {
 
     private final boolean cleanrequired;
     private final boolean buildrequired;
+    private final boolean debugrequired;
     private final PProject project;
     private final FileObject buildfile;
 
@@ -47,10 +48,12 @@ public class ActionsWorker implements Runnable {
      * @param buildfile the build file
      * @param cleanrequired true if clean required
      * @param buildrequired true if build required
+     * @param debugrequired true if debug required
      */
-    public ActionsWorker(PProject project, FileObject buildfile, boolean cleanrequired, boolean buildrequired) {
+    public ActionsWorker(PProject project, FileObject buildfile, boolean cleanrequired, boolean buildrequired, boolean debugrequired) {
         this.cleanrequired = cleanrequired;
         this.buildrequired = buildrequired;
+        this.debugrequired = debugrequired;
         this.project = project;
         this.buildfile = buildfile;
     }
@@ -67,7 +70,7 @@ public class ActionsWorker implements Runnable {
                 reset(msg, err);
                 int errorcount = 0;
                 CommandFactory.init();
-                ExecutionEnvironment env = new ExecutionEnvironment(project.getProjectDirectory(), buildfile, msg, err);
+                ExecutionEnvironment env = new ExecutionEnvironment(project.getProjectDirectory(), buildfile, msg, err, debugrequired);
                 if (cleanrequired) {
                     errorcount += cleanWorker(env);
                 }

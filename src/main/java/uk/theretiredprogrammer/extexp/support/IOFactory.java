@@ -17,10 +17,9 @@ package uk.theretiredprogrammer.extexp.support;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.util.Optional;
 import org.openide.filesystems.FileObject;
@@ -213,22 +212,26 @@ public class IOFactory {
             case '=':
                 throw new IOException("literal input should not be used in output writer context");
             case '!':
-                return new BufferedWriter(ee.tempfs.getOutputStreamWriter(parametervalue.substring(1)));
+                return ee.debugrequired
+                        ? getWriter(ee.paths.getCachefolder(), parametervalue.substring(1), false)
+                        : new BufferedWriter(ee.tempfs.getOutputStreamWriter(parametervalue.substring(1)));
             case '+':
-                return new BufferedWriter(ee.tempfs.getOutputStreamWriter(parametervalue.substring(1), true));
+                return ee.debugrequired
+                        ? getWriter(ee.paths.getCachefolder(), parametervalue.substring(1), true)
+                        : new BufferedWriter(ee.tempfs.getOutputStreamWriter(parametervalue.substring(1), true));
             case '&':
-                return new BufferedWriter(new OutputStreamWriter(getOutputStream(ee.paths.getCachefolder(), parametervalue.substring(1))));
+                return getWriter(ee.paths.getCachefolder(), parametervalue.substring(1), false);
             default:
-                return new BufferedWriter(new OutputStreamWriter(getOutputStream(ee.paths.getOutfolder(), parametervalue)));
+                return getWriter(ee.paths.getOutfolder(), parametervalue, false);
         }
     }
 
-    private static OutputStream getOutputStream(FileObject todirectory, String name) throws IOException {
+    private static BufferedWriter getWriter(FileObject todirectory, String name, boolean append) throws IOException {
         FileObject outfo = todirectory.getFileObject(name);
-        if (outfo != null) {
-            outfo.delete();
+        if (outfo == null) {
+            outfo = todirectory.createData(name);
         }
-        return todirectory.createAndOpen(name);
+        return new BufferedWriter(new FileWriter(FileUtil.toFile(outfo).getCanonicalPath(), append));
     }
 
     /**
@@ -307,7 +310,9 @@ public class IOFactory {
             case '=':
                 throw new IOException("literal input should not be used in output descriptor context");
             case '!':
-                return new OutputDescriptor(ee.tempfs.getRoot(), parametervalue.substring(1));
+                return ee.debugrequired 
+                     ? new OutputDescriptor(ee.paths.getCachefolder(), parametervalue.substring(1))
+                    : new OutputDescriptor(ee.tempfs.getRoot(), parametervalue.substring(1));
             case '+':
                 throw new IOException("append in-memory file prefix should not be used in output descriptor context");
             case '&':
@@ -316,12 +321,12 @@ public class IOFactory {
                 return new OutputDescriptor(ee.paths.getOutfolder(), parametervalue);
         }
     }
-    
+
     /**
      * Descriptor for an output file.
-     * 
+     *
      * Note that the File is not yet created.
-     * 
+     *
      */
     public static class OutputDescriptor {
 
@@ -336,8 +341,8 @@ public class IOFactory {
 
         /**
          * create the descriptor
-         * 
-         * @param folder the folder in which the file will be created 
+         *
+         * @param folder the folder in which the file will be created
          * @param filename the filename to be used
          */
         public OutputDescriptor(FileObject folder, String filename) {
