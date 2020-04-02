@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 richard linsdale.
+ * Copyright 2019-2020 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,10 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
+import org.openide.util.NbPreferences;
 import uk.theretiredprogrammer.extexp.actions.ActionBuild;
-import uk.theretiredprogrammer.extexp.actions.ActionClean;
-import uk.theretiredprogrammer.extexp.actions.ActionCleanBuild;
-import uk.theretiredprogrammer.extexp.actions.ActionCleanDebugBuild;
 import uk.theretiredprogrammer.extexp.actions.ActionDebugBuild;
+import uk.theretiredprogrammer.extexp.options.ExtexpPanel;
 import uk.theretiredprogrammer.extexp.visualeditor.ActionOpenVisualEditor;
 
 /**
@@ -101,17 +100,27 @@ public class BuildElementChildFactory extends ChildFactory<FileObject> {
 
         @Override
         public Action[] getActions(boolean arg0) {
+            int actioncount = 1;
+            boolean enableDebug = NbPreferences.forModule(ExtexpPanel.class).getBoolean("EnableDebug", false);
+            boolean enableVisualEditor = NbPreferences.forModule(ExtexpPanel.class).getBoolean("EnableVisualEditor", false);
+            if (enableDebug) {
+                actioncount++;
+            }
+            if (enableVisualEditor) {
+                actioncount++;
+            }
+            Action[] actions = new Action[actioncount];
+            int p = 0;
+            actions[p++] = new ActionBuild(project, fo);
+            if (enableDebug) {
+                actions[p++] = new ActionDebugBuild(project, fo);
+            }
+            if (enableVisualEditor) {
+                actions[p++] = new ActionOpenVisualEditor(project, fo);
+            }
             return fo.getName().startsWith("_")
                     ? new Action[]{}
-                    : new Action[]{
-                        new ActionOpenVisualEditor(project, fo),
-                        new ActionClean(project, fo),
-                        new ActionBuild(project, fo),
-                        new ActionCleanBuild(project, fo),
-                        new ActionDebugBuild(project, fo),
-                        new ActionCleanDebugBuild(project, fo),
-                    }
-                    ;
+                    : actions;
         }
     }
 }

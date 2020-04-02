@@ -22,7 +22,7 @@ import org.openide.util.RequestProcessor;
 import uk.theretiredprogrammer.extexp.PProject;
 
 /**
- * The Debug Build Action class
+ * The Clean and Build Action class
  * 
  * @author richard linsdale
  */
@@ -45,6 +45,6 @@ public class ActionDebugBuild extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new RequestProcessor(ActionDebugBuild.class).post(new ActionsWorker(project, buildfile, false, true, true));
+        new RequestProcessor(ActionDebugBuild.class).post(new ActionsWorker(project, buildfile, true));
     }
 }

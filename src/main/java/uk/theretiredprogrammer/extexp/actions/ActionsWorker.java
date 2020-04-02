@@ -35,8 +35,6 @@ import uk.theretiredprogrammer.extexp.support.ExecutionEnvironment;
  */
 public class ActionsWorker implements Runnable {
 
-    private final boolean cleanrequired;
-    private final boolean buildrequired;
     private final boolean debugrequired;
     private final PProject project;
     private final FileObject buildfile;
@@ -46,13 +44,9 @@ public class ActionsWorker implements Runnable {
      *
      * @param project the project
      * @param buildfile the build file
-     * @param cleanrequired true if clean required
-     * @param buildrequired true if build required
      * @param debugrequired true if debug required
      */
-    public ActionsWorker(PProject project, FileObject buildfile, boolean cleanrequired, boolean buildrequired, boolean debugrequired) {
-        this.cleanrequired = cleanrequired;
-        this.buildrequired = buildrequired;
+    public ActionsWorker(PProject project, FileObject buildfile, boolean debugrequired) {
         this.debugrequired = debugrequired;
         this.project = project;
         this.buildfile = buildfile;
@@ -65,19 +59,15 @@ public class ActionsWorker implements Runnable {
         ProjectInformation projectinfo = ProjectUtils.getInformation(project);
         InputOutput io = IOProvider.getDefault().getIO("Extexp - " + projectinfo.getName() + " - " + buildfile.getName(), false);
         io.select();
-        try (OutputWriter msg = io.getOut(); OutputWriter err = io.getErr()) {
+        try ( OutputWriter msg = io.getOut();  OutputWriter err = io.getErr()) {
             try {
                 reset(msg, err);
                 int errorcount = 0;
                 CommandFactory.init();
                 ExecutionEnvironment env = new ExecutionEnvironment(project.getProjectDirectory(), buildfile, msg, err, debugrequired);
-                if (cleanrequired) {
-                    errorcount += cleanWorker(env);
-                }
-                if (buildrequired) {
-                    errorcount += buildWorker(env);
-                }
-                if (errorcount > 0){
+                errorcount += cleanWorker(env);
+                errorcount += buildWorker(env);
+                if (errorcount > 0) {
                     errflag = true;
                 }
             } catch (IOException ex) {
@@ -97,11 +87,9 @@ public class ActionsWorker implements Runnable {
     }
 
     private int cleanWorker(ExecutionEnvironment env) {
-        env.println("Cleaning...");
         int errorcount = 0;
         FileObject cachefolder = env.paths.getCachefolder();
         if (cachefolder != null) {
-            env.println("   ...cache folder");
             for (FileObject f : cachefolder.getChildren()) {
                 if (!deleteFile(f, env)) {
                     errorcount++;
@@ -110,7 +98,6 @@ public class ActionsWorker implements Runnable {
         }
         FileObject outputfolder = env.paths.getOutfolder();
         if (outputfolder != null) {
-            env.println("   ...output folder");
             for (FileObject f : outputfolder.getChildren()) {
                 if (!deleteFile(f, env)) {
                     errorcount++;
