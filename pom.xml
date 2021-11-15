@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
     <artifactId>extexp</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>nbm</packaging>
     
     <name>ExTexP NB Plugin</name>
@@ -39,9 +39,9 @@
     </licenses>
        
     <properties>
-        <netbeans.version>RELEASE111</netbeans.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <netbeans.version>RELEASE120</netbeans.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 richard linsdale.
+ * Copyright 2018-2021 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import uk.theretiredprogrammer.extexp.api.ControlFactory;
 import uk.theretiredprogrammer.extexp.support.Control;
 
 /**
- * The Factory creating Controls. These include: IfDefined, Run, Use and For.
+ * The Factory creating Controls. These include: IfDefined, Run, Use, For and ForList.
  *
  * @author richard linsdale
  */
@@ -43,6 +43,9 @@ public class ControlsFactory implements ControlFactory {
         if (keys.contains("For")) {
             return new ForControl();
         }
+        if (keys.contains("ForList")) {
+            return new ForListControl();
+        }
         return null;
     }
 
@@ -52,5 +55,6 @@ public class ControlsFactory implements ControlFactory {
         consumer.accept(new UseControl());
         consumer.accept(new IfDefinedControl());
         consumer.accept(new ForControl());
+        consumer.accept(new ForListControl());
     }
 }
